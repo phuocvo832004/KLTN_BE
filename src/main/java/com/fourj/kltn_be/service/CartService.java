@@ -30,9 +30,12 @@ public class CartService {
 
     @Transactional
     public CartDTO getOrCreateActiveCart(Long userId) {
-        Optional<Cart> existingCart = cartRepository.findByUserIdAndStatus(userId, "ACTIVE");
+        Optional<Cart> existingCart = cartRepository.findByUserIdAndStatusWithItems(userId, "ACTIVE");
         if (existingCart.isPresent()) {
-            return convertToDTO(existingCart.get());
+            Cart cart = existingCart.get();
+            // Ensure cart items are initialized
+            cart.getCartItems().size();
+            return convertToDTO(cart);
         }
         
         User user = userRepository.findById(userId)
@@ -48,7 +51,7 @@ public class CartService {
     @Transactional
     public CartItemDTO addToCart(Long userId, AddToCartRequest request) {
         CartDTO cartDTO = getOrCreateActiveCart(userId);
-        Cart cart = cartRepository.findById(cartDTO.getId())
+        Cart cart = cartRepository.findByIdWithItems(cartDTO.getId())
                 .orElseThrow(() -> new RuntimeException("Cart not found"));
         
         Product product = productRepository.findById(request.getProductId())
@@ -74,6 +77,9 @@ public class CartService {
 
     @Transactional
     public void removeFromCart(Long cartId, Long itemId) {
+        if (!cartItemRepository.existsById(itemId)) {
+            throw new RuntimeException("Cart item not found");
+        }
         cartItemRepository.deleteById(itemId);
     }
 
@@ -111,7 +117,9 @@ public class CartService {
         dto.setStatus(cart.getStatus());
         dto.setCreatedAt(cart.getCreatedAt());
         dto.setUpdatedAt(cart.getUpdatedAt());
-        dto.setItems(cart.getCartItems().stream()
+        // Ensure cart items are loaded and convert to DTO
+        List<CartItem> items = cart.getCartItems() != null ? cart.getCartItems() : List.of();
+        dto.setItems(items.stream()
                 .map(this::convertItemToDTO)
                 .collect(Collectors.toList()));
         return dto;

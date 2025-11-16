@@ -49,8 +49,12 @@ public class CartController {
 
     @DeleteMapping("/items/{itemId}")
     public ResponseEntity<Void> removeFromCart(@PathVariable Long itemId) {
-        cartService.removeFromCart(null, itemId);
-        return ResponseEntity.noContent().build();
+        try {
+            cartService.removeFromCart(null, itemId);
+            return ResponseEntity.noContent().build();
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
+        }
     }
 
     @DeleteMapping("/{cartId}/items")
