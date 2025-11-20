@@ -1,8 +1,12 @@
 package com.fourj.kltn_be.controller;
 
+import com.fourj.kltn_be.dto.PageResponse;
 import com.fourj.kltn_be.dto.UserDTO;
 import com.fourj.kltn_be.service.UserService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -18,8 +22,22 @@ public class UserController {
     private final UserService userService;
 
     @GetMapping
-    public ResponseEntity<List<UserDTO>> getAllUsers() {
-        return ResponseEntity.ok(userService.getAllUsers());
+    public ResponseEntity<?> getAllUsers(
+            @RequestParam(required = false, defaultValue = "0") int page,
+            @RequestParam(required = false, defaultValue = "24") int size,
+            @RequestParam(required = false, defaultValue = "userId") String sortBy,
+            @RequestParam(required = false, defaultValue = "asc") String sortDir) {
+        if (page < 0 || size <= 0) {
+            // Return non-paginated response for backward compatibility
+            return ResponseEntity.ok(userService.getAllUsers());
+        }
+        
+        Sort sort = sortDir.equalsIgnoreCase("desc") 
+                ? Sort.by(sortBy).descending() 
+                : Sort.by(sortBy).ascending();
+        Pageable pageable = PageRequest.of(page, size, sort);
+        PageResponse<UserDTO> response = userService.getAllUsers(pageable);
+        return ResponseEntity.ok(response);
     }
 
     @GetMapping("/{userId}")

@@ -1,5 +1,6 @@
 package com.fourj.kltn_be.service;
 
+import com.fourj.kltn_be.dto.PageResponse;
 import com.fourj.kltn_be.dto.ProductDTO;
 import com.fourj.kltn_be.dto.ProductSpecDTO;
 import com.fourj.kltn_be.entity.Product;
@@ -8,6 +9,8 @@ import com.fourj.kltn_be.entity.ProductSpec;
 import com.fourj.kltn_be.repository.ProductRepository;
 import com.fourj.kltn_be.repository.ReviewRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -27,6 +30,11 @@ public class ProductService {
                 .collect(Collectors.toList());
     }
 
+    public PageResponse<ProductDTO> getAllProducts(Pageable pageable) {
+        Page<Product> page = productRepository.findAll(pageable);
+        return convertToPageResponse(page);
+    }
+
     public Optional<ProductDTO> getProductById(String id) {
         return productRepository.findById(id)
                 .map(this::convertToDTO);
@@ -38,10 +46,20 @@ public class ProductService {
                 .collect(Collectors.toList());
     }
 
+    public PageResponse<ProductDTO> searchProducts(String title, Pageable pageable) {
+        Page<Product> page = productRepository.findByTitleContainingIgnoreCase(title, pageable);
+        return convertToPageResponse(page);
+    }
+
     public List<ProductDTO> getProductsByCategory(String category) {
         return productRepository.findByCategory(category).stream()
                 .map(this::convertToDTO)
                 .collect(Collectors.toList());
+    }
+
+    public PageResponse<ProductDTO> getProductsByCategory(String category, Pageable pageable) {
+        Page<Product> page = productRepository.findByCategory(category, pageable);
+        return convertToPageResponse(page);
     }
 
     @Transactional
@@ -94,6 +112,7 @@ public class ProductService {
         dto.setCategories(product.getCategories());
         dto.setSpecs(product.getSpecs());
         dto.setAverageRating(product.getAverageRating());
+        dto.setRating(product.getAverageRating()); // Set rating from averageRating
         dto.setRelatedProducts(product.getRelatedProducts());
         dto.setCreatedAt(product.getCreatedAt());
         dto.setUpdatedAt(product.getUpdatedAt());
@@ -126,6 +145,22 @@ public class ProductService {
         product.setAverageRating(dto.getAverageRating());
         product.setRelatedProducts(dto.getRelatedProducts());
         return product;
+    }
+
+    private PageResponse<ProductDTO> convertToPageResponse(Page<Product> page) {
+        List<ProductDTO> content = page.getContent().stream()
+                .map(this::convertToDTO)
+                .collect(Collectors.toList());
+        
+        return new PageResponse<>(
+                content,
+                page.getNumber(),
+                page.getSize(),
+                page.getTotalElements(),
+                page.getTotalPages(),
+                page.isFirst(),
+                page.isLast()
+        );
     }
 }
 

@@ -20,6 +20,7 @@ public class ProductDTO {
     private String[] categories;
     private String specs;
     private Double averageRating;
+    private Double rating; // Alias for averageRating for API compatibility
     private String[] relatedProducts;
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;

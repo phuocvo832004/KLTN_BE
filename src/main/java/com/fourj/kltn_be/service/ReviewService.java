@@ -1,11 +1,14 @@
 package com.fourj.kltn_be.service;
 
+import com.fourj.kltn_be.dto.PageResponse;
 import com.fourj.kltn_be.dto.ReviewDTO;
 import com.fourj.kltn_be.entity.Product;
 import com.fourj.kltn_be.entity.Review;
 import com.fourj.kltn_be.repository.ProductRepository;
 import com.fourj.kltn_be.repository.ReviewRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -23,6 +26,23 @@ public class ReviewService {
         return reviewRepository.findByProductId(productId).stream()
                 .map(this::convertToDTO)
                 .collect(Collectors.toList());
+    }
+
+    public PageResponse<ReviewDTO> getProductReviews(String productId, Pageable pageable) {
+        Page<Review> page = reviewRepository.findByProductId(productId, pageable);
+        List<ReviewDTO> content = page.getContent().stream()
+                .map(this::convertToDTO)
+                .collect(Collectors.toList());
+        
+        return new PageResponse<>(
+                content,
+                page.getNumber(),
+                page.getSize(),
+                page.getTotalElements(),
+                page.getTotalPages(),
+                page.isFirst(),
+                page.isLast()
+        );
     }
 
     @Transactional

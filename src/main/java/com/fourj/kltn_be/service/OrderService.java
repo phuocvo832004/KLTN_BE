@@ -3,6 +3,7 @@ package com.fourj.kltn_be.service;
 import com.fourj.kltn_be.dto.CreateOrderRequest;
 import com.fourj.kltn_be.dto.OrderDTO;
 import com.fourj.kltn_be.dto.OrderItemDTO;
+import com.fourj.kltn_be.dto.PageResponse;
 import com.fourj.kltn_be.entity.Order;
 import com.fourj.kltn_be.entity.OrderItem;
 import com.fourj.kltn_be.entity.Product;
@@ -12,6 +13,8 @@ import com.fourj.kltn_be.repository.OrderRepository;
 import com.fourj.kltn_be.repository.ProductRepository;
 import com.fourj.kltn_be.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -64,6 +67,23 @@ public class OrderService {
         return orderRepository.findByUserId(userId).stream()
                 .map(this::convertToDTO)
                 .collect(Collectors.toList());
+    }
+
+    public PageResponse<OrderDTO> getUserOrders(Long userId, Pageable pageable) {
+        Page<Order> page = orderRepository.findByUserId(userId, pageable);
+        List<OrderDTO> content = page.getContent().stream()
+                .map(this::convertToDTO)
+                .collect(Collectors.toList());
+        
+        return new PageResponse<>(
+                content,
+                page.getNumber(),
+                page.getSize(),
+                page.getTotalElements(),
+                page.getTotalPages(),
+                page.isFirst(),
+                page.isLast()
+        );
     }
 
     public Optional<OrderDTO> getOrderById(Long orderId) {

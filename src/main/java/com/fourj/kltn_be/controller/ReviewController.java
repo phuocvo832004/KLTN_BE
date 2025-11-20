@@ -1,8 +1,12 @@
 package com.fourj.kltn_be.controller;
 
+import com.fourj.kltn_be.dto.PageResponse;
 import com.fourj.kltn_be.dto.ReviewDTO;
 import com.fourj.kltn_be.service.ReviewService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -17,8 +21,23 @@ public class ReviewController {
     private final ReviewService reviewService;
 
     @GetMapping("/product/{productId}")
-    public ResponseEntity<List<ReviewDTO>> getProductReviews(@PathVariable String productId) {
-        return ResponseEntity.ok(reviewService.getProductReviews(productId));
+    public ResponseEntity<?> getProductReviews(
+            @PathVariable String productId,
+            @RequestParam(required = false, defaultValue = "0") int page,
+            @RequestParam(required = false, defaultValue = "24") int size,
+            @RequestParam(required = false, defaultValue = "reviewDate") String sortBy,
+            @RequestParam(required = false, defaultValue = "desc") String sortDir) {
+        if (page < 0 || size <= 0) {
+            // Return non-paginated response for backward compatibility
+            return ResponseEntity.ok(reviewService.getProductReviews(productId));
+        }
+        
+        Sort sort = sortDir.equalsIgnoreCase("desc") 
+                ? Sort.by(sortBy).descending() 
+                : Sort.by(sortBy).ascending();
+        Pageable pageable = PageRequest.of(page, size, sort);
+        PageResponse<ReviewDTO> response = reviewService.getProductReviews(productId, pageable);
+        return ResponseEntity.ok(response);
     }
 
     @PostMapping

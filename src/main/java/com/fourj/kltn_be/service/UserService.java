@@ -1,9 +1,12 @@
 package com.fourj.kltn_be.service;
 
+import com.fourj.kltn_be.dto.PageResponse;
 import com.fourj.kltn_be.dto.UserDTO;
 import com.fourj.kltn_be.entity.User;
 import com.fourj.kltn_be.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -20,6 +23,23 @@ public class UserService {
         return userRepository.findAll().stream()
                 .map(this::convertToDTO)
                 .collect(Collectors.toList());
+    }
+
+    public PageResponse<UserDTO> getAllUsers(Pageable pageable) {
+        Page<User> page = userRepository.findAll(pageable);
+        List<UserDTO> content = page.getContent().stream()
+                .map(this::convertToDTO)
+                .collect(Collectors.toList());
+        
+        return new PageResponse<>(
+                content,
+                page.getNumber(),
+                page.getSize(),
+                page.getTotalElements(),
+                page.getTotalPages(),
+                page.isFirst(),
+                page.isLast()
+        );
     }
 
     public Optional<UserDTO> getUserById(Long userId) {

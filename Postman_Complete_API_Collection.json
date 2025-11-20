@@ -1,0 +1,688 @@
+{
+	"info": {
+		"_postman_id": "complete-api-collection",
+		"name": "KLTN Complete API Collection",
+		"description": "Collection đầy đủ để test tất cả các API của hệ thống",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "Product APIs",
+			"item": [
+				{
+					"name": "1. GET All Products",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/api/products",
+							"host": ["{{base_url}}"],
+							"path": ["api", "products"]
+						},
+						"description": "Lấy danh sách tất cả sản phẩm"
+					}
+				},
+				{
+					"name": "2. GET Product By ID",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/api/products/:id",
+							"host": ["{{base_url}}"],
+							"path": ["api", "products", ":id"],
+							"variable": [
+								{
+									"key": "id",
+									"value": "PROD001"
+								}
+							]
+						},
+						"description": "Lấy thông tin chi tiết sản phẩm theo ID"
+					}
+				},
+				{
+					"name": "3. Search Products",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/api/products/search?title=nike",
+							"host": ["{{base_url}}"],
+							"path": ["api", "products", "search"],
+							"query": [
+								{
+									"key": "title",
+									"value": "nike"
+								}
+							]
+						},
+						"description": "Tìm kiếm sản phẩm theo tên"
+					}
+				},
+				{
+					"name": "4. GET Products By Category",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/api/products/category/:category",
+							"host": ["{{base_url}}"],
+							"path": ["api", "products", "category", ":category"],
+							"variable": [
+								{
+									"key": "category",
+									"value": "sneakers"
+								}
+							]
+						},
+						"description": "Lấy danh sách sản phẩm theo category"
+					}
+				},
+				{
+					"name": "5. CREATE Product",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"id\": \"PROD_NEW_001\",\n  \"title\": \"Nike Air Max 90\",\n  \"description\": \"Classic sneaker với thiết kế retro\",\n  \"price\": 2500000,\n  \"imurl\": \"https://example.com/nike-air-max-90.jpg\",\n  \"imgUrl\": \"https://example.com/nike-air-max-90.jpg\",\n  \"categories\": [\"sneakers\", \"nike\"],\n  \"specs\": \"{\\\"size\\\": \\\"42\\\", \\\"color\\\": \\\"black\\\"}\",\n  \"categoryList\": [\"sneakers\", \"nike\"],\n  \"specList\": [\n    {\n      \"specKey\": \"Size\",\n      \"specValue\": \"42\"\n    },\n    {\n      \"specKey\": \"Color\",\n      \"specValue\": \"Black\"\n    }\n  ]\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{base_url}}/api/products",
+							"host": ["{{base_url}}"],
+							"path": ["api", "products"]
+						},
+						"description": "Tạo sản phẩm mới"
+					}
+				},
+				{
+					"name": "6. UPDATE Product",
+					"request": {
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"title\": \"Nike Air Max 90 Updated\",\n  \"description\": \"Classic sneaker với thiết kế retro - Updated\",\n  \"price\": 2600000,\n  \"imurl\": \"https://example.com/nike-air-max-90-updated.jpg\",\n  \"imgUrl\": \"https://example.com/nike-air-max-90-updated.jpg\",\n  \"categories\": [\"sneakers\", \"nike\"],\n  \"specs\": \"{\\\"size\\\": \\\"42\\\", \\\"color\\\": \\\"black\\\"}\",\n  \"categoryList\": [\"sneakers\", \"nike\"],\n  \"specList\": [\n    {\n      \"specKey\": \"Size\",\n      \"specValue\": \"42\"\n    },\n    {\n      \"specKey\": \"Color\",\n      \"specValue\": \"Black\"\n    }\n  ]\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{base_url}}/api/products/:id",
+							"host": ["{{base_url}}"],
+							"path": ["api", "products", ":id"],
+							"variable": [
+								{
+									"key": "id",
+									"value": "PROD_NEW_001"
+								}
+							]
+						},
+						"description": "Cập nhật thông tin sản phẩm"
+					}
+				},
+				{
+					"name": "7. DELETE Product",
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/api/products/:id",
+							"host": ["{{base_url}}"],
+							"path": ["api", "products", ":id"],
+							"variable": [
+								{
+									"key": "id",
+									"value": "PROD_NEW_001"
+								}
+							]
+						},
+						"description": "Xóa sản phẩm"
+					}
+				}
+			]
+		},
+		{
+			"name": "User APIs",
+			"item": [
+				{
+					"name": "1. GET All Users",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/api/users",
+							"host": ["{{base_url}}"],
+							"path": ["api", "users"]
+						},
+						"description": "Lấy danh sách tất cả users"
+					}
+				},
+				{
+					"name": "2. GET User By ID",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/api/users/:userId",
+							"host": ["{{base_url}}"],
+							"path": ["api", "users", ":userId"],
+							"variable": [
+								{
+									"key": "userId",
+									"value": "1"
+								}
+							]
+						},
+						"description": "Lấy thông tin user theo ID"
+					}
+				},
+				{
+					"name": "3. GET User By Username",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/api/users/username/:username",
+							"host": ["{{base_url}}"],
+							"path": ["api", "users", "username", ":username"],
+							"variable": [
+								{
+									"key": "username",
+									"value": "testuser"
+								}
+							]
+						},
+						"description": "Lấy thông tin user theo username"
+					}
+				},
+				{
+					"name": "4. CREATE User",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"username\": \"newuser\",\n  \"email\": \"newuser@example.com\",\n  \"preferences\": \"{\\\"theme\\\": \\\"dark\\\"}\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{base_url}}/api/users",
+							"host": ["{{base_url}}"],
+							"path": ["api", "users"]
+						},
+						"description": "Tạo user mới"
+					}
+				},
+				{
+					"name": "5. UPDATE User",
+					"request": {
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"username\": \"updateduser\",\n  \"email\": \"updateduser@example.com\",\n  \"preferences\": \"{\\\"theme\\\": \\\"light\\\"}\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{base_url}}/api/users/:userId",
+							"host": ["{{base_url}}"],
+							"path": ["api", "users", ":userId"],
+							"variable": [
+								{
+									"key": "userId",
+									"value": "1"
+								}
+							]
+						},
+						"description": "Cập nhật thông tin user"
+					}
+				},
+				{
+					"name": "6. DELETE User",
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/api/users/:userId",
+							"host": ["{{base_url}}"],
+							"path": ["api", "users", ":userId"],
+							"variable": [
+								{
+									"key": "userId",
+									"value": "1"
+								}
+							]
+						},
+						"description": "Xóa user"
+					}
+				}
+			]
+		},
+		{
+			"name": "Cart APIs",
+			"item": [
+				{
+					"name": "1. GET Active Cart",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/api/carts/user/:userId",
+							"host": ["{{base_url}}"],
+							"path": ["api", "carts", "user", ":userId"],
+							"variable": [
+								{
+									"key": "userId",
+									"value": "1"
+								}
+							]
+						},
+						"description": "Lấy hoặc tạo cart active của user"
+					}
+				},
+				{
+					"name": "2. ADD To Cart",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"productId\": \"PROD001\",\n  \"quantity\": 2,\n  \"unitPrice\": 2500000\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{base_url}}/api/carts/user/:userId/items",
+							"host": ["{{base_url}}"],
+							"path": ["api", "carts", "user", ":userId", "items"],
+							"variable": [
+								{
+									"key": "userId",
+									"value": "1"
+								}
+							]
+						},
+						"description": "Thêm sản phẩm vào cart"
+					}
+				},
+				{
+					"name": "3. GET Cart Items",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/api/carts/:cartId/items",
+							"host": ["{{base_url}}"],
+							"path": ["api", "carts", ":cartId", "items"],
+							"variable": [
+								{
+									"key": "cartId",
+									"value": "1"
+								}
+							]
+						},
+						"description": "Lấy danh sách items trong cart"
+					}
+				},
+				{
+					"name": "4. UPDATE Cart Item Quantity",
+					"request": {
+						"method": "PUT",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/api/carts/items/:itemId?quantity=3",
+							"host": ["{{base_url}}"],
+							"path": ["api", "carts", "items", ":itemId"],
+							"query": [
+								{
+									"key": "quantity",
+									"value": "3"
+								}
+							],
+							"variable": [
+								{
+									"key": "itemId",
+									"value": "1"
+								}
+							]
+						},
+						"description": "Cập nhật số lượng item trong cart"
+					}
+				},
+				{
+					"name": "5. REMOVE From Cart",
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/api/carts/items/:itemId",
+							"host": ["{{base_url}}"],
+							"path": ["api", "carts", "items", ":itemId"],
+							"variable": [
+								{
+									"key": "itemId",
+									"value": "1"
+								}
+							]
+						},
+						"description": "Xóa item khỏi cart"
+					}
+				},
+				{
+					"name": "6. CLEAR Cart",
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/api/carts/:cartId/items",
+							"host": ["{{base_url}}"],
+							"path": ["api", "carts", ":cartId", "items"],
+							"variable": [
+								{
+									"key": "cartId",
+									"value": "1"
+								}
+							]
+						},
+						"description": "Xóa tất cả items trong cart"
+					}
+				},
+				{
+					"name": "7. CHECKOUT Cart",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/api/carts/:cartId/checkout",
+							"host": ["{{base_url}}"],
+							"path": ["api", "carts", ":cartId", "checkout"],
+							"variable": [
+								{
+									"key": "cartId",
+									"value": "1"
+								}
+							]
+						},
+						"description": "Checkout cart (chuyển cart sang trạng thái completed)"
+					}
+				}
+			]
+		},
+		{
+			"name": "Order APIs",
+			"item": [
+				{
+					"name": "1. CREATE Order",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"shippingAddress\": \"123 Đường ABC, Quận 1, TP.HCM\",\n  \"paymentMethod\": \"COD\",\n  \"items\": [\n    {\n      \"productId\": \"PROD001\",\n      \"quantity\": 2,\n      \"unitPrice\": 2500000\n    },\n    {\n      \"productId\": \"PROD002\",\n      \"quantity\": 1,\n      \"unitPrice\": 3000000\n    }\n  ]\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{base_url}}/api/orders/user/:userId",
+							"host": ["{{base_url}}"],
+							"path": ["api", "orders", "user", ":userId"],
+							"variable": [
+								{
+									"key": "userId",
+									"value": "1"
+								}
+							]
+						},
+						"description": "Tạo order mới"
+					}
+				},
+				{
+					"name": "2. GET User Orders",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/api/orders/user/:userId",
+							"host": ["{{base_url}}"],
+							"path": ["api", "orders", "user", ":userId"],
+							"variable": [
+								{
+									"key": "userId",
+									"value": "1"
+								}
+							]
+						},
+						"description": "Lấy danh sách orders của user"
+					}
+				},
+				{
+					"name": "3. GET Order By ID",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/api/orders/:orderId",
+							"host": ["{{base_url}}"],
+							"path": ["api", "orders", ":orderId"],
+							"variable": [
+								{
+									"key": "orderId",
+									"value": "1"
+								}
+							]
+						},
+						"description": "Lấy thông tin chi tiết order theo ID"
+					}
+				},
+				{
+					"name": "4. UPDATE Order Status",
+					"request": {
+						"method": "PUT",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/api/orders/:orderId/status?status=SHIPPED",
+							"host": ["{{base_url}}"],
+							"path": ["api", "orders", ":orderId", "status"],
+							"query": [
+								{
+									"key": "status",
+									"value": "SHIPPED",
+									"description": "Order status: PENDING, CONFIRMED, SHIPPED, DELIVERED, CANCELLED"
+								}
+							],
+							"variable": [
+								{
+									"key": "orderId",
+									"value": "1"
+								}
+							]
+						},
+						"description": "Cập nhật trạng thái order"
+					}
+				}
+			]
+		},
+		{
+			"name": "Review APIs",
+			"item": [
+				{
+					"name": "1. GET Product Reviews",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/api/reviews/product/:productId",
+							"host": ["{{base_url}}"],
+							"path": ["api", "reviews", "product", ":productId"],
+							"variable": [
+								{
+									"key": "productId",
+									"value": "PROD001"
+								}
+							]
+						},
+						"description": "Lấy danh sách reviews của sản phẩm"
+					}
+				},
+				{
+					"name": "2. CREATE Review",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"productId\": \"PROD001\",\n  \"rating\": 5,\n  \"comment\": \"Sản phẩm rất tốt, chất lượng cao!\",\n  \"userId\": \"1\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{base_url}}/api/reviews",
+							"host": ["{{base_url}}"],
+							"path": ["api", "reviews"]
+						},
+						"description": "Tạo review mới cho sản phẩm"
+					}
+				},
+				{
+					"name": "3. DELETE Review",
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/api/reviews/:reviewId",
+							"host": ["{{base_url}}"],
+							"path": ["api", "reviews", ":reviewId"],
+							"variable": [
+								{
+									"key": "reviewId",
+									"value": "1"
+								}
+							]
+						},
+						"description": "Xóa review"
+					}
+				}
+			]
+		},
+		{
+			"name": "Chat Message APIs",
+			"item": [
+				{
+					"name": "1. GET User Chat Messages",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/api/chat-messages/user/:userId",
+							"host": ["{{base_url}}"],
+							"path": ["api", "chat-messages", "user", ":userId"],
+							"variable": [
+								{
+									"key": "userId",
+									"value": "1"
+								}
+							]
+						},
+						"description": "Lấy danh sách chat messages của user"
+					}
+				},
+				{
+					"name": "2. CREATE Chat Message",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"userId\": 1,\n  \"message\": \"Tôi muốn tìm giày Nike\",\n  \"response\": \"Tôi tìm thấy các sản phẩm Nike cho bạn\",\n  \"productIds\": \"PROD001,PROD002\",\n  \"intent\": \"search_product\",\n  \"context\": \"{\\\"category\\\": \\\"sneakers\\\"}\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{base_url}}/api/chat-messages",
+							"host": ["{{base_url}}"],
+							"path": ["api", "chat-messages"]
+						},
+						"description": "Tạo chat message mới"
+					}
+				}
+			]
+		}
+	],
+	"variable": [
+		{
+			"key": "base_url",
+			"value": "http://localhost:8080",
+			"type": "string"
+		}
+	]
+}
+
