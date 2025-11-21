@@ -41,8 +41,13 @@ public class ProductController {
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<ProductDTO> getProductById(@PathVariable String id) {
-        return productService.getProductById(id)
+    public ResponseEntity<ProductDTO> getProductById(
+            @PathVariable String id,
+            @RequestParam(required = false, defaultValue = "-1") int reviewPage,
+            @RequestParam(required = false, defaultValue = "10") int reviewSize,
+            @RequestParam(required = false, defaultValue = "reviewDate") String reviewSortBy,
+            @RequestParam(required = false, defaultValue = "desc") String reviewSortDir) {
+        return productService.getProductById(id, reviewPage, reviewSize, reviewSortBy, reviewSortDir)
                 .map(ResponseEntity::ok)
                 .orElse(ResponseEntity.notFound().build());
     }

@@ -12,7 +12,9 @@ import com.fourj.kltn_be.repository.ProductRepository;
 import com.fourj.kltn_be.repository.ReviewRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -38,14 +40,31 @@ public class ProductService {
     }
 
     public Optional<ProductDTO> getProductById(String id) {
+        return getProductById(id, -1, 10, "reviewDate", "desc");
+    }
+
+    public Optional<ProductDTO> getProductById(String id, int reviewPage, int reviewSize, String reviewSortBy, String reviewSortDir) {
         return productRepository.findById(id)
                 .map(product -> {
                     ProductDTO dto = convertToDTO(product);
-                    // Fetch reviews for product detail
-                    List<ReviewDTO> reviews = reviewRepository.findByProductId(id).stream()
-                            .map(this::convertReviewToDTO)
-                            .collect(Collectors.toList());
-                    dto.setReviews(reviews);
+                    // Fetch reviews for product detail with pagination
+                    if (reviewPage >= 0 && reviewSize > 0) {
+                        Sort sort = reviewSortDir.equalsIgnoreCase("desc") 
+                                ? Sort.by(reviewSortBy).descending() 
+                                : Sort.by(reviewSortBy).ascending();
+                        Pageable pageable = PageRequest.of(reviewPage, reviewSize, sort);
+                        Page<Review> reviewPageResult = reviewRepository.findByProductId(id, pageable);
+                        List<ReviewDTO> reviews = reviewPageResult.getContent().stream()
+                                .map(this::convertReviewToDTO)
+                                .collect(Collectors.toList());
+                        dto.setReviews(reviews);
+                    } else {
+                        // Return all reviews if pagination not requested (backward compatibility)
+                        List<ReviewDTO> reviews = reviewRepository.findByProductId(id).stream()
+                                .map(this::convertReviewToDTO)
+                                .collect(Collectors.toList());
+                        dto.setReviews(reviews);
+                    }
                     return dto;
                 });
     }
