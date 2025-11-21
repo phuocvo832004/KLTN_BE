@@ -3,9 +3,11 @@ package com.fourj.kltn_be.service;
 import com.fourj.kltn_be.dto.PageResponse;
 import com.fourj.kltn_be.dto.ProductDTO;
 import com.fourj.kltn_be.dto.ProductSpecDTO;
+import com.fourj.kltn_be.dto.ReviewDTO;
 import com.fourj.kltn_be.entity.Product;
 import com.fourj.kltn_be.entity.ProductCategory;
 import com.fourj.kltn_be.entity.ProductSpec;
+import com.fourj.kltn_be.entity.Review;
 import com.fourj.kltn_be.repository.ProductRepository;
 import com.fourj.kltn_be.repository.ReviewRepository;
 import lombok.RequiredArgsConstructor;
@@ -37,7 +39,15 @@ public class ProductService {
 
     public Optional<ProductDTO> getProductById(String id) {
         return productRepository.findById(id)
-                .map(this::convertToDTO);
+                .map(product -> {
+                    ProductDTO dto = convertToDTO(product);
+                    // Fetch reviews for product detail
+                    List<ReviewDTO> reviews = reviewRepository.findByProductId(id).stream()
+                            .map(this::convertReviewToDTO)
+                            .collect(Collectors.toList());
+                    dto.setReviews(reviews);
+                    return dto;
+                });
     }
 
     public List<ProductDTO> searchProducts(String title) {
@@ -161,6 +171,18 @@ public class ProductService {
                 page.isFirst(),
                 page.isLast()
         );
+    }
+
+    private ReviewDTO convertReviewToDTO(Review review) {
+        ReviewDTO dto = new ReviewDTO();
+        dto.setReviewId(review.getReviewId());
+        dto.setProductId(review.getProduct().getId());
+        dto.setRating(review.getRating());
+        dto.setComment(review.getComment());
+        dto.setUserId(review.getUserId());
+        dto.setCreatedAt(review.getCreatedAt());
+        dto.setReviewDate(review.getReviewDate());
+        return dto;
     }
 }
 

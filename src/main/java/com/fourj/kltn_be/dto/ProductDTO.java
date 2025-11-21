@@ -27,5 +27,6 @@ public class ProductDTO {
     private String imgUrl;
     private List<String> categoryList;
     private List<ProductSpecDTO> specList;
+    private List<ReviewDTO> reviews;
 }
 
