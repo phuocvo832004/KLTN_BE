@@ -25,6 +25,7 @@ public class ProductDTO {
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;
     private String imgUrl;
+    private BigDecimal sale; // Sale price or discount percentage
     private List<String> categoryList;
     private List<ProductSpecDTO> specList;
     private List<ReviewDTO> reviews;

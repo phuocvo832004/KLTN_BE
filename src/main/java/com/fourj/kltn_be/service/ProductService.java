@@ -91,6 +91,35 @@ public class ProductService {
         return convertToPageResponse(page);
     }
 
+    // Get products by season type (0 = special offer, 1 = new arrivals, etc.)
+    public List<ProductDTO> getProductsBySeasonType(Integer type) {
+        return productRepository.findBySeasonType(type).stream()
+                .map(this::convertToDTO)
+                .collect(Collectors.toList());
+    }
+
+    public PageResponse<ProductDTO> getProductsBySeasonType(Integer type, Pageable pageable) {
+        Page<Product> page = productRepository.findBySeasonType(type, pageable);
+        return convertToPageResponse(page);
+    }
+
+    // Convenience methods for special offers (type = 0) and new arrivals (type = 1)
+    public List<ProductDTO> getSpecialOffers() {
+        return getProductsBySeasonType(0);
+    }
+
+    public PageResponse<ProductDTO> getSpecialOffers(Pageable pageable) {
+        return getProductsBySeasonType(0, pageable);
+    }
+
+    public List<ProductDTO> getNewArrivals() {
+        return getProductsBySeasonType(1);
+    }
+
+    public PageResponse<ProductDTO> getNewArrivals(Pageable pageable) {
+        return getProductsBySeasonType(1, pageable);
+    }
+
     @Transactional
     public ProductDTO createProduct(ProductDTO productDTO) {
         Product product = convertToEntity(productDTO);
@@ -108,6 +137,7 @@ public class ProductService {
                     existing.setPrice(productDTO.getPrice());
                     existing.setImurl(productDTO.getImurl());
                     existing.setImgUrl(productDTO.getImgUrl());
+                    existing.setSale(productDTO.getSale());
                     existing.setCategories(productDTO.getCategories());
                     existing.setSpecs(productDTO.getSpecs());
                     existing.setRelatedProducts(productDTO.getRelatedProducts());
@@ -138,6 +168,7 @@ public class ProductService {
         dto.setPrice(product.getPrice());
         dto.setImurl(product.getImurl());
         dto.setImgUrl(product.getImgUrl());
+        dto.setSale(product.getSale());
         dto.setCategories(product.getCategories());
         dto.setSpecs(product.getSpecs());
         dto.setAverageRating(product.getAverageRating());
@@ -169,6 +200,7 @@ public class ProductService {
         product.setPrice(dto.getPrice());
         product.setImurl(dto.getImurl());
         product.setImgUrl(dto.getImgUrl());
+        product.setSale(dto.getSale());
         product.setCategories(dto.getCategories());
         product.setSpecs(dto.getSpecs());
         product.setAverageRating(dto.getAverageRating());

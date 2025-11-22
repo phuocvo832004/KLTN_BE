@@ -62,8 +62,14 @@ public class Product {
     @Column(name = "img_url", length = 255)
     private String imgUrl;
 
+    @Column(name = "sale")
+    private BigDecimal sale; // Sale price or discount percentage
+
     @OneToMany(mappedBy = "product", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<ProductCategory> productCategories = new ArrayList<>();
+
+    @OneToMany(mappedBy = "product", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<SeasonCategory> seasonCategories = new ArrayList<>();
 
     @OneToMany(mappedBy = "product", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<ProductSpec> productSpecs = new ArrayList<>();

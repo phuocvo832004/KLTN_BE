@@ -114,5 +114,60 @@ public class ProductController {
         productService.deleteProduct(id);
         return ResponseEntity.noContent().build();
     }
+
+    @GetMapping("/special-offers")
+    public ResponseEntity<?> getSpecialOffers(
+            @RequestParam(required = false, defaultValue = "0") int page,
+            @RequestParam(required = false, defaultValue = "24") int size,
+            @RequestParam(required = false, defaultValue = "id") String sortBy,
+            @RequestParam(required = false, defaultValue = "asc") String sortDir) {
+        if (page < 0 || size <= 0) {
+            return ResponseEntity.ok(productService.getSpecialOffers());
+        }
+        
+        Sort sort = sortDir.equalsIgnoreCase("desc") 
+                ? Sort.by(sortBy).descending() 
+                : Sort.by(sortBy).ascending();
+        Pageable pageable = PageRequest.of(page, size, sort);
+        PageResponse<ProductDTO> response = productService.getSpecialOffers(pageable);
+        return ResponseEntity.ok(response);
+    }
+
+    @GetMapping("/new-arrivals")
+    public ResponseEntity<?> getNewArrivals(
+            @RequestParam(required = false, defaultValue = "0") int page,
+            @RequestParam(required = false, defaultValue = "24") int size,
+            @RequestParam(required = false, defaultValue = "id") String sortBy,
+            @RequestParam(required = false, defaultValue = "asc") String sortDir) {
+        if (page < 0 || size <= 0) {
+            return ResponseEntity.ok(productService.getNewArrivals());
+        }
+        
+        Sort sort = sortDir.equalsIgnoreCase("desc") 
+                ? Sort.by(sortBy).descending() 
+                : Sort.by(sortBy).ascending();
+        Pageable pageable = PageRequest.of(page, size, sort);
+        PageResponse<ProductDTO> response = productService.getNewArrivals(pageable);
+        return ResponseEntity.ok(response);
+    }
+
+    @GetMapping("/season/{type}")
+    public ResponseEntity<?> getProductsBySeasonType(
+            @PathVariable Integer type,
+            @RequestParam(required = false, defaultValue = "0") int page,
+            @RequestParam(required = false, defaultValue = "24") int size,
+            @RequestParam(required = false, defaultValue = "id") String sortBy,
+            @RequestParam(required = false, defaultValue = "asc") String sortDir) {
+        if (page < 0 || size <= 0) {
+            return ResponseEntity.ok(productService.getProductsBySeasonType(type));
+        }
+        
+        Sort sort = sortDir.equalsIgnoreCase("desc") 
+                ? Sort.by(sortBy).descending() 
+                : Sort.by(sortBy).ascending();
+        Pageable pageable = PageRequest.of(page, size, sort);
+        PageResponse<ProductDTO> response = productService.getProductsBySeasonType(type, pageable);
+        return ResponseEntity.ok(response);
+    }
 }
 

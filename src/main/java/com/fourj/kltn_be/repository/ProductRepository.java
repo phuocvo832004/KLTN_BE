@@ -34,5 +34,12 @@ public interface ProductRepository extends JpaRepository<Product, String> {
     Page<Product> findByCategoryFromArray(@Param("category") String category, Pageable pageable);
     
     List<Product> findByAverageRatingGreaterThanEqual(Double minRating);
+    
+    // Query products by season type (0 = special offer, 1 = new arrivals, etc.)
+    @Query("SELECT DISTINCT p FROM Product p JOIN p.seasonCategories sc WHERE sc.type = :type")
+    List<Product> findBySeasonType(@Param("type") Integer type);
+    
+    @Query("SELECT DISTINCT p FROM Product p JOIN p.seasonCategories sc WHERE sc.type = :type")
+    Page<Product> findBySeasonType(@Param("type") Integer type, Pageable pageable);
 }
 
