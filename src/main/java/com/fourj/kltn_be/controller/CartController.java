@@ -41,7 +41,7 @@ public class CartController {
         return ResponseEntity.ok(cartService.getCartItems(cartId));
     }
 
-    @PutMapping("/items/{itemId}")
+    @PatchMapping("/items/{itemId}")
     public ResponseEntity<Void> updateCartItemQuantity(@PathVariable Long itemId, @RequestParam Integer quantity) {
         cartService.updateCartItemQuantity(itemId, quantity);
         return ResponseEntity.ok().build();
