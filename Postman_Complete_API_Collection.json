@@ -517,7 +517,7 @@
 								}
 							]
 						},
-						"description": "Lấy hoặc tạo cart active của user"
+						"description": "Lấy hoặc tạo cart active của user. Trả về CartDTO với đầy đủ thông tin sản phẩm trong items."
 					}
 				},
 				{
@@ -550,7 +550,7 @@
 								}
 							]
 						},
-						"description": "Thêm sản phẩm vào cart"
+						"description": "Thêm sản phẩm vào cart. Trả về CartItemDTO với đầy đủ thông tin sản phẩm."
 					}
 				},
 				{
@@ -569,34 +569,34 @@
 								}
 							]
 						},
-						"description": "Lấy danh sách items trong cart"
+						"description": "Lấy danh sách items trong cart với đầy đủ thông tin sản phẩm."
 					}
 				},
-				{
-					"name": "4. UPDATE Cart Item Quantity",
-					"request": {
-						"method": "PUT",
-						"header": [],
-						"url": {
-							"raw": "{{base_url}}/api/carts/items/:itemId?quantity=3",
-							"host": ["{{base_url}}"],
-							"path": ["api", "carts", "items", ":itemId"],
-							"query": [
-								{
-									"key": "quantity",
-									"value": "3"
-								}
-							],
-							"variable": [
-								{
-									"key": "itemId",
-									"value": "1"
-								}
-							]
-						},
-						"description": "Cập nhật số lượng item trong cart"
-					}
-				},
+			{
+				"name": "4. UPDATE Cart Item Quantity",
+				"request": {
+					"method": "PATCH",
+					"header": [],
+					"url": {
+						"raw": "{{base_url}}/api/carts/items/:itemId?quantity=3",
+						"host": ["{{base_url}}"],
+						"path": ["api", "carts", "items", ":itemId"],
+						"query": [
+							{
+								"key": "quantity",
+								"value": "3"
+							}
+						],
+						"variable": [
+							{
+								"key": "itemId",
+								"value": "1"
+							}
+						]
+					},
+					"description": "Cập nhật số lượng item trong cart. Trả về CartItemDTO với đầy đủ thông tin sản phẩm."
+				}
+			},
 				{
 					"name": "5. REMOVE From Cart",
 					"request": {
@@ -613,7 +613,7 @@
 								}
 							]
 						},
-						"description": "Xóa item khỏi cart"
+						"description": "Xóa item khỏi cart. Trả về CartDTO với các items còn lại và đầy đủ thông tin sản phẩm."
 					}
 				},
 				{
@@ -632,7 +632,7 @@
 								}
 							]
 						},
-						"description": "Xóa tất cả items trong cart"
+						"description": "Xóa tất cả items trong cart. Trả về CartDTO rỗng."
 					}
 				},
 				{
@@ -651,7 +651,7 @@
 								}
 							]
 						},
-						"description": "Checkout cart (chuyển cart sang trạng thái completed)"
+						"description": "Checkout cart (chuyển cart sang trạng thái CHECKED_OUT). Trả về CartDTO với đầy đủ thông tin."
 					}
 				}
 			]

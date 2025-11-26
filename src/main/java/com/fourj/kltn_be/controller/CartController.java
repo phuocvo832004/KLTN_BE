@@ -42,31 +42,43 @@ public class CartController {
     }
 
     @PatchMapping("/items/{itemId}")
-    public ResponseEntity<Void> updateCartItemQuantity(@PathVariable Long itemId, @RequestParam Integer quantity) {
-        cartService.updateCartItemQuantity(itemId, quantity);
-        return ResponseEntity.ok().build();
+    public ResponseEntity<CartItemDTO> updateCartItemQuantity(@PathVariable Long itemId, @RequestParam Integer quantity) {
+        try {
+            CartItemDTO updatedItem = cartService.updateCartItemQuantity(itemId, quantity);
+            return ResponseEntity.ok(updatedItem);
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
+        }
     }
 
     @DeleteMapping("/items/{itemId}")
-    public ResponseEntity<Void> removeFromCart(@PathVariable Long itemId) {
+    public ResponseEntity<CartDTO> removeFromCart(@PathVariable Long itemId) {
         try {
-            cartService.removeFromCart(null, itemId);
-            return ResponseEntity.noContent().build();
+            CartDTO updatedCart = cartService.removeFromCart(null, itemId);
+            return ResponseEntity.ok(updatedCart);
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
         }
     }
 
     @DeleteMapping("/{cartId}/items")
-    public ResponseEntity<Void> clearCart(@PathVariable Long cartId) {
-        cartService.clearCart(cartId);
-        return ResponseEntity.noContent().build();
+    public ResponseEntity<CartDTO> clearCart(@PathVariable Long cartId) {
+        try {
+            CartDTO clearedCart = cartService.clearCart(cartId);
+            return ResponseEntity.ok(clearedCart);
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
+        }
     }
 
     @PostMapping("/{cartId}/checkout")
-    public ResponseEntity<Void> checkoutCart(@PathVariable Long cartId) {
-        cartService.checkoutCart(cartId);
-        return ResponseEntity.ok().build();
+    public ResponseEntity<CartDTO> checkoutCart(@PathVariable Long cartId) {
+        try {
+            CartDTO checkedOutCart = cartService.checkoutCart(cartId);
+            return ResponseEntity.ok(checkedOutCart);
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
+        }
     }
 }
 

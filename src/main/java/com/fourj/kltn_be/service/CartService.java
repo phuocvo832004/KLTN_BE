@@ -76,32 +76,42 @@ public class CartService {
     }
 
     @Transactional
-    public void removeFromCart(Long cartId, Long itemId) {
-        if (!cartItemRepository.existsById(itemId)) {
-            throw new RuntimeException("Cart item not found");
-        }
+    public CartDTO removeFromCart(Long cartId, Long itemId) {
+        CartItem cartItem = cartItemRepository.findById(itemId)
+                .orElseThrow(() -> new RuntimeException("Cart item not found"));
+        Long actualCartId = cartItem.getCart().getId();
         cartItemRepository.deleteById(itemId);
+        
+        // Return updated cart with remaining items
+        Cart cart = cartRepository.findByIdWithItems(actualCartId)
+                .orElseThrow(() -> new RuntimeException("Cart not found"));
+        return convertToDTO(cart);
     }
 
     @Transactional
-    public void updateCartItemQuantity(Long itemId, Integer quantity) {
-        cartItemRepository.findById(itemId).ifPresent(item -> {
-            item.setQuantity(quantity);
-            cartItemRepository.save(item);
-        });
+    public CartItemDTO updateCartItemQuantity(Long itemId, Integer quantity) {
+        CartItem item = cartItemRepository.findById(itemId)
+                .orElseThrow(() -> new RuntimeException("Cart item not found"));
+        item.setQuantity(quantity);
+        CartItem saved = cartItemRepository.save(item);
+        return convertItemToDTO(saved);
     }
 
     @Transactional
-    public void clearCart(Long cartId) {
+    public CartDTO clearCart(Long cartId) {
         cartItemRepository.deleteByCartId(cartId);
+        Cart cart = cartRepository.findByIdWithItems(cartId)
+                .orElseThrow(() -> new RuntimeException("Cart not found"));
+        return convertToDTO(cart);
     }
 
     @Transactional
-    public void checkoutCart(Long cartId) {
-        cartRepository.findById(cartId).ifPresent(cart -> {
-            cart.setStatus("CHECKED_OUT");
-            cartRepository.save(cart);
-        });
+    public CartDTO checkoutCart(Long cartId) {
+        Cart cart = cartRepository.findByIdWithItems(cartId)
+                .orElseThrow(() -> new RuntimeException("Cart not found"));
+        cart.setStatus("CHECKED_OUT");
+        Cart saved = cartRepository.save(cart);
+        return convertToDTO(saved);
     }
 
     public List<CartItemDTO> getCartItems(Long cartId) {
