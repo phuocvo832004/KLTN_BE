@@ -1,5 +1,6 @@
 package com.fourj.kltn_be.service;
 
+import com.fourj.kltn_be.dto.LimitedDealDTO;
 import com.fourj.kltn_be.dto.PageResponse;
 import com.fourj.kltn_be.dto.ProductDTO;
 import com.fourj.kltn_be.dto.ProductSpecDTO;
@@ -8,16 +9,22 @@ import com.fourj.kltn_be.entity.Product;
 import com.fourj.kltn_be.entity.ProductCategory;
 import com.fourj.kltn_be.entity.ProductSpec;
 import com.fourj.kltn_be.entity.Review;
+import com.fourj.kltn_be.entity.Sale;
 import com.fourj.kltn_be.repository.ProductRepository;
 import com.fourj.kltn_be.repository.ReviewRepository;
+import com.fourj.kltn_be.repository.SaleRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.math.BigDecimal;
+import java.time.Duration;
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -27,6 +34,7 @@ import java.util.stream.Collectors;
 public class ProductService {
     private final ProductRepository productRepository;
     private final ReviewRepository reviewRepository;
+    private final SaleRepository saleRepository;
 
     public List<ProductDTO> getAllProducts() {
         return productRepository.findAll().stream()
@@ -118,6 +126,127 @@ public class ProductService {
 
     public PageResponse<ProductDTO> getNewArrivals(Pageable pageable) {
         return getProductsBySeasonType(1, pageable);
+    }
+
+    // ==================== POPULAR PRODUCTS ====================
+    
+    /**
+     * Get popular products sorted by average rating (descending)
+     */
+    public List<ProductDTO> getPopularProducts() {
+        return productRepository.findPopularProducts().stream()
+                .map(this::convertToDTO)
+                .collect(Collectors.toList());
+    }
+
+    public PageResponse<ProductDTO> getPopularProducts(Pageable pageable) {
+        Page<Product> page = productRepository.findPopularProducts(pageable);
+        return convertToPageResponse(page);
+    }
+
+    /**
+     * Get popular products with minimum rating threshold
+     */
+    public List<ProductDTO> getPopularProducts(Double minRating) {
+        return productRepository.findPopularProductsWithMinRating(minRating).stream()
+                .map(this::convertToDTO)
+                .collect(Collectors.toList());
+    }
+
+    public PageResponse<ProductDTO> getPopularProducts(Double minRating, Pageable pageable) {
+        Page<Product> page = productRepository.findPopularProductsWithMinRating(minRating, pageable);
+        return convertToPageResponse(page);
+    }
+
+    // ==================== LIMITED DEALS ====================
+    
+    /**
+     * Get products with active sales (limited deals)
+     */
+    public List<LimitedDealDTO> getLimitedDeals() {
+        LocalDateTime now = LocalDateTime.now();
+        List<Sale> activeSales = saleRepository.findActiveSalesOrderByDiscount(now);
+        return activeSales.stream()
+                .map(this::convertToLimitedDealDTO)
+                .collect(Collectors.toList());
+    }
+
+    public PageResponse<LimitedDealDTO> getLimitedDeals(Pageable pageable) {
+        LocalDateTime now = LocalDateTime.now();
+        Page<Sale> page = saleRepository.findActiveSalesOrderByDiscount(now, pageable);
+        return convertToLimitedDealPageResponse(page);
+    }
+
+    /**
+     * Get distinct products that have active sales
+     */
+    public List<ProductDTO> getProductsWithDeals() {
+        LocalDateTime now = LocalDateTime.now();
+        List<Product> products = saleRepository.findProductsWithActiveSales(now);
+        return products.stream()
+                .map(this::convertToDTO)
+                .collect(Collectors.toList());
+    }
+
+    public PageResponse<ProductDTO> getProductsWithDeals(Pageable pageable) {
+        LocalDateTime now = LocalDateTime.now();
+        Page<Product> page = saleRepository.findProductsWithActiveSales(now, pageable);
+        return convertToPageResponse(page);
+    }
+
+    private LimitedDealDTO convertToLimitedDealDTO(Sale sale) {
+        LimitedDealDTO dto = new LimitedDealDTO();
+        Product product = sale.getProduct();
+        
+        // Product information
+        dto.setProductId(product.getId());
+        dto.setTitle(product.getTitle());
+        dto.setDescription(product.getDescription());
+        dto.setOriginalPrice(product.getPrice());
+        dto.setImurl(product.getImurl());
+        dto.setImgUrl(product.getImgUrl());
+        dto.setAverageRating(product.getAverageRating());
+        dto.setCategories(product.getCategories());
+        
+        // Sale information
+        dto.setSaleId(sale.getId());
+        dto.setSalePrice(sale.getSalePrice());
+        dto.setDiscountPercentage(sale.getDiscountPercentage());
+        dto.setStartDate(sale.getStartDate());
+        dto.setEndDate(sale.getEndDate());
+        
+        if (sale.getBranch() != null) {
+            dto.setBranchId(sale.getBranch().getId());
+            dto.setBranchName(sale.getBranch().getName());
+        }
+        
+        // Calculated fields
+        if (product.getPrice() != null && sale.getSalePrice() != null) {
+            dto.setSavedAmount(product.getPrice().subtract(sale.getSalePrice()));
+        }
+        
+        if (sale.getEndDate() != null) {
+            Duration duration = Duration.between(LocalDateTime.now(), sale.getEndDate());
+            dto.setHoursRemaining(duration.isNegative() ? 0L : duration.toHours());
+        }
+        
+        return dto;
+    }
+
+    private PageResponse<LimitedDealDTO> convertToLimitedDealPageResponse(Page<Sale> page) {
+        List<LimitedDealDTO> content = page.getContent().stream()
+                .map(this::convertToLimitedDealDTO)
+                .collect(Collectors.toList());
+        
+        return new PageResponse<>(
+                content,
+                page.getNumber(),
+                page.getSize(),
+                page.getTotalElements(),
+                page.getTotalPages(),
+                page.isFirst(),
+                page.isLast()
+        );
     }
 
     @Transactional

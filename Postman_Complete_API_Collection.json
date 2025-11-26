@@ -2,7 +2,7 @@
 	"info": {
 		"_postman_id": "complete-api-collection-v2",
 		"name": "KLTN Complete API Collection",
-		"description": "Collection đầy đủ để test tất cả các API của hệ thống - Updated với Special Offers, New Arrivals, và Season Types",
+		"description": "Collection đầy đủ để test tất cả các API của hệ thống - Updated với Special Offers, New Arrivals, Season Types, Popular Products và Limited Deals",
 		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
 	},
 	"item": [
@@ -226,46 +226,153 @@
 						"description": "Lấy danh sách sản phẩm new arrivals (type = 1 trong season_categories)"
 					}
 				},
-				{
-					"name": "7. GET Products By Season Type",
-					"request": {
-						"method": "GET",
-						"header": [],
-						"url": {
-							"raw": "{{base_url}}/api/products/season/:type?page=0&size=24&sortBy=id&sortDir=asc",
-							"host": ["{{base_url}}"],
-							"path": ["api", "products", "season", ":type"],
-							"query": [
-								{
-									"key": "page",
-									"value": "0"
-								},
-								{
-									"key": "size",
-									"value": "24"
-								},
-								{
-									"key": "sortBy",
-									"value": "id"
-								},
-								{
-									"key": "sortDir",
-									"value": "asc"
-								}
-							],
-							"variable": [
-								{
-									"key": "type",
-									"value": "0",
-									"description": "0 = Special Offers, 1 = New Arrivals, 2 = Other type 1, 3 = Other type 2"
-								}
-							]
-						},
-						"description": "Lấy sản phẩm theo season type (generic endpoint)"
-					}
-				},
-				{
-					"name": "8. CREATE Product",
+			{
+				"name": "7. GET Products By Season Type",
+				"request": {
+					"method": "GET",
+					"header": [],
+					"url": {
+						"raw": "{{base_url}}/api/products/season/:type?page=0&size=24&sortBy=id&sortDir=asc",
+						"host": ["{{base_url}}"],
+						"path": ["api", "products", "season", ":type"],
+						"query": [
+							{
+								"key": "page",
+								"value": "0"
+							},
+							{
+								"key": "size",
+								"value": "24"
+							},
+							{
+								"key": "sortBy",
+								"value": "id"
+							},
+							{
+								"key": "sortDir",
+								"value": "asc"
+							}
+						],
+						"variable": [
+							{
+								"key": "type",
+								"value": "0",
+								"description": "0 = Special Offers, 1 = New Arrivals, 2 = Other type 1, 3 = Other type 2"
+							}
+						]
+					},
+					"description": "Lấy sản phẩm theo season type (generic endpoint)"
+				}
+			},
+			{
+				"name": "8. GET Popular Products",
+				"request": {
+					"method": "GET",
+					"header": [],
+					"url": {
+						"raw": "{{base_url}}/api/products/popular?page=0&size=12&sortBy=averageRating&sortDir=desc",
+						"host": ["{{base_url}}"],
+						"path": ["api", "products", "popular"],
+						"query": [
+							{
+								"key": "minRating",
+								"value": "4.0",
+								"description": "Lọc sản phẩm có rating >= giá trị này (optional)",
+								"disabled": true
+							},
+							{
+								"key": "page",
+								"value": "0",
+								"description": "Số trang (bắt đầu từ 0)"
+							},
+							{
+								"key": "size",
+								"value": "12",
+								"description": "Số lượng items mỗi trang"
+							},
+							{
+								"key": "sortBy",
+								"value": "averageRating",
+								"description": "Field để sort (averageRating, price, title)"
+							},
+							{
+								"key": "sortDir",
+								"value": "desc",
+								"description": "Hướng sort: desc để rating cao nhất lên đầu"
+							}
+						]
+					},
+					"description": "Lấy danh sách sản phẩm phổ biến, sắp xếp theo rating cao nhất. Có thể filter theo minRating."
+				}
+			},
+			{
+				"name": "9. GET Limited Deals",
+				"request": {
+					"method": "GET",
+					"header": [],
+					"url": {
+						"raw": "{{base_url}}/api/products/limited-deals?page=0&size=12&sortBy=discountPercentage&sortDir=desc",
+						"host": ["{{base_url}}"],
+						"path": ["api", "products", "limited-deals"],
+						"query": [
+							{
+								"key": "page",
+								"value": "0",
+								"description": "Số trang"
+							},
+							{
+								"key": "size",
+								"value": "12",
+								"description": "Số lượng items"
+							},
+							{
+								"key": "sortBy",
+								"value": "discountPercentage",
+								"description": "Sort theo phần trăm giảm giá"
+							},
+							{
+								"key": "sortDir",
+								"value": "desc",
+								"description": "Giảm dần (giảm giá nhiều nhất lên đầu)"
+							}
+						]
+					},
+					"description": "Lấy danh sách sản phẩm đang có khuyến mãi (limited deals). Trả về thông tin chi tiết về sale bao gồm: originalPrice, salePrice, discountPercentage, savedAmount, hoursRemaining, startDate, endDate, branchId, branchName."
+				}
+			},
+			{
+				"name": "10. GET Products With Deals",
+				"request": {
+					"method": "GET",
+					"header": [],
+					"url": {
+						"raw": "{{base_url}}/api/products/products-with-deals?page=0&size=24&sortBy=id&sortDir=asc",
+						"host": ["{{base_url}}"],
+						"path": ["api", "products", "products-with-deals"],
+						"query": [
+							{
+								"key": "page",
+								"value": "0"
+							},
+							{
+								"key": "size",
+								"value": "24"
+							},
+							{
+								"key": "sortBy",
+								"value": "id"
+							},
+							{
+								"key": "sortDir",
+								"value": "asc"
+							}
+						]
+					},
+					"description": "Lấy danh sách sản phẩm đang có khuyến mãi (simplified version - trả về ProductDTO). Khác với limited-deals, endpoint này chỉ trả về thông tin sản phẩm cơ bản."
+				}
+			},
+			{
+				"name": "11. CREATE Product",
 					"request": {
 						"method": "POST",
 						"header": [
@@ -292,7 +399,7 @@
 					}
 				},
 				{
-					"name": "9. UPDATE Product",
+					"name": "12. UPDATE Product",
 					"request": {
 						"method": "PUT",
 						"header": [
@@ -325,7 +432,7 @@
 					}
 				},
 				{
-					"name": "10. DELETE Product",
+					"name": "13. DELETE Product",
 					"request": {
 						"method": "DELETE",
 						"header": [],

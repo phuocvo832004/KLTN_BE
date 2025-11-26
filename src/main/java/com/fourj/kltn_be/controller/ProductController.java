@@ -1,5 +1,6 @@
 package com.fourj.kltn_be.controller;
 
+import com.fourj.kltn_be.dto.LimitedDealDTO;
 import com.fourj.kltn_be.dto.PageResponse;
 import com.fourj.kltn_be.dto.ProductDTO;
 import com.fourj.kltn_be.service.ProductService;
@@ -167,6 +168,87 @@ public class ProductController {
                 : Sort.by(sortBy).ascending();
         Pageable pageable = PageRequest.of(page, size, sort);
         PageResponse<ProductDTO> response = productService.getProductsBySeasonType(type, pageable);
+        return ResponseEntity.ok(response);
+    }
+
+    /**
+     * Get popular products sorted by average rating (highest first)
+     * Optional: minRating parameter to filter products with rating >= minRating
+     */
+    @GetMapping("/popular")
+    public ResponseEntity<?> getPopularProducts(
+            @RequestParam(required = false) Double minRating,
+            @RequestParam(required = false, defaultValue = "0") int page,
+            @RequestParam(required = false, defaultValue = "24") int size,
+            @RequestParam(required = false, defaultValue = "averageRating") String sortBy,
+            @RequestParam(required = false, defaultValue = "desc") String sortDir) {
+        
+        Sort sort = sortDir.equalsIgnoreCase("desc") 
+                ? Sort.by(sortBy).descending() 
+                : Sort.by(sortBy).ascending();
+        Pageable pageable = PageRequest.of(page, size, sort);
+        
+        if (page < 0 || size <= 0) {
+            // Return non-paginated response
+            if (minRating != null) {
+                return ResponseEntity.ok(productService.getPopularProducts(minRating));
+            }
+            return ResponseEntity.ok(productService.getPopularProducts());
+        }
+        
+        if (minRating != null) {
+            PageResponse<ProductDTO> response = productService.getPopularProducts(minRating, pageable);
+            return ResponseEntity.ok(response);
+        }
+        
+        PageResponse<ProductDTO> response = productService.getPopularProducts(pageable);
+        return ResponseEntity.ok(response);
+    }
+
+    /**
+     * Get limited deals - products with active sales
+     * Returns detailed sale information including discount percentage and time remaining
+     */
+    @GetMapping("/limited-deals")
+    public ResponseEntity<?> getLimitedDeals(
+            @RequestParam(required = false, defaultValue = "0") int page,
+            @RequestParam(required = false, defaultValue = "24") int size,
+            @RequestParam(required = false, defaultValue = "discountPercentage") String sortBy,
+            @RequestParam(required = false, defaultValue = "desc") String sortDir) {
+        
+        if (page < 0 || size <= 0) {
+            // Return non-paginated response
+            return ResponseEntity.ok(productService.getLimitedDeals());
+        }
+        
+        Sort sort = sortDir.equalsIgnoreCase("desc") 
+                ? Sort.by(sortBy).descending() 
+                : Sort.by(sortBy).ascending();
+        Pageable pageable = PageRequest.of(page, size, sort);
+        PageResponse<LimitedDealDTO> response = productService.getLimitedDeals(pageable);
+        return ResponseEntity.ok(response);
+    }
+
+    /**
+     * Get products that have active deals (simplified - returns ProductDTO)
+     */
+    @GetMapping("/products-with-deals")
+    public ResponseEntity<?> getProductsWithDeals(
+            @RequestParam(required = false, defaultValue = "0") int page,
+            @RequestParam(required = false, defaultValue = "24") int size,
+            @RequestParam(required = false, defaultValue = "id") String sortBy,
+            @RequestParam(required = false, defaultValue = "asc") String sortDir) {
+        
+        if (page < 0 || size <= 0) {
+            // Return non-paginated response
+            return ResponseEntity.ok(productService.getProductsWithDeals());
+        }
+        
+        Sort sort = sortDir.equalsIgnoreCase("desc") 
+                ? Sort.by(sortBy).descending() 
+                : Sort.by(sortBy).ascending();
+        Pageable pageable = PageRequest.of(page, size, sort);
+        PageResponse<ProductDTO> response = productService.getProductsWithDeals(pageable);
         return ResponseEntity.ok(response);
     }
 }
