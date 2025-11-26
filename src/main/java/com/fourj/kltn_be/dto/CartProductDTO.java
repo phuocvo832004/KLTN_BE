@@ -31,11 +31,12 @@ public class CartProductDTO {
     private List<ReviewDTO> reviews;
     
     // Cart-specific fields
+    private Long cartItemId;
     private Integer quantity;
     private BigDecimal unitPrice;
     private String productId;
     
-    public static CartProductDTO fromProductDTO(ProductDTO productDTO, Integer quantity, BigDecimal unitPrice) {
+    public static CartProductDTO fromProductDTO(ProductDTO productDTO, Integer quantity, BigDecimal unitPrice, Long cartItemId) {
         CartProductDTO dto = new CartProductDTO();
         dto.setId(productDTO.getId());
         dto.setTitle(productDTO.getTitle());
@@ -57,6 +58,7 @@ public class CartProductDTO {
         dto.setQuantity(quantity);
         dto.setUnitPrice(unitPrice);
         dto.setProductId(productDTO.getId());
+        dto.setCartItemId(cartItemId);
         return dto;
     }
 }

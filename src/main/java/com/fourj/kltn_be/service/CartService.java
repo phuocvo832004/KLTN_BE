@@ -134,10 +134,11 @@ public class CartService {
     private CartProductDTO convertToCartProductDTO(CartItem item) {
         ProductDTO productDTO = productService.getProductById(item.getProduct().getId()).orElse(null);
         if (productDTO != null) {
-            return CartProductDTO.fromProductDTO(productDTO, item.getQuantity(), item.getUnitPrice());
+            return CartProductDTO.fromProductDTO(productDTO, item.getQuantity(), item.getUnitPrice(), item.getId());
         }
         // Return a minimal CartProductDTO if product not found
         CartProductDTO dto = new CartProductDTO();
+        dto.setCartItemId(item.getId());
         dto.setProductId(item.getProduct().getId());
         dto.setQuantity(item.getQuantity());
         dto.setUnitPrice(item.getUnitPrice());

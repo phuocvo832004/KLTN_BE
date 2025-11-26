@@ -553,69 +553,72 @@
 						"description": "Thêm sản phẩm vào cart. Trả về CartItemDTO với đầy đủ thông tin sản phẩm."
 					}
 				},
-				{
-					"name": "3. GET Cart Items",
-					"request": {
-						"method": "GET",
-						"header": [],
-						"url": {
-							"raw": "{{base_url}}/api/carts/:cartId/items",
-							"host": ["{{base_url}}"],
-							"path": ["api", "carts", ":cartId", "items"],
-							"variable": [
-								{
-									"key": "cartId",
-									"value": "1"
-								}
-							]
-						},
-						"description": "Lấy danh sách items trong cart với đầy đủ thông tin sản phẩm."
-					}
-				},
 			{
-				"name": "4. UPDATE Cart Item Quantity",
+				"name": "3. GET Cart Items",
 				"request": {
-					"method": "PATCH",
+					"method": "GET",
 					"header": [],
 					"url": {
-						"raw": "{{base_url}}/api/carts/items/:itemId?quantity=3",
+						"raw": "{{base_url}}/api/carts/:cartId/items",
 						"host": ["{{base_url}}"],
-						"path": ["api", "carts", "items", ":itemId"],
-						"query": [
-							{
-								"key": "quantity",
-								"value": "3"
-							}
-						],
+						"path": ["api", "carts", ":cartId", "items"],
 						"variable": [
 							{
-								"key": "itemId",
+								"key": "cartId",
 								"value": "1"
 							}
 						]
 					},
-					"description": "Cập nhật số lượng item trong cart. Trả về CartItemDTO với đầy đủ thông tin sản phẩm."
+					"description": "Lấy danh sách products trong cart.\n\nResponse format:\n```json\n{\n  \"products\": [\n    {\n      \"id\": \"848\",\n      \"title\": \"Product Name\",\n      \"price\": 3267986,\n      \"cartItemId\": 1,\n      \"quantity\": 2,\n      \"unitPrice\": 3267986,\n      \"productId\": \"848\",\n      ... (all product fields)\n    }\n  ],\n  \"meta\": {\n    \"total\": 6535972\n  }\n}\n```\n\n- products: Array chứa thông tin đầy đủ sản phẩm + cartItemId, quantity, unitPrice\n- meta.total: Tổng giá tiền (unitPrice × quantity)\n- cartItemId: Dùng cho PATCH/DELETE endpoints"
 				}
 			},
-				{
-					"name": "5. REMOVE From Cart",
-					"request": {
-						"method": "DELETE",
-						"header": [],
-						"url": {
-							"raw": "{{base_url}}/api/carts/items/:itemId",
-							"host": ["{{base_url}}"],
-							"path": ["api", "carts", "items", ":itemId"],
-							"variable": [
-								{
-									"key": "itemId",
-									"value": "1"
-								}
-							]
-						},
-						"description": "Xóa item khỏi cart. Trả về CartDTO với các items còn lại và đầy đủ thông tin sản phẩm."
-					}
+		{
+			"name": "4. UPDATE Cart Item Quantity",
+			"request": {
+				"method": "PATCH",
+				"header": [],
+				"url": {
+					"raw": "{{base_url}}/api/carts/items/:itemId?quantity=3",
+					"host": ["{{base_url}}"],
+					"path": ["api", "carts", "items", ":itemId"],
+					"query": [
+						{
+							"key": "quantity",
+							"value": "3",
+							"description": "Số lượng mới"
+						}
+					],
+					"variable": [
+						{
+							"key": "itemId",
+							"value": "1",
+							"description": "cartItemId từ GET Cart Items response (không phải productId)"
+						}
+					]
 				},
+				"description": "Cập nhật số lượng item trong cart.\n\n"
+			}
+		},
+			{
+				"name": "5. REMOVE From Cart",
+				"request": {
+					"method": "DELETE",
+					"header": [],
+					"url": {
+						"raw": "{{base_url}}/api/carts/items/:itemId",
+						"host": ["{{base_url}}"],
+						"path": ["api", "carts", "items", ":itemId"],
+						"variable": [
+							{
+								"key": "itemId",
+								"value": "1",
+								"description": "cartItemId từ GET Cart Items response (không phải productId)"
+							}
+						]
+					},
+					"description": "Xóa item khỏi cart.\n\n"
+				}
+			},
 				{
 					"name": "6. CLEAR Cart",
 					"request": {
