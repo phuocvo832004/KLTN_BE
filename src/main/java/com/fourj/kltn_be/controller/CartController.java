@@ -3,13 +3,12 @@ package com.fourj.kltn_be.controller;
 import com.fourj.kltn_be.dto.AddToCartRequest;
 import com.fourj.kltn_be.dto.CartDTO;
 import com.fourj.kltn_be.dto.CartItemDTO;
+import com.fourj.kltn_be.dto.CartItemsResponseDTO;
 import com.fourj.kltn_be.service.CartService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-
-import java.util.List;
 
 @RestController
 @RequestMapping("/api/carts")
@@ -37,8 +36,8 @@ public class CartController {
     }
 
     @GetMapping("/{cartId}/items")
-    public ResponseEntity<List<CartItemDTO>> getCartItems(@PathVariable Long cartId) {
-        return ResponseEntity.ok(cartService.getCartItems(cartId));
+    public ResponseEntity<CartItemsResponseDTO> getCartItems(@PathVariable Long cartId) {
+        return ResponseEntity.ok(cartService.getCartItemsWithProducts(cartId));
     }
 
     @PatchMapping("/items/{itemId}")

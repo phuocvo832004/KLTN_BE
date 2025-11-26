@@ -3,6 +3,9 @@ package com.fourj.kltn_be.service;
 import com.fourj.kltn_be.dto.AddToCartRequest;
 import com.fourj.kltn_be.dto.CartDTO;
 import com.fourj.kltn_be.dto.CartItemDTO;
+import com.fourj.kltn_be.dto.CartItemsResponseDTO;
+import com.fourj.kltn_be.dto.CartProductDTO;
+import com.fourj.kltn_be.dto.ProductDTO;
 import com.fourj.kltn_be.entity.Cart;
 import com.fourj.kltn_be.entity.CartItem;
 import com.fourj.kltn_be.entity.Product;
@@ -118,6 +121,27 @@ public class CartService {
         return cartItemRepository.findByCartId(cartId).stream()
                 .map(this::convertItemToDTO)
                 .collect(Collectors.toList());
+    }
+
+    public CartItemsResponseDTO getCartItemsWithProducts(Long cartId) {
+        List<CartItem> items = cartItemRepository.findByCartId(cartId);
+        List<CartProductDTO> products = items.stream()
+                .map(this::convertToCartProductDTO)
+                .collect(Collectors.toList());
+        return CartItemsResponseDTO.of(products);
+    }
+
+    private CartProductDTO convertToCartProductDTO(CartItem item) {
+        ProductDTO productDTO = productService.getProductById(item.getProduct().getId()).orElse(null);
+        if (productDTO != null) {
+            return CartProductDTO.fromProductDTO(productDTO, item.getQuantity(), item.getUnitPrice());
+        }
+        // Return a minimal CartProductDTO if product not found
+        CartProductDTO dto = new CartProductDTO();
+        dto.setProductId(item.getProduct().getId());
+        dto.setQuantity(item.getQuantity());
+        dto.setUnitPrice(item.getUnitPrice());
+        return dto;
     }
 
     private CartDTO convertToDTO(Cart cart) {
