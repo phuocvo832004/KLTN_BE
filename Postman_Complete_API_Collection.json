@@ -2,7 +2,6 @@
 	"info": {
 		"_postman_id": "complete-api-collection-v2",
 		"name": "KLTN Complete API Collection",
-		"description": "Collection đầy đủ để test tất cả các API của hệ thống - Updated với Special Offers, New Arrivals, và Season Types",
 		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
 	},
 	"item": [
@@ -19,29 +18,12 @@
 							"host": ["{{base_url}}"],
 							"path": ["api", "products"],
 							"query": [
-								{
-									"key": "page",
-									"value": "0",
-									"description": "Số trang (bắt đầu từ 0)"
-								},
-								{
-									"key": "size",
-									"value": "24",
-									"description": "Số lượng items mỗi trang"
-								},
-								{
-									"key": "sortBy",
-									"value": "id",
-									"description": "Field để sort (id, title, price, createdAt, averageRating)"
-								},
-								{
-									"key": "sortDir",
-									"value": "asc",
-									"description": "Hướng sort: asc hoặc desc"
-								}
+								{ "key": "page", "value": "0" },
+								{ "key": "size", "value": "24" },
+								{ "key": "sortBy", "value": "id" },
+								{ "key": "sortDir", "value": "asc" }
 							]
-						},
-						"description": "Lấy danh sách tất cả sản phẩm với pagination"
+						}
 					}
 				},
 				{
@@ -54,35 +36,15 @@
 							"host": ["{{base_url}}"],
 							"path": ["api", "products", ":id"],
 							"query": [
-								{
-									"key": "reviewPage",
-									"value": "-1",
-									"description": "Trang reviews (-1 = tất cả)"
-								},
-								{
-									"key": "reviewSize",
-									"value": "10",
-									"description": "Số lượng reviews mỗi trang"
-								},
-								{
-									"key": "reviewSortBy",
-									"value": "reviewDate",
-									"description": "Field để sort reviews"
-								},
-								{
-									"key": "reviewSortDir",
-									"value": "desc",
-									"description": "Hướng sort reviews"
-								}
+								{ "key": "reviewPage", "value": "-1" },
+								{ "key": "reviewSize", "value": "10" },
+								{ "key": "reviewSortBy", "value": "reviewDate" },
+								{ "key": "reviewSortDir", "value": "desc" }
 							],
 							"variable": [
-								{
-									"key": "id",
-									"value": "PROD001"
-								}
+								{ "key": "id", "value": "PROD001" }
 							]
-						},
-						"description": "Lấy thông tin chi tiết sản phẩm theo ID, bao gồm reviews"
+						}
 					}
 				},
 				{
@@ -95,30 +57,13 @@
 							"host": ["{{base_url}}"],
 							"path": ["api", "products", "search"],
 							"query": [
-								{
-									"key": "title",
-									"value": "nike",
-									"description": "Từ khóa tìm kiếm"
-								},
-								{
-									"key": "page",
-									"value": "0"
-								},
-								{
-									"key": "size",
-									"value": "24"
-								},
-								{
-									"key": "sortBy",
-									"value": "price"
-								},
-								{
-									"key": "sortDir",
-									"value": "asc"
-								}
+								{ "key": "title", "value": "nike" },
+								{ "key": "page", "value": "0" },
+								{ "key": "size", "value": "24" },
+								{ "key": "sortBy", "value": "price" },
+								{ "key": "sortDir", "value": "asc" }
 							]
-						},
-						"description": "Tìm kiếm sản phẩm theo tên"
+						}
 					}
 				},
 				{
@@ -131,35 +76,37 @@
 							"host": ["{{base_url}}"],
 							"path": ["api", "products", "category", ":category"],
 							"query": [
-								{
-									"key": "page",
-									"value": "0"
-								},
-								{
-									"key": "size",
-									"value": "24"
-								},
-								{
-									"key": "sortBy",
-									"value": "id"
-								},
-								{
-									"key": "sortDir",
-									"value": "asc"
-								}
+								{ "key": "page", "value": "0" },
+								{ "key": "size", "value": "24" },
+								{ "key": "sortBy", "value": "id" },
+								{ "key": "sortDir", "value": "asc" }
 							],
 							"variable": [
-								{
-									"key": "category",
-									"value": "sneakers"
-								}
+								{ "key": "category", "value": "sneakers" }
 							]
-						},
-						"description": "Lấy danh sách sản phẩm theo category"
+						}
 					}
 				},
 				{
-					"name": "5. GET Special Offers",
+					"name": "5. GET Homepage Data",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/api/products/homepage?specialOffersLimit=8&newArrivalsLimit=8&popularLimit=8&limitedDealsLimit=8",
+							"host": ["{{base_url}}"],
+							"path": ["api", "products", "homepage"],
+							"query": [
+								{ "key": "specialOffersLimit", "value": "8" },
+								{ "key": "newArrivalsLimit", "value": "8" },
+								{ "key": "popularLimit", "value": "8" },
+								{ "key": "limitedDealsLimit", "value": "8" }
+							]
+						}
+					}
+				},
+				{
+					"name": "6. GET Special Offers",
 					"request": {
 						"method": "GET",
 						"header": [],
@@ -168,33 +115,16 @@
 							"host": ["{{base_url}}"],
 							"path": ["api", "products", "special-offers"],
 							"query": [
-								{
-									"key": "page",
-									"value": "0",
-									"description": "Số trang"
-								},
-								{
-									"key": "size",
-									"value": "8",
-									"description": "Số lượng items"
-								},
-								{
-									"key": "sortBy",
-									"value": "sale",
-									"description": "Sort theo sale price"
-								},
-								{
-									"key": "sortDir",
-									"value": "desc",
-									"description": "Giảm dần"
-								}
+								{ "key": "page", "value": "0" },
+								{ "key": "size", "value": "8" },
+								{ "key": "sortBy", "value": "sale" },
+								{ "key": "sortDir", "value": "desc" }
 							]
-						},
-						"description": "Lấy danh sách sản phẩm special offers (type = 0 trong season_categories)"
+						}
 					}
 				},
 				{
-					"name": "6. GET New Arrivals",
+					"name": "7. GET New Arrivals",
 					"request": {
 						"method": "GET",
 						"header": [],
@@ -203,129 +133,130 @@
 							"host": ["{{base_url}}"],
 							"path": ["api", "products", "new-arrivals"],
 							"query": [
-								{
-									"key": "page",
-									"value": "0"
-								},
-								{
-									"key": "size",
-									"value": "8"
-								},
-								{
-									"key": "sortBy",
-									"value": "createdAt",
-									"description": "Sort theo ngày tạo"
-								},
-								{
-									"key": "sortDir",
-									"value": "desc",
-									"description": "Mới nhất trước"
-								}
+								{ "key": "page", "value": "0" },
+								{ "key": "size", "value": "8" },
+								{ "key": "sortBy", "value": "createdAt" },
+								{ "key": "sortDir", "value": "desc" }
 							]
-						},
-						"description": "Lấy danh sách sản phẩm new arrivals (type = 1 trong season_categories)"
+						}
 					}
 				},
-			{
-				"name": "7. GET Products By Season Type",
-				"request": {
-					"method": "GET",
-					"header": [],
-					"url": {
-						"raw": "{{base_url}}/api/products/season/:type?page=0&size=24&sortBy=id&sortDir=asc",
-						"host": ["{{base_url}}"],
-						"path": ["api", "products", "season", ":type"],
-						"query": [
-							{
-								"key": "page",
-								"value": "0"
-							},
-							{
-								"key": "size",
-								"value": "24"
-							},
-							{
-								"key": "sortBy",
-								"value": "id"
-							},
-							{
-								"key": "sortDir",
-								"value": "asc"
-							}
-						],
-						"variable": [
-							{
-								"key": "type",
-								"value": "0",
-								"description": "0 = Special Offers, 1 = New Arrivals, 2 = Other type 1, 3 = Other type 2"
-							}
-						]
-					},
-					"description": "Lấy sản phẩm theo season type (generic endpoint)"
-				}
-			},
-			{
-				"name": "8. CREATE Product",
+				{
+					"name": "8. GET Products By Season Type",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/api/products/season/:type?page=0&size=24&sortBy=id&sortDir=asc",
+							"host": ["{{base_url}}"],
+							"path": ["api", "products", "season", ":type"],
+							"query": [
+								{ "key": "page", "value": "0" },
+								{ "key": "size", "value": "24" },
+								{ "key": "sortBy", "value": "id" },
+								{ "key": "sortDir", "value": "asc" }
+							],
+							"variable": [
+								{ "key": "type", "value": "0" }
+							]
+						}
+					}
+				},
+				{
+					"name": "9. GET Popular Products",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/api/products/popular?page=0&size=24&sortBy=averageRating&sortDir=desc",
+							"host": ["{{base_url}}"],
+							"path": ["api", "products", "popular"],
+							"query": [
+								{ "key": "page", "value": "0" },
+								{ "key": "size", "value": "24" },
+								{ "key": "sortBy", "value": "averageRating" },
+								{ "key": "sortDir", "value": "desc" }
+							]
+						}
+					}
+				},
+				{
+					"name": "10. GET Limited Deals",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/api/products/limited-deals?page=0&size=24&sortBy=discountPercentage&sortDir=desc",
+							"host": ["{{base_url}}"],
+							"path": ["api", "products", "limited-deals"],
+							"query": [
+								{ "key": "page", "value": "0" },
+								{ "key": "size", "value": "24" },
+								{ "key": "sortBy", "value": "discountPercentage" },
+								{ "key": "sortDir", "value": "desc" }
+							]
+						}
+					}
+				},
+				{
+					"name": "11. GET Products With Deals",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/api/products/products-with-deals?page=0&size=24&sortBy=id&sortDir=asc",
+							"host": ["{{base_url}}"],
+							"path": ["api", "products", "products-with-deals"],
+							"query": [
+								{ "key": "page", "value": "0" },
+								{ "key": "size", "value": "24" },
+								{ "key": "sortBy", "value": "id" },
+								{ "key": "sortDir", "value": "asc" }
+							]
+						}
+					}
+				},
+				{
+					"name": "12. CREATE Product",
 					"request": {
 						"method": "POST",
 						"header": [
-							{
-								"key": "Content-Type",
-								"value": "application/json"
-							}
+							{ "key": "Content-Type", "value": "application/json" }
 						],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n  \"id\": \"PROD_NEW_001\",\n  \"title\": \"Nike Air Max 90\",\n  \"description\": \"Classic sneaker với thiết kế retro\",\n  \"price\": 2500000,\n  \"sale\": 2000000,\n  \"imurl\": \"https://example.com/nike-air-max-90.jpg\",\n  \"imgUrl\": \"https://example.com/nike-air-max-90.jpg\",\n  \"categories\": [\"sneakers\", \"nike\"],\n  \"specs\": \"{\\\"size\\\": \\\"42\\\", \\\"color\\\": \\\"black\\\"}\",\n  \"categoryList\": [\"sneakers\", \"nike\"],\n  \"specList\": [\n    {\n      \"specKey\": \"Size\",\n      \"specValue\": \"42\"\n    },\n    {\n      \"specKey\": \"Color\",\n      \"specValue\": \"Black\"\n    }\n  ]\n}",
-							"options": {
-								"raw": {
-									"language": "json"
-								}
-							}
+							"raw": "{\n  \"id\": \"PROD_NEW_001\",\n  \"title\": \"Nike Air Max 90\",\n  \"description\": \"Classic sneaker với thiết kế retro\",\n  \"price\": 2500000,\n  \"sale\": 2000000,\n  \"imurl\": \"https://example.com/nike-air-max-90.jpg\",\n  \"imgUrl\": \"https://example.com/nike-air-max-90.jpg\",\n  \"categories\": [\"sneakers\", \"nike\"],\n  \"specs\": \"{\\\"size\\\": \\\"42\\\", \\\"color\\\": \\\"black\\\"}\",\n  \"categoryList\": [\"sneakers\", \"nike\"],\n  \"specList\": [\n    { \"specKey\": \"Size\", \"specValue\": \"42\" },\n    { \"specKey\": \"Color\", \"specValue\": \"Black\" }\n  ]\n}"
 						},
 						"url": {
 							"raw": "{{base_url}}/api/products",
 							"host": ["{{base_url}}"],
 							"path": ["api", "products"]
-						},
-						"description": "Tạo sản phẩm mới"
+						}
 					}
 				},
 				{
-					"name": "9. UPDATE Product",
+					"name": "13. UPDATE Product",
 					"request": {
 						"method": "PUT",
 						"header": [
-							{
-								"key": "Content-Type",
-								"value": "application/json"
-							}
+							{ "key": "Content-Type", "value": "application/json" }
 						],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n  \"title\": \"Nike Air Max 90 Updated\",\n  \"description\": \"Classic sneaker với thiết kế retro - Updated\",\n  \"price\": 2600000,\n  \"sale\": 2080000,\n  \"imurl\": \"https://example.com/nike-air-max-90-updated.jpg\",\n  \"imgUrl\": \"https://example.com/nike-air-max-90-updated.jpg\",\n  \"categories\": [\"sneakers\", \"nike\"],\n  \"specs\": \"{\\\"size\\\": \\\"42\\\", \\\"color\\\": \\\"black\\\"}\",\n  \"categoryList\": [\"sneakers\", \"nike\"],\n  \"specList\": [\n    {\n      \"specKey\": \"Size\",\n      \"specValue\": \"42\"\n    },\n    {\n      \"specKey\": \"Color\",\n      \"specValue\": \"Black\"\n    }\n  ]\n}",
-							"options": {
-								"raw": {
-									"language": "json"
-								}
-							}
+							"raw": "{\n  \"title\": \"Nike Air Max 90 Updated\",\n  \"description\": \"Classic sneaker với thiết kế retro - Updated\",\n  \"price\": 2600000,\n  \"sale\": 2080000,\n  \"imurl\": \"https://example.com/nike-air-max-90-updated.jpg\",\n  \"imgUrl\": \"https://example.com/nike-air-max-90-updated.jpg\",\n  \"categories\": [\"sneakers\", \"nike\"],\n  \"specs\": \"{\\\"size\\\": \\\"42\\\", \\\"color\\\": \\\"black\\\"}\",\n  \"categoryList\": [\"sneakers\", \"nike\"],\n  \"specList\": [\n    { \"specKey\": \"Size\", \"specValue\": \"42\" },\n    { \"specKey\": \"Color\", \"specValue\": \"Black\" }\n  ]\n}"
 						},
 						"url": {
 							"raw": "{{base_url}}/api/products/:id",
 							"host": ["{{base_url}}"],
 							"path": ["api", "products", ":id"],
 							"variable": [
-								{
-									"key": "id",
-									"value": "PROD_NEW_001"
-								}
+								{ "key": "id", "value": "PROD_NEW_001" }
 							]
-						},
-						"description": "Cập nhật thông tin sản phẩm"
+						}
 					}
 				},
 				{
-					"name": "10. DELETE Product",
+					"name": "14. DELETE Product",
 					"request": {
 						"method": "DELETE",
 						"header": [],
@@ -334,13 +265,9 @@
 							"host": ["{{base_url}}"],
 							"path": ["api", "products", ":id"],
 							"variable": [
-								{
-									"key": "id",
-									"value": "PROD_NEW_001"
-								}
+								{ "key": "id", "value": "PROD_NEW_001" }
 							]
-						},
-						"description": "Xóa sản phẩm"
+						}
 					}
 				}
 			]
@@ -358,25 +285,12 @@
 							"host": ["{{base_url}}"],
 							"path": ["api", "users"],
 							"query": [
-								{
-									"key": "page",
-									"value": "0"
-								},
-								{
-									"key": "size",
-									"value": "24"
-								},
-								{
-									"key": "sortBy",
-									"value": "userId"
-								},
-								{
-									"key": "sortDir",
-									"value": "asc"
-								}
+								{ "key": "page", "value": "0" },
+								{ "key": "size", "value": "24" },
+								{ "key": "sortBy", "value": "userId" },
+								{ "key": "sortDir", "value": "asc" }
 							]
-						},
-						"description": "Lấy danh sách tất cả users với pagination"
+						}
 					}
 				},
 				{
@@ -389,13 +303,9 @@
 							"host": ["{{base_url}}"],
 							"path": ["api", "users", ":userId"],
 							"variable": [
-								{
-									"key": "userId",
-									"value": "1"
-								}
+								{ "key": "userId", "value": "1" }
 							]
-						},
-						"description": "Lấy thông tin user theo ID"
+						}
 					}
 				},
 				{
@@ -408,13 +318,9 @@
 							"host": ["{{base_url}}"],
 							"path": ["api", "users", "username", ":username"],
 							"variable": [
-								{
-									"key": "username",
-									"value": "testuser"
-								}
+								{ "key": "username", "value": "testuser" }
 							]
-						},
-						"description": "Lấy thông tin user theo username"
+						}
 					}
 				},
 				{
@@ -422,26 +328,17 @@
 					"request": {
 						"method": "POST",
 						"header": [
-							{
-								"key": "Content-Type",
-								"value": "application/json"
-							}
+							{ "key": "Content-Type", "value": "application/json" }
 						],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n  \"username\": \"newuser\",\n  \"email\": \"newuser@example.com\",\n  \"preferences\": \"{\\\"theme\\\": \\\"dark\\\"}\"\n}",
-							"options": {
-								"raw": {
-									"language": "json"
-								}
-							}
+							"raw": "{\n  \"username\": \"newuser\",\n  \"email\": \"newuser@example.com\",\n  \"preferences\": \"{\\\"theme\\\": \\\"dark\\\"}\"\n}"
 						},
 						"url": {
 							"raw": "{{base_url}}/api/users",
 							"host": ["{{base_url}}"],
 							"path": ["api", "users"]
-						},
-						"description": "Tạo user mới"
+						}
 					}
 				},
 				{
@@ -449,32 +346,20 @@
 					"request": {
 						"method": "PUT",
 						"header": [
-							{
-								"key": "Content-Type",
-								"value": "application/json"
-							}
+							{ "key": "Content-Type", "value": "application/json" }
 						],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n  \"username\": \"updateduser\",\n  \"email\": \"updateduser@example.com\",\n  \"preferences\": \"{\\\"theme\\\": \\\"light\\\"}\"\n}",
-							"options": {
-								"raw": {
-									"language": "json"
-								}
-							}
+							"raw": "{\n  \"username\": \"updateduser\",\n  \"email\": \"updateduser@example.com\",\n  \"preferences\": \"{\\\"theme\\\": \\\"light\\\"}\"\n}"
 						},
 						"url": {
 							"raw": "{{base_url}}/api/users/:userId",
 							"host": ["{{base_url}}"],
 							"path": ["api", "users", ":userId"],
 							"variable": [
-								{
-									"key": "userId",
-									"value": "1"
-								}
+								{ "key": "userId", "value": "1" }
 							]
-						},
-						"description": "Cập nhật thông tin user"
+						}
 					}
 				},
 				{
@@ -487,13 +372,9 @@
 							"host": ["{{base_url}}"],
 							"path": ["api", "users", ":userId"],
 							"variable": [
-								{
-									"key": "userId",
-									"value": "1"
-								}
+								{ "key": "userId", "value": "1" }
 							]
-						},
-						"description": "Xóa user"
+						}
 					}
 				}
 			]
@@ -511,13 +392,9 @@
 							"host": ["{{base_url}}"],
 							"path": ["api", "carts", "user", ":userId"],
 							"variable": [
-								{
-									"key": "userId",
-									"value": "1"
-								}
+								{ "key": "userId", "value": "1" }
 							]
-						},
-						"description": "Lấy hoặc tạo cart active của user. Trả về CartDTO với đầy đủ thông tin sản phẩm trong items."
+						}
 					}
 				},
 				{
@@ -525,100 +402,70 @@
 					"request": {
 						"method": "POST",
 						"header": [
-							{
-								"key": "Content-Type",
-								"value": "application/json"
-							}
+							{ "key": "Content-Type", "value": "application/json" }
 						],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n  \"productId\": \"PROD001\",\n  \"quantity\": 2,\n  \"unitPrice\": 2500000\n}",
-							"options": {
-								"raw": {
-									"language": "json"
-								}
-							}
+							"raw": "{\n  \"productId\": \"PROD001\",\n  \"quantity\": 2,\n  \"unitPrice\": 2500000\n}"
 						},
 						"url": {
 							"raw": "{{base_url}}/api/carts/user/:userId/items",
 							"host": ["{{base_url}}"],
 							"path": ["api", "carts", "user", ":userId", "items"],
 							"variable": [
-								{
-									"key": "userId",
-									"value": "1"
-								}
+								{ "key": "userId", "value": "1" }
 							]
-						},
-						"description": "Thêm sản phẩm vào cart. Trả về CartItemDTO với đầy đủ thông tin sản phẩm."
+						}
 					}
 				},
-			{
-				"name": "3. GET Cart Items",
-				"request": {
-					"method": "GET",
-					"header": [],
-					"url": {
-						"raw": "{{base_url}}/api/carts/:cartId/items",
-						"host": ["{{base_url}}"],
-						"path": ["api", "carts", ":cartId", "items"],
-						"variable": [
-							{
-								"key": "cartId",
-								"value": "1"
-							}
-						]
-					},
-					"description": "Lấy danh sách products trong cart.\n\nResponse format:\n```json\n{\n  \"products\": [\n    {\n      \"id\": \"848\",\n      \"title\": \"Product Name\",\n      \"price\": 3267986,\n      \"cartItemId\": 1,\n      \"quantity\": 2,\n      \"unitPrice\": 3267986,\n      \"productId\": \"848\",\n      ... (all product fields)\n    }\n  ],\n  \"meta\": {\n    \"total\": 6535972\n  }\n}\n```\n\n- products: Array chứa thông tin đầy đủ sản phẩm + cartItemId, quantity, unitPrice\n- meta.total: Tổng giá tiền (unitPrice × quantity)\n- cartItemId: Dùng cho PATCH/DELETE endpoints"
-				}
-			},
-		{
-			"name": "4. UPDATE Cart Item Quantity",
-			"request": {
-				"method": "PATCH",
-				"header": [],
-				"url": {
-					"raw": "{{base_url}}/api/carts/items/:itemId?quantity=3",
-					"host": ["{{base_url}}"],
-					"path": ["api", "carts", "items", ":itemId"],
-					"query": [
-						{
-							"key": "quantity",
-							"value": "3",
-							"description": "Số lượng mới"
+				{
+					"name": "3. GET Cart Items",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/api/carts/:cartId/items",
+							"host": ["{{base_url}}"],
+							"path": ["api", "carts", ":cartId", "items"],
+							"variable": [
+								{ "key": "cartId", "value": "1" }
+							]
 						}
-					],
-					"variable": [
-						{
-							"key": "itemId",
-							"value": "1",
-							"description": "cartItemId từ GET Cart Items response (không phải productId)"
-						}
-					]
+					}
 				},
-				"description": "Cập nhật số lượng item trong cart.\n\n"
-			}
-		},
-			{
-				"name": "5. REMOVE From Cart",
-				"request": {
-					"method": "DELETE",
-					"header": [],
-					"url": {
-						"raw": "{{base_url}}/api/carts/items/:itemId",
-						"host": ["{{base_url}}"],
-						"path": ["api", "carts", "items", ":itemId"],
-						"variable": [
-							{
-								"key": "itemId",
-								"value": "1",
-								"description": "cartItemId từ GET Cart Items response (không phải productId)"
-							}
-						]
-					},
-					"description": "Xóa item khỏi cart.\n\n"
-				}
-			},
+				{
+					"name": "4. UPDATE Cart Item Quantity",
+					"request": {
+						"method": "PATCH",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/api/carts/items/:itemId?quantity=3",
+							"host": ["{{base_url}}"],
+							"path": ["api", "carts", "items", ":itemId"],
+							"query": [
+								{ "key": "quantity", "value": "3" }
+							],
+							"variable": [
+								{ "key": "itemId", "value": "1" }
+							]
+						}
+					}
+				},
+				{
+					"name": "5. REMOVE From Cart",
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/api/carts/items/:itemId",
+							"host": ["{{base_url}}"],
+							"path": ["api", "carts", "items", ":itemId"],
+							"variable": [
+								{ "key": "itemId", "value": "1" }
+							]
+						}
+					}
+				},
 				{
 					"name": "6. CLEAR Cart",
 					"request": {
@@ -629,13 +476,9 @@
 							"host": ["{{base_url}}"],
 							"path": ["api", "carts", ":cartId", "items"],
 							"variable": [
-								{
-									"key": "cartId",
-									"value": "1"
-								}
+								{ "key": "cartId", "value": "1" }
 							]
-						},
-						"description": "Xóa tất cả items trong cart. Trả về CartDTO rỗng."
+						}
 					}
 				},
 				{
@@ -648,13 +491,9 @@
 							"host": ["{{base_url}}"],
 							"path": ["api", "carts", ":cartId", "checkout"],
 							"variable": [
-								{
-									"key": "cartId",
-									"value": "1"
-								}
+								{ "key": "cartId", "value": "1" }
 							]
-						},
-						"description": "Checkout cart (chuyển cart sang trạng thái CHECKED_OUT). Trả về CartDTO với đầy đủ thông tin."
+						}
 					}
 				}
 			]
@@ -667,32 +506,20 @@
 					"request": {
 						"method": "POST",
 						"header": [
-							{
-								"key": "Content-Type",
-								"value": "application/json"
-							}
+							{ "key": "Content-Type", "value": "application/json" }
 						],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n  \"shippingAddress\": \"123 Đường ABC, Quận 1, TP.HCM\",\n  \"paymentMethod\": \"COD\",\n  \"items\": [\n    {\n      \"productId\": \"PROD001\",\n      \"quantity\": 2,\n      \"unitPrice\": 2500000\n    },\n    {\n      \"productId\": \"PROD002\",\n      \"quantity\": 1,\n      \"unitPrice\": 3000000\n    }\n  ]\n}",
-							"options": {
-								"raw": {
-									"language": "json"
-								}
-							}
+							"raw": "{\n  \"shippingAddress\": \"123 Đường ABC, Quận 1, TP.HCM\",\n  \"paymentMethod\": \"COD\",\n  \"items\": [\n    { \"productId\": \"PROD001\", \"quantity\": 2, \"unitPrice\": 2500000 },\n    { \"productId\": \"PROD002\", \"quantity\": 1, \"unitPrice\": 3000000 }\n  ]\n}"
 						},
 						"url": {
 							"raw": "{{base_url}}/api/orders/user/:userId",
 							"host": ["{{base_url}}"],
 							"path": ["api", "orders", "user", ":userId"],
 							"variable": [
-								{
-									"key": "userId",
-									"value": "1"
-								}
+								{ "key": "userId", "value": "1" }
 							]
-						},
-						"description": "Tạo order mới"
+						}
 					}
 				},
 				{
@@ -705,31 +532,15 @@
 							"host": ["{{base_url}}"],
 							"path": ["api", "orders", "user", ":userId"],
 							"query": [
-								{
-									"key": "page",
-									"value": "0"
-								},
-								{
-									"key": "size",
-									"value": "24"
-								},
-								{
-									"key": "sortBy",
-									"value": "createdAt"
-								},
-								{
-									"key": "sortDir",
-									"value": "desc"
-								}
+								{ "key": "page", "value": "0" },
+								{ "key": "size", "value": "24" },
+								{ "key": "sortBy", "value": "createdAt" },
+								{ "key": "sortDir", "value": "desc" }
 							],
 							"variable": [
-								{
-									"key": "userId",
-									"value": "1"
-								}
+								{ "key": "userId", "value": "1" }
 							]
-						},
-						"description": "Lấy danh sách orders của user với pagination"
+						}
 					}
 				},
 				{
@@ -742,13 +553,9 @@
 							"host": ["{{base_url}}"],
 							"path": ["api", "orders", ":orderId"],
 							"variable": [
-								{
-									"key": "orderId",
-									"value": "1"
-								}
+								{ "key": "orderId", "value": "1" }
 							]
-						},
-						"description": "Lấy thông tin chi tiết order theo ID"
+						}
 					}
 				},
 				{
@@ -761,20 +568,12 @@
 							"host": ["{{base_url}}"],
 							"path": ["api", "orders", ":orderId", "status"],
 							"query": [
-								{
-									"key": "status",
-									"value": "SHIPPED",
-									"description": "Order status: PENDING, CONFIRMED, SHIPPED, DELIVERED, CANCELLED"
-								}
+								{ "key": "status", "value": "SHIPPED" }
 							],
 							"variable": [
-								{
-									"key": "orderId",
-									"value": "1"
-								}
+								{ "key": "orderId", "value": "1" }
 							]
-						},
-						"description": "Cập nhật trạng thái order"
+						}
 					}
 				}
 			]
@@ -792,31 +591,15 @@
 							"host": ["{{base_url}}"],
 							"path": ["api", "reviews", "product", ":productId"],
 							"query": [
-								{
-									"key": "page",
-									"value": "0"
-								},
-								{
-									"key": "size",
-									"value": "24"
-								},
-								{
-									"key": "sortBy",
-									"value": "reviewDate"
-								},
-								{
-									"key": "sortDir",
-									"value": "desc"
-								}
+								{ "key": "page", "value": "0" },
+								{ "key": "size", "value": "24" },
+								{ "key": "sortBy", "value": "reviewDate" },
+								{ "key": "sortDir", "value": "desc" }
 							],
 							"variable": [
-								{
-									"key": "productId",
-									"value": "PROD001"
-								}
+								{ "key": "productId", "value": "PROD001" }
 							]
-						},
-						"description": "Lấy danh sách reviews của sản phẩm với pagination"
+						}
 					}
 				},
 				{
@@ -824,26 +607,17 @@
 					"request": {
 						"method": "POST",
 						"header": [
-							{
-								"key": "Content-Type",
-								"value": "application/json"
-							}
+							{ "key": "Content-Type", "value": "application/json" }
 						],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n  \"productId\": \"PROD001\",\n  \"rating\": 5,\n  \"comment\": \"Sản phẩm rất tốt, chất lượng cao!\",\n  \"userId\": \"1\"\n}",
-							"options": {
-								"raw": {
-									"language": "json"
-								}
-							}
+							"raw": "{\n  \"productId\": \"PROD001\",\n  \"rating\": 5,\n  \"comment\": \"Sản phẩm rất tốt, chất lượng cao!\",\n  \"userId\": \"1\"\n}"
 						},
 						"url": {
 							"raw": "{{base_url}}/api/reviews",
 							"host": ["{{base_url}}"],
 							"path": ["api", "reviews"]
-						},
-						"description": "Tạo review mới cho sản phẩm"
+						}
 					}
 				},
 				{
@@ -856,13 +630,9 @@
 							"host": ["{{base_url}}"],
 							"path": ["api", "reviews", ":reviewId"],
 							"variable": [
-								{
-									"key": "reviewId",
-									"value": "1"
-								}
+								{ "key": "reviewId", "value": "1" }
 							]
-						},
-						"description": "Xóa review"
+						}
 					}
 				}
 			]
@@ -875,26 +645,17 @@
 					"request": {
 						"method": "POST",
 						"header": [
-							{
-								"key": "Content-Type",
-								"value": "application/json"
-							}
+							{ "key": "Content-Type", "value": "application/json" }
 						],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n  \"user_id\": \"1\",\n  \"message\": \"Tôi muốn tìm giày Nike giá khoảng 2 triệu\",\n  \"k\": 20\n}",
-							"options": {
-								"raw": {
-									"language": "json"
-								}
-							}
+							"raw": "{\n  \"user_id\": \"1\",\n  \"message\": \"Tôi muốn tìm giày Nike giá khoảng 2 triệu\",\n  \"k\": 20\n}"
 						},
 						"url": {
 							"raw": "{{chatbot_base_url}}/chat",
 							"host": ["{{chatbot_base_url}}"],
 							"path": ["chat"]
-						},
-						"description": "Gửi tin nhắn đến chatbot Python API. Chatbot sẽ tự động phân tích nhu cầu, tìm kiếm sản phẩm và trả về phản hồi thông minh. Lưu ý: Chatbot tự động lưu vào database."
+						}
 					}
 				},
 				{
@@ -907,13 +668,9 @@
 							"host": ["{{base_url}}"],
 							"path": ["api", "chat-messages", "user", ":userId"],
 							"variable": [
-								{
-									"key": "userId",
-									"value": "1"
-								}
+								{ "key": "userId", "value": "1" }
 							]
-						},
-						"description": "Lấy danh sách chat messages của user từ Java API (sắp xếp theo createdAt DESC)"
+						}
 					}
 				},
 				{
@@ -921,26 +678,17 @@
 					"request": {
 						"method": "POST",
 						"header": [
-							{
-								"key": "Content-Type",
-								"value": "application/json"
-							}
+							{ "key": "Content-Type", "value": "application/json" }
 						],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n  \"userId\": 1,\n  \"message\": \"Tôi muốn tìm giày Nike\",\n  \"response\": \"Tôi tìm thấy các sản phẩm Nike cho bạn\",\n  \"productIds\": \"[\\\"PROD001\\\", \\\"PROD002\\\"]\",\n  \"intent\": \"search_product\",\n  \"context\": \"{\\\"category\\\": \\\"sneakers\\\"}\"\n}",
-							"options": {
-								"raw": {
-									"language": "json"
-								}
-							}
+							"raw": "{\n  \"userId\": 1,\n  \"message\": \"Tôi muốn tìm giày Nike\",\n  \"response\": \"Tôi tìm thấy các sản phẩm Nike cho bạn\",\n  \"productIds\": \"[\\\"PROD001\\\", \\\"PROD002\\\"]\",\n  \"intent\": \"search_product\",\n  \"context\": \"{\\\"category\\\": \\\"sneakers\\\"}\"\n}"
 						},
 						"url": {
 							"raw": "{{base_url}}/api/chat-messages",
 							"host": ["{{base_url}}"],
 							"path": ["api", "chat-messages"]
-						},
-						"description": "Tạo chat message mới trong Java API. Lưu ý: productIds nên là JSON array string, ví dụ: \"[\\\"PROD001\\\", \\\"PROD002\\\"]\""
+						}
 					}
 				}
 			]
@@ -950,14 +698,12 @@
 		{
 			"key": "base_url",
 			"value": "http://localhost:8080",
-			"type": "string",
-			"description": "Java Spring Boot API base URL"
+			"type": "string"
 		},
 		{
 			"key": "chatbot_base_url",
 			"value": "http://localhost:8000",
-			"type": "string",
-			"description": "Python Chatbot API base URL"
+			"type": "string"
 		}
 	]
 }

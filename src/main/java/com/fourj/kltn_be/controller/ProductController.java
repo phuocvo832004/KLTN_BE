@@ -1,5 +1,6 @@
 package com.fourj.kltn_be.controller;
 
+import com.fourj.kltn_be.dto.HomepageDataDTO;
 import com.fourj.kltn_be.dto.LimitedDealDTO;
 import com.fourj.kltn_be.dto.PageResponse;
 import com.fourj.kltn_be.dto.ProductDTO;
@@ -114,6 +115,23 @@ public class ProductController {
     public ResponseEntity<Void> deleteProduct(@PathVariable String id) {
         productService.deleteProduct(id);
         return ResponseEntity.noContent().build();
+    }
+
+    /**
+     * Get all homepage data in a single API call
+     * Combines: special offers, new arrivals, popular products, limited deals
+     * This reduces multiple API calls from frontend to just one
+     */
+    @GetMapping("/homepage")
+    public ResponseEntity<HomepageDataDTO> getHomepageData(
+            @RequestParam(required = false, defaultValue = "8") int specialOffersLimit,
+            @RequestParam(required = false, defaultValue = "8") int newArrivalsLimit,
+            @RequestParam(required = false, defaultValue = "8") int popularLimit,
+            @RequestParam(required = false, defaultValue = "8") int limitedDealsLimit) {
+        
+        HomepageDataDTO homepageData = productService.getHomepageData(
+                specialOffersLimit, newArrivalsLimit, popularLimit, limitedDealsLimit);
+        return ResponseEntity.ok(homepageData);
     }
 
     @GetMapping("/special-offers")

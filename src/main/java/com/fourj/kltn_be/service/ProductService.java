@@ -1,5 +1,6 @@
 package com.fourj.kltn_be.service;
 
+import com.fourj.kltn_be.dto.HomepageDataDTO;
 import com.fourj.kltn_be.dto.LimitedDealDTO;
 import com.fourj.kltn_be.dto.PageResponse;
 import com.fourj.kltn_be.dto.ProductDTO;
@@ -192,6 +193,42 @@ public class ProductService {
         LocalDateTime now = LocalDateTime.now();
         Page<Product> page = saleRepository.findProductsWithActiveSales(now, pageable);
         return convertToPageResponse(page);
+    }
+
+    // ==================== HOMEPAGE DATA ====================
+    
+    /**
+     * Get all homepage data in a single call
+     * Combines: special offers, new arrivals, popular products, limited deals
+     * 
+     * @param specialOffersLimit limit for special offers (default 8)
+     * @param newArrivalsLimit limit for new arrivals (default 8)
+     * @param popularLimit limit for popular products (default 8)
+     * @param limitedDealsLimit limit for limited deals (default 8)
+     * @return HomepageDataDTO containing all homepage sections
+     */
+    public HomepageDataDTO getHomepageData(int specialOffersLimit, int newArrivalsLimit, 
+                                           int popularLimit, int limitedDealsLimit) {
+        // Get Special Offers (season type = 0)
+        Pageable specialOffersPageable = PageRequest.of(0, specialOffersLimit);
+        List<ProductDTO> specialOffers = getProductsBySeasonType(0, specialOffersPageable).getContent();
+        
+        // Get New Arrivals (season type = 1)
+        Pageable newArrivalsPageable = PageRequest.of(0, newArrivalsLimit, 
+                Sort.by("createdAt").descending());
+        List<ProductDTO> newArrivals = getProductsBySeasonType(1, newArrivalsPageable).getContent();
+        
+        // Get Popular Products (sorted by average rating desc)
+        Pageable popularPageable = PageRequest.of(0, popularLimit, 
+                Sort.by("averageRating").descending());
+        List<ProductDTO> popularProducts = getPopularProducts(popularPageable).getContent();
+        
+        // Get Limited Deals
+        Pageable limitedDealsPageable = PageRequest.of(0, limitedDealsLimit, 
+                Sort.by("discountPercentage").descending());
+        List<LimitedDealDTO> limitedDeals = getLimitedDeals(limitedDealsPageable).getContent();
+        
+        return new HomepageDataDTO(specialOffers, newArrivals, popularProducts, limitedDeals);
     }
 
     private LimitedDealDTO convertToLimitedDealDTO(Sale sale) {
