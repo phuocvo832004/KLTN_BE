@@ -15,44 +15,50 @@ import org.springframework.web.reactive.function.client.WebClient;
 import javax.crypto.Mac;
 import javax.crypto.spec.SecretKeySpec;
 import java.nio.charset.StandardCharsets;
-import java.security.InvalidKeyException;
-import java.security.NoSuchAlgorithmException;
+import java.util.ArrayList;
 import java.util.Base64;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
 
 @Slf4j
 @Service
 public class PayOSService {
-    private final PayOSConfig payOSConfig;
     private final WebClient webClient;
+    private final String checksumKey;
     private final ObjectMapper objectMapper;
 
     public PayOSService(PayOSConfig payOSConfig) {
-        this.payOSConfig = payOSConfig;
+        this.checksumKey = payOSConfig.getChecksumKey();
+        this.objectMapper = new ObjectMapper();
         this.webClient = WebClient.builder()
                 .baseUrl(payOSConfig.getBaseUrl())
                 .defaultHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON_VALUE)
                 .defaultHeader("x-client-id", payOSConfig.getClientId())
                 .defaultHeader("x-api-key", payOSConfig.getApiKey())
                 .build();
-        this.objectMapper = new ObjectMapper();
     }
 
     public PaymentLinkResponse createPaymentLink(PaymentLinkRequest request) {
         try {
-            Map<String, Object> payload = new HashMap<>();
+            Map<String, Object> payload = new TreeMap<>();
             payload.put("orderCode", request.getOrderId().intValue());
             payload.put("amount", request.getAmount().intValue());
             payload.put("description", request.getDescription());
-            payload.put("items", request.getItems().stream().map(item -> {
-                Map<String, Object> itemMap = new HashMap<>();
-                itemMap.put("name", item.getName());
-                itemMap.put("quantity", item.getQuantity());
-                itemMap.put("price", item.getPrice().intValue());
-                return itemMap;
-            }).toList());
+            
+            if (request.getItems() != null && !request.getItems().isEmpty()) {
+                List<Map<String, Object>> items = new ArrayList<>();
+                for (PaymentLinkRequest.PaymentItem item : request.getItems()) {
+                    Map<String, Object> itemMap = new HashMap<>();
+                    itemMap.put("name", item.getName());
+                    itemMap.put("quantity", item.getQuantity());
+                    itemMap.put("price", item.getPrice().intValue());
+                    items.add(itemMap);
+                }
+                payload.put("items", items);
+            }
+            
             payload.put("returnUrl", request.getReturnUrl());
             payload.put("cancelUrl", request.getCancelUrl());
 
@@ -69,11 +75,15 @@ public class PayOSService {
             if (response != null && response.getCode() == 0) {
                 return response;
             } else {
-                throw new RuntimeException("Failed to create payment link: " + (response != null ? response.getDesc() : "Unknown error"));
+                String errorMsg = response != null ? response.getDesc() : "Unknown error";
+                log.error("Failed to create payment link: {}", errorMsg);
+                throw new RuntimeException("Failed to create payment link: " + errorMsg);
             }
+        } catch (RuntimeException e) {
+            throw e;
         } catch (Exception e) {
             log.error("Error creating payment link", e);
-            throw new RuntimeException("Failed to create payment link", e);
+            throw new RuntimeException("Failed to create payment link: " + e.getMessage(), e);
         }
     }
 
@@ -88,46 +98,25 @@ public class PayOSService {
             if (response != null && response.getCode() == 0) {
                 return response;
             } else {
-                throw new RuntimeException("Failed to get payment status: " + (response != null ? response.getDesc() : "Unknown error"));
+                String errorMsg = response != null ? response.getDesc() : "Unknown error";
+                log.error("Failed to get payment status: {}", errorMsg);
+                throw new RuntimeException("Failed to get payment status: " + errorMsg);
             }
+        } catch (RuntimeException e) {
+            throw e;
         } catch (Exception e) {
             log.error("Error getting payment status", e);
-            throw new RuntimeException("Failed to get payment status", e);
+            throw new RuntimeException("Failed to get payment status: " + e.getMessage(), e);
         }
     }
 
     public boolean verifyWebhookSignature(PaymentWebhookPayload payload) {
         try {
-            Map<String, Object> dataMap = new HashMap<>();
-            dataMap.put("orderCode", payload.getData().getOrderCode());
-            dataMap.put("amount", payload.getData().getAmount().intValue());
-            dataMap.put("description", payload.getData().getDescription());
-            dataMap.put("accountNumber", payload.getData().getAccountNumber());
-            dataMap.put("reference", payload.getData().getReference());
-            dataMap.put("transactionDateTime", payload.getData().getTransactionDateTime());
-            dataMap.put("currency", payload.getData().getCurrency());
-            dataMap.put("paymentLinkId", payload.getData().getPaymentLinkId());
-            dataMap.put("code", payload.getData().getCode());
-            dataMap.put("desc", payload.getData().getDesc());
-            if (payload.getData().getCounterAccountBankId() != null) {
-                dataMap.put("counterAccountBankId", payload.getData().getCounterAccountBankId());
-            }
-            if (payload.getData().getCounterAccountBankName() != null) {
-                dataMap.put("counterAccountBankName", payload.getData().getCounterAccountBankName());
-            }
-            if (payload.getData().getCounterAccountName() != null) {
-                dataMap.put("counterAccountName", payload.getData().getCounterAccountName());
-            }
-            if (payload.getData().getCounterAccountNumber() != null) {
-                dataMap.put("counterAccountNumber", payload.getData().getCounterAccountNumber());
-            }
-            if (payload.getData().getVirtualAccountName() != null) {
-                dataMap.put("virtualAccountName", payload.getData().getVirtualAccountName());
-            }
-            if (payload.getData().getVirtualAccountNumber() != null) {
-                dataMap.put("virtualAccountNumber", payload.getData().getVirtualAccountNumber());
+            if (payload == null || payload.getData() == null || payload.getSignature() == null) {
+                return false;
             }
 
+            Map<String, Object> dataMap = buildWebhookDataMap(payload.getData());
             String expectedSignature = generateSignature(dataMap);
             return expectedSignature.equals(payload.getSignature());
         } catch (Exception e) {
@@ -136,19 +125,33 @@ public class PayOSService {
         }
     }
 
+    private Map<String, Object> buildWebhookDataMap(PaymentWebhookPayload.PaymentWebhookData data) {
+        Map<String, Object> dataMap = new TreeMap<>();
+        if (data.getOrderCode() != null) dataMap.put("orderCode", data.getOrderCode());
+        if (data.getAmount() != null) dataMap.put("amount", data.getAmount().intValue());
+        if (data.getDescription() != null) dataMap.put("description", data.getDescription());
+        if (data.getAccountNumber() != null) dataMap.put("accountNumber", data.getAccountNumber());
+        if (data.getReference() != null) dataMap.put("reference", data.getReference());
+        if (data.getTransactionDateTime() != null) dataMap.put("transactionDateTime", data.getTransactionDateTime());
+        if (data.getCurrency() != null) dataMap.put("currency", data.getCurrency());
+        if (data.getPaymentLinkId() != null) dataMap.put("paymentLinkId", data.getPaymentLinkId());
+        if (data.getCode() != null) dataMap.put("code", data.getCode());
+        if (data.getDesc() != null) dataMap.put("desc", data.getDesc());
+        if (data.getCounterAccountBankId() != null) dataMap.put("counterAccountBankId", data.getCounterAccountBankId());
+        if (data.getCounterAccountBankName() != null) dataMap.put("counterAccountBankName", data.getCounterAccountBankName());
+        if (data.getCounterAccountName() != null) dataMap.put("counterAccountName", data.getCounterAccountName());
+        if (data.getCounterAccountNumber() != null) dataMap.put("counterAccountNumber", data.getCounterAccountNumber());
+        if (data.getVirtualAccountName() != null) dataMap.put("virtualAccountName", data.getVirtualAccountName());
+        if (data.getVirtualAccountNumber() != null) dataMap.put("virtualAccountNumber", data.getVirtualAccountNumber());
+        return dataMap;
+    }
+
     private String generateSignature(Map<String, Object> data) {
         try {
-            // Sắp xếp keys theo thứ tự alphabet để đảm bảo signature nhất quán
-            Map<String, Object> sortedData = new TreeMap<>(data);
-            
-            String jsonString = objectMapper.writeValueAsString(sortedData);
-            
-            // Log để debug (có thể xóa sau)
-            log.debug("JSON string for signature: {}", jsonString);
-            
+            String jsonString = objectMapper.writeValueAsString(data);
             Mac hmac = Mac.getInstance("HmacSHA256");
             SecretKeySpec secretKey = new SecretKeySpec(
-                    payOSConfig.getChecksumKey().getBytes(StandardCharsets.UTF_8),
+                    checksumKey.getBytes(StandardCharsets.UTF_8),
                     "HmacSHA256"
             );
             hmac.init(secretKey);
@@ -160,4 +163,3 @@ public class PayOSService {
         }
     }
 }
-
