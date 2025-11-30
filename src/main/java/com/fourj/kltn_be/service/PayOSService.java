@@ -146,7 +146,7 @@ public class PayOSService {
             hmac.init(secretKey);
             byte[] hash = hmac.doFinal(jsonString.getBytes(StandardCharsets.UTF_8));
             return Base64.getEncoder().encodeToString(hash);
-        } catch (NoSuchAlgorithmException | InvalidKeyException | Exception e) {
+        } catch (Exception e) {
             log.error("Error generating signature", e);
             throw new RuntimeException("Failed to generate signature", e);
         }
