@@ -39,7 +39,6 @@ public class OrderController {
             @RequestParam(required = false, defaultValue = "createdAt") String sortBy,
             @RequestParam(required = false, defaultValue = "desc") String sortDir) {
         if (page < 0 || size <= 0) {
-            // Return non-paginated response for backward compatibility
             return ResponseEntity.ok(orderService.getUserOrders(userId));
         }
         

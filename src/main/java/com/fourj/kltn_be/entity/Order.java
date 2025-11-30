@@ -39,6 +39,15 @@ public class Order {
     @Column(name = "payment_method", length = 255)
     private String paymentMethod;
 
+    @Column(name = "payment_link_id")
+    private String paymentLinkId;
+
+    @Column(name = "payment_status", length = 50)
+    private String paymentStatus;
+
+    @Column(name = "payment_code")
+    private String paymentCode;
+
     @CreationTimestamp
     @Column(name = "created_at")
     private OffsetDateTime createdAt;

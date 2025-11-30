@@ -30,19 +30,19 @@ public class Stocking {
     private Branch branch;
 
     @Column(name = "quantity", nullable = false)
-    private Integer quantity = 0; // Số lượng tồn kho tại chi nhánh
+    private Integer quantity = 0;
 
     @Column(name = "reserved_quantity", nullable = false)
-    private Integer reservedQuantity = 0; // Số lượng đã được đặt trước (chưa xuất kho)
+    private Integer reservedQuantity = 0;
 
     @Column(name = "available_quantity", nullable = false)
-    private Integer availableQuantity = 0; // Số lượng có sẵn = quantity - reservedQuantity
+    private Integer availableQuantity = 0;
 
     @Column(name = "min_stock_level", nullable = false)
-    private Integer minStockLevel = 0; // Mức tồn kho tối thiểu để cảnh báo
+    private Integer minStockLevel = 0;
 
     @Column(name = "last_restocked_at")
-    private LocalDateTime lastRestockedAt; // Lần cuối nhập hàng
+    private LocalDateTime lastRestockedAt;
 
     @CreationTimestamp
     @Column(name = "created_at")
@@ -52,19 +52,16 @@ public class Stocking {
     @Column(name = "updated_at")
     private LocalDateTime updatedAt;
 
-    // Method để tính available quantity
     @PreUpdate
     @PrePersist
     private void calculateAvailableQuantity() {
         this.availableQuantity = Math.max(0, this.quantity - this.reservedQuantity);
     }
 
-    // Method để kiểm tra còn hàng không
     public Boolean isInStock() {
         return this.availableQuantity > 0;
     }
 
-    // Method để kiểm tra sắp hết hàng
     public Boolean isLowStock() {
         return this.availableQuantity <= this.minStockLevel;
     }

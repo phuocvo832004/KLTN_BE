@@ -28,7 +28,6 @@ public class UserController {
             @RequestParam(required = false, defaultValue = "userId") String sortBy,
             @RequestParam(required = false, defaultValue = "asc") String sortDir) {
         if (page < 0 || size <= 0) {
-            // Return non-paginated response for backward compatibility
             return ResponseEntity.ok(userService.getAllUsers());
         }
         

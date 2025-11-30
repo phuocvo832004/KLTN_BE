@@ -30,7 +30,6 @@ public class CartProductDTO {
     private List<ProductSpecDTO> specList;
     private List<ReviewDTO> reviews;
     
-    // Cart-specific fields
     private Long cartItemId;
     private Integer quantity;
     private BigDecimal unitPrice;

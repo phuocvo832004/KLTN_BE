@@ -11,7 +11,6 @@ import java.time.LocalDateTime;
 @NoArgsConstructor
 @AllArgsConstructor
 public class LimitedDealDTO {
-    // Product information
     private String productId;
     private String title;
     private String description;
@@ -21,7 +20,6 @@ public class LimitedDealDTO {
     private Double averageRating;
     private String[] categories;
     
-    // Sale information
     private Long saleId;
     private BigDecimal salePrice;
     private BigDecimal discountPercentage;
@@ -30,8 +28,7 @@ public class LimitedDealDTO {
     private Long branchId;
     private String branchName;
     
-    // Calculated fields
-    private BigDecimal savedAmount; // originalPrice - salePrice
-    private Long hoursRemaining; // Hours until deal ends
+    private BigDecimal savedAmount;
+    private Long hoursRemaining;
 }
 

@@ -59,7 +59,6 @@ public class ReviewService {
         
         Review saved = reviewRepository.save(review);
         
-        // Update product average rating
         productService.updateAverageRating(product.getId());
         
         return convertToDTO(saved);

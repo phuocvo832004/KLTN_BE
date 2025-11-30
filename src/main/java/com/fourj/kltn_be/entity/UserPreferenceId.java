@@ -11,7 +11,7 @@ import java.util.Objects;
 @NoArgsConstructor
 @AllArgsConstructor
 public class UserPreferenceId implements Serializable {
-    private Long userId;  // Must match the field name in UserPreference entity
+    private Long userId;
     private String prefKey;
 
     @Override

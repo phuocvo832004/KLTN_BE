@@ -56,7 +56,6 @@ public class ProductService {
         return productRepository.findById(id)
                 .map(product -> {
                     ProductDTO dto = convertToDTO(product);
-                    // Fetch reviews for product detail with pagination
                     if (reviewPage >= 0 && reviewSize > 0) {
                         Sort sort = reviewSortDir.equalsIgnoreCase("desc") 
                                 ? Sort.by(reviewSortBy).descending() 
@@ -68,7 +67,6 @@ public class ProductService {
                                 .collect(Collectors.toList());
                         dto.setReviews(reviews);
                     } else {
-                        // Return all reviews if pagination not requested (backward compatibility)
                         List<ReviewDTO> reviews = reviewRepository.findByProductId(id).stream()
                                 .map(this::convertReviewToDTO)
                                 .collect(Collectors.toList());
@@ -100,7 +98,6 @@ public class ProductService {
         return convertToPageResponse(page);
     }
 
-    // Get products by season type (0 = special offer, 1 = new arrivals, etc.)
     public List<ProductDTO> getProductsBySeasonType(Integer type) {
         return productRepository.findBySeasonType(type).stream()
                 .map(this::convertToDTO)
@@ -112,7 +109,6 @@ public class ProductService {
         return convertToPageResponse(page);
     }
 
-    // Convenience methods for special offers (type = 0) and new arrivals (type = 1)
     public List<ProductDTO> getSpecialOffers() {
         return getProductsBySeasonType(0);
     }
@@ -129,11 +125,6 @@ public class ProductService {
         return getProductsBySeasonType(1, pageable);
     }
 
-    // ==================== POPULAR PRODUCTS ====================
-    
-    /**
-     * Get popular products sorted by average rating (descending)
-     */
     public List<ProductDTO> getPopularProducts() {
         return productRepository.findPopularProducts().stream()
                 .map(this::convertToDTO)
@@ -145,9 +136,6 @@ public class ProductService {
         return convertToPageResponse(page);
     }
 
-    /**
-     * Get popular products with minimum rating threshold
-     */
     public List<ProductDTO> getPopularProducts(Double minRating) {
         return productRepository.findPopularProductsWithMinRating(minRating).stream()
                 .map(this::convertToDTO)
@@ -159,11 +147,6 @@ public class ProductService {
         return convertToPageResponse(page);
     }
 
-    // ==================== LIMITED DEALS ====================
-    
-    /**
-     * Get products with active sales (limited deals)
-     */
     public List<LimitedDealDTO> getLimitedDeals() {
         LocalDateTime now = LocalDateTime.now();
         List<Sale> activeSales = saleRepository.findActiveSalesOrderByDiscount(now);
@@ -178,9 +161,6 @@ public class ProductService {
         return convertToLimitedDealPageResponse(page);
     }
 
-    /**
-     * Get distinct products that have active sales
-     */
     public List<ProductDTO> getProductsWithDeals() {
         LocalDateTime now = LocalDateTime.now();
         List<Product> products = saleRepository.findProductsWithActiveSales(now);
@@ -195,35 +175,19 @@ public class ProductService {
         return convertToPageResponse(page);
     }
 
-    // ==================== HOMEPAGE DATA ====================
-    
-    /**
-     * Get all homepage data in a single call
-     * Combines: special offers, new arrivals, popular products, limited deals
-     * 
-     * @param specialOffersLimit limit for special offers (default 8)
-     * @param newArrivalsLimit limit for new arrivals (default 8)
-     * @param popularLimit limit for popular products (default 8)
-     * @param limitedDealsLimit limit for limited deals (default 8)
-     * @return HomepageDataDTO containing all homepage sections
-     */
     public HomepageDataDTO getHomepageData(int specialOffersLimit, int newArrivalsLimit, 
                                            int popularLimit, int limitedDealsLimit) {
-        // Get Special Offers (season type = 0)
         Pageable specialOffersPageable = PageRequest.of(0, specialOffersLimit);
         List<ProductDTO> specialOffers = getProductsBySeasonType(0, specialOffersPageable).getContent();
         
-        // Get New Arrivals (season type = 1)
         Pageable newArrivalsPageable = PageRequest.of(0, newArrivalsLimit, 
                 Sort.by("createdAt").descending());
         List<ProductDTO> newArrivals = getProductsBySeasonType(1, newArrivalsPageable).getContent();
         
-        // Get Popular Products (sorted by average rating desc)
         Pageable popularPageable = PageRequest.of(0, popularLimit, 
                 Sort.by("averageRating").descending());
         List<ProductDTO> popularProducts = getPopularProducts(popularPageable).getContent();
         
-        // Get Limited Deals
         Pageable limitedDealsPageable = PageRequest.of(0, limitedDealsLimit, 
                 Sort.by("discountPercentage").descending());
         List<LimitedDealDTO> limitedDeals = getLimitedDeals(limitedDealsPageable).getContent();
@@ -235,7 +199,6 @@ public class ProductService {
         LimitedDealDTO dto = new LimitedDealDTO();
         Product product = sale.getProduct();
         
-        // Product information
         dto.setProductId(product.getId());
         dto.setTitle(product.getTitle());
         dto.setDescription(product.getDescription());
@@ -245,7 +208,6 @@ public class ProductService {
         dto.setAverageRating(product.getAverageRating());
         dto.setCategories(product.getCategories());
         
-        // Sale information
         dto.setSaleId(sale.getId());
         dto.setSalePrice(sale.getSalePrice());
         dto.setDiscountPercentage(sale.getDiscountPercentage());
@@ -257,7 +219,6 @@ public class ProductService {
             dto.setBranchName(sale.getBranch().getName());
         }
         
-        // Calculated fields
         if (product.getPrice() != null && sale.getSalePrice() != null) {
             dto.setSavedAmount(product.getPrice().subtract(sale.getSalePrice()));
         }
@@ -338,7 +299,7 @@ public class ProductService {
         dto.setCategories(product.getCategories());
         dto.setSpecs(product.getSpecs());
         dto.setAverageRating(product.getAverageRating());
-        dto.setRating(product.getAverageRating()); // Set rating from averageRating
+        dto.setRating(product.getAverageRating());
         dto.setRelatedProducts(product.getRelatedProducts());
         dto.setCreatedAt(product.getCreatedAt());
         dto.setUpdatedAt(product.getUpdatedAt());

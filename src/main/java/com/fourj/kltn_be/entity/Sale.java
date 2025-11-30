@@ -31,19 +31,19 @@ public class Sale {
     private Branch branch;
 
     @Column(name = "sale_price", nullable = false, precision = 38, scale = 2)
-    private BigDecimal salePrice; // Giá sale tại chi nhánh này
+    private BigDecimal salePrice;
 
     @Column(name = "discount_percentage", precision = 5, scale = 2)
-    private BigDecimal discountPercentage; // Phần trăm giảm giá (0-100)
+    private BigDecimal discountPercentage;
 
     @Column(name = "start_date")
-    private LocalDateTime startDate; // Ngày bắt đầu sale
+    private LocalDateTime startDate;
 
     @Column(name = "end_date")
-    private LocalDateTime endDate; // Ngày kết thúc sale
+    private LocalDateTime endDate;
 
     @Column(name = "is_active", nullable = false)
-    private Boolean isActive = true; // Sale có đang hoạt động không
+    private Boolean isActive = true;
 
     @CreationTimestamp
     @Column(name = "created_at")

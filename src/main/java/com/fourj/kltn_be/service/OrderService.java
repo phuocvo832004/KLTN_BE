@@ -101,6 +101,37 @@ public class OrderService {
                 });
     }
 
+    @Transactional
+    public void updatePaymentInfo(Long orderId, String paymentLinkId, String paymentStatus, String paymentCode) {
+        orderRepository.findById(orderId).ifPresent(order -> {
+            order.setPaymentLinkId(paymentLinkId);
+            order.setPaymentStatus(paymentStatus);
+            order.setPaymentCode(paymentCode);
+            orderRepository.save(order);
+        });
+    }
+
+    @Transactional
+    public void updatePaymentStatus(Long orderId, String paymentStatus) {
+        orderRepository.findById(orderId).ifPresent(order -> {
+            order.setPaymentStatus(paymentStatus);
+            if ("PAID".equals(paymentStatus)) {
+                order.setStatus("CONFIRMED");
+            }
+            orderRepository.save(order);
+        });
+    }
+
+    @Transactional
+    public void completePayment(Long orderCode, String reference) {
+        orderRepository.findByPaymentCode(orderCode.toString())
+                .ifPresent(order -> {
+                    order.setPaymentStatus("PAID");
+                    order.setStatus("CONFIRMED");
+                    orderRepository.save(order);
+                });
+    }
+
     private OrderDTO convertToDTO(Order order) {
         OrderDTO dto = new OrderDTO();
         dto.setId(order.getId());
@@ -109,6 +140,9 @@ public class OrderService {
         dto.setTotalAmount(order.getTotalAmount());
         dto.setShippingAddress(order.getShippingAddress());
         dto.setPaymentMethod(order.getPaymentMethod());
+        dto.setPaymentLinkId(order.getPaymentLinkId());
+        dto.setPaymentStatus(order.getPaymentStatus());
+        dto.setPaymentCode(order.getPaymentCode());
         dto.setCreatedAt(order.getCreatedAt());
         dto.setUpdatedAt(order.getUpdatedAt());
         dto.setItems(order.getOrderItems().stream()

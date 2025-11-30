@@ -28,7 +28,6 @@ public class ReviewController {
             @RequestParam(required = false, defaultValue = "reviewDate") String sortBy,
             @RequestParam(required = false, defaultValue = "desc") String sortDir) {
         if (page < 0 || size <= 0) {
-            // Return non-paginated response for backward compatibility
             return ResponseEntity.ok(reviewService.getProductReviews(productId));
         }
         

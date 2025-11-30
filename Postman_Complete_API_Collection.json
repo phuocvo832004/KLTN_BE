@@ -421,7 +421,7 @@
 					}
 				},
 				{
-					"name": "2b. ADD To Cart (With quantity)",
+					"name": "3. ADD To Cart (With quantity)",
 					"request": {
 						"method": "POST",
 						"header": [
@@ -443,7 +443,7 @@
 					}
 				},
 				{
-					"name": "3. GET Cart Items",
+					"name": "4. GET Cart Items",
 					"request": {
 						"method": "GET",
 						"header": [],
@@ -459,7 +459,7 @@
 					}
 				},
 				{
-					"name": "4. UPDATE Cart Item Quantity (Default +1)",
+					"name": "5. UPDATE Cart Item Quantity (Default +1)",
 					"request": {
 						"method": "PATCH",
 						"header": [],
@@ -475,7 +475,7 @@
 					}
 				},
 				{
-					"name": "5. UPDATE Cart Item Quantity (Set Specific)",
+					"name": "6. UPDATE Cart Item Quantity (Set Specific)",
 					"request": {
 						"method": "PATCH",
 						"header": [],
@@ -494,7 +494,7 @@
 					}
 				},
 				{
-					"name": "6. REMOVE From Cart",
+					"name": "7. REMOVE From Cart",
 					"request": {
 						"method": "DELETE",
 						"header": [],
@@ -510,7 +510,7 @@
 					}
 				},
 				{
-					"name": "7. CLEAR Cart",
+					"name": "8. CLEAR Cart",
 					"request": {
 						"method": "DELETE",
 						"header": [],
@@ -526,7 +526,7 @@
 					}
 				},
 				{
-					"name": "8. CHECKOUT Cart",
+					"name": "9. CHECKOUT Cart",
 					"request": {
 						"method": "POST",
 						"header": [],

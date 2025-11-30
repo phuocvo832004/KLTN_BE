@@ -38,9 +38,6 @@ public class Review {
 
     @Column(name = "review_date")
     private String reviewDate;
-
-    // Note: 'id' column exists in DB but is not the primary key
-    // JPA will not manage this field since it's not @Id
     @Column(name = "id", insertable = false, updatable = false)
     private Long id;
 }

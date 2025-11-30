@@ -37,9 +37,6 @@ public class User {
 
     @Column(name = "email", length = 255)
     private String email;
-
-    // Note: 'id' column exists in DB but is not the primary key
-    // JPA will not manage this field since it's not @Id
     @Column(name = "id", insertable = false, updatable = false)
     private Long id;
 

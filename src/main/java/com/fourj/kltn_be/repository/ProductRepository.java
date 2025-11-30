@@ -19,14 +19,12 @@ public interface ProductRepository extends JpaRepository<Product, String> {
     
     Page<Product> findByTitleContainingIgnoreCase(String title, Pageable pageable);
     
-    // Option 1: Use ProductCategory relationship (recommended if data exists in product_categories table)
     @Query("SELECT DISTINCT p FROM Product p JOIN p.productCategories pc WHERE pc.category = :category")
     List<Product> findByCategory(@Param("category") String category);
     
     @Query("SELECT DISTINCT p FROM Product p JOIN p.productCategories pc WHERE pc.category = :category")
     Page<Product> findByCategory(@Param("category") String category, Pageable pageable);
     
-    // Option 2: Use native query for PostgreSQL array (use if categories are stored in array column)
     @Query(value = "SELECT * FROM products WHERE categories IS NOT NULL AND :category = ANY(categories)", nativeQuery = true)
     List<Product> findByCategoryFromArray(@Param("category") String category);
     

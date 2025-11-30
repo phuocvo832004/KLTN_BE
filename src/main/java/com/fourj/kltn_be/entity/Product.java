@@ -63,7 +63,7 @@ public class Product {
     private String imgUrl;
 
     @Column(name = "sale")
-    private BigDecimal sale; // Sale price or discount percentage
+    private BigDecimal sale;
 
     @OneToMany(mappedBy = "product", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<ProductCategory> productCategories = new ArrayList<>();

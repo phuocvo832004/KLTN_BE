@@ -11,7 +11,7 @@ import java.math.BigDecimal;
 @AllArgsConstructor
 public class AddToCartRequest {
     private String productId;
-    private Integer quantity; // Optional, mặc định 1
-    private BigDecimal unitPrice; // Optional, sẽ lấy từ product (ưu tiên sale, không thì price)
+    private Integer quantity;
+    private BigDecimal unitPrice;
 }
 

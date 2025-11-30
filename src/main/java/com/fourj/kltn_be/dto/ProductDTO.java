@@ -20,12 +20,12 @@ public class ProductDTO {
     private String[] categories;
     private String specs;
     private Double averageRating;
-    private Double rating; // Alias for averageRating for API compatibility
+    private Double rating;
     private String[] relatedProducts;
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;
     private String imgUrl;
-    private BigDecimal sale; // Sale price or discount percentage
+    private BigDecimal sale;
     private List<String> categoryList;
     private List<ProductSpecDTO> specList;
     private List<ReviewDTO> reviews;

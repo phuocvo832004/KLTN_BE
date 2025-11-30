@@ -30,7 +30,6 @@ public class ProductController {
             @RequestParam(required = false, defaultValue = "id") String sortBy,
             @RequestParam(required = false, defaultValue = "asc") String sortDir) {
         if (page < 0 || size <= 0) {
-            // Return non-paginated response for backward compatibility
             return ResponseEntity.ok(productService.getAllProducts());
         }
         
@@ -62,7 +61,6 @@ public class ProductController {
             @RequestParam(required = false, defaultValue = "id") String sortBy,
             @RequestParam(required = false, defaultValue = "asc") String sortDir) {
         if (page < 0 || size <= 0) {
-            // Return non-paginated response for backward compatibility
             return ResponseEntity.ok(productService.searchProducts(title));
         }
         
@@ -82,7 +80,6 @@ public class ProductController {
             @RequestParam(required = false, defaultValue = "id") String sortBy,
             @RequestParam(required = false, defaultValue = "asc") String sortDir) {
         if (page < 0 || size <= 0) {
-            // Return non-paginated response for backward compatibility
             return ResponseEntity.ok(productService.getProductsByCategory(category));
         }
         
@@ -117,11 +114,6 @@ public class ProductController {
         return ResponseEntity.noContent().build();
     }
 
-    /**
-     * Get all homepage data in a single API call
-     * Combines: special offers, new arrivals, popular products, limited deals
-     * This reduces multiple API calls from frontend to just one
-     */
     @GetMapping("/homepage")
     public ResponseEntity<HomepageDataDTO> getHomepageData(
             @RequestParam(required = false, defaultValue = "8") int specialOffersLimit,
@@ -189,10 +181,6 @@ public class ProductController {
         return ResponseEntity.ok(response);
     }
 
-    /**
-     * Get popular products sorted by average rating (highest first)
-     * Optional: minRating parameter to filter products with rating >= minRating
-     */
     @GetMapping("/popular")
     public ResponseEntity<?> getPopularProducts(
             @RequestParam(required = false) Double minRating,
@@ -207,7 +195,6 @@ public class ProductController {
         Pageable pageable = PageRequest.of(page, size, sort);
         
         if (page < 0 || size <= 0) {
-            // Return non-paginated response
             if (minRating != null) {
                 return ResponseEntity.ok(productService.getPopularProducts(minRating));
             }
@@ -223,10 +210,6 @@ public class ProductController {
         return ResponseEntity.ok(response);
     }
 
-    /**
-     * Get limited deals - products with active sales
-     * Returns detailed sale information including discount percentage and time remaining
-     */
     @GetMapping("/limited-deals")
     public ResponseEntity<?> getLimitedDeals(
             @RequestParam(required = false, defaultValue = "0") int page,
@@ -235,7 +218,6 @@ public class ProductController {
             @RequestParam(required = false, defaultValue = "desc") String sortDir) {
         
         if (page < 0 || size <= 0) {
-            // Return non-paginated response
             return ResponseEntity.ok(productService.getLimitedDeals());
         }
         
@@ -247,9 +229,6 @@ public class ProductController {
         return ResponseEntity.ok(response);
     }
 
-    /**
-     * Get products that have active deals (simplified - returns ProductDTO)
-     */
     @GetMapping("/products-with-deals")
     public ResponseEntity<?> getProductsWithDeals(
             @RequestParam(required = false, defaultValue = "0") int page,
@@ -258,7 +237,6 @@ public class ProductController {
             @RequestParam(required = false, defaultValue = "asc") String sortDir) {
         
         if (page < 0 || size <= 0) {
-            // Return non-paginated response
             return ResponseEntity.ok(productService.getProductsWithDeals());
         }
         

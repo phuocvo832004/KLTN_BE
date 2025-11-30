@@ -37,7 +37,6 @@ public class CartService {
         Optional<Cart> existingCart = cartRepository.findByUserIdAndStatusWithItems(userId, "ACTIVE");
         if (existingCart.isPresent()) {
             Cart cart = existingCart.get();
-            // Ensure cart items are initialized
             cart.getCartItems().size();
             return convertToDTO(cart);
         }
@@ -95,7 +94,6 @@ public class CartService {
         Long actualCartId = cartItem.getCart().getId();
         cartItemRepository.deleteById(itemId);
         
-        // Return updated cart with remaining items
         Cart cart = cartRepository.findByIdWithItems(actualCartId)
                 .orElseThrow(() -> new RuntimeException("Cart not found"));
         return convertToDTO(cart);
@@ -105,7 +103,6 @@ public class CartService {
     public CartItemDTO updateCartItemQuantity(Long itemId, Integer quantity) {
         CartItem item = cartItemRepository.findById(itemId)
                 .orElseThrow(() -> new RuntimeException("Cart item not found"));
-        // Nếu không có quantity parameter, mặc định tăng lên 1
         if (quantity == null) {
             item.setQuantity(item.getQuantity() + 1);
         } else {
@@ -151,7 +148,6 @@ public class CartService {
         if (productDTO != null) {
             return CartProductDTO.fromProductDTO(productDTO, item.getQuantity(), item.getUnitPrice(), item.getId());
         }
-        // Return a minimal CartProductDTO if product not found
         CartProductDTO dto = new CartProductDTO();
         dto.setCartItemId(item.getId());
         dto.setProductId(item.getProduct().getId());
@@ -167,7 +163,6 @@ public class CartService {
         dto.setStatus(cart.getStatus());
         dto.setCreatedAt(cart.getCreatedAt());
         dto.setUpdatedAt(cart.getUpdatedAt());
-        // Ensure cart items are loaded and convert to DTO
         List<CartItem> items = cart.getCartItems() != null ? cart.getCartItems() : List.of();
         dto.setItems(items.stream()
                 .map(this::convertItemToDTO)

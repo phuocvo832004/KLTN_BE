@@ -16,7 +16,7 @@ public class SeasonCategory {
     private Long id;
 
     @Column(name = "type", nullable = false)
-    private Integer type; // 0 = special offer, 1 = new arrivals, 2, 3 = other types
+    private Integer type;
 
     @Column(name = "product_id", nullable = false, length = 255)
     private String productId;

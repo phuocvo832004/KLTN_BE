@@ -26,7 +26,7 @@ public class Branch {
     private String name;
 
     @Column(name = "code", nullable = false, unique = true, length = 50)
-    private String code; // Mã chi nhánh (ví dụ: CN001, CN002)
+    private String code;
 
     @Column(name = "address", length = 500)
     private String address;

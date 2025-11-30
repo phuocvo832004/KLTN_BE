@@ -18,6 +18,10 @@ public class OrderDTO {
     private BigDecimal totalAmount;
     private String shippingAddress;
     private String paymentMethod;
+    private String paymentLinkId;
+    private String paymentStatus;
+    private String paymentCode;
+    private String checkoutUrl;
     private OffsetDateTime createdAt;
     private OffsetDateTime updatedAt;
     private List<OrderItemDTO> items;
