@@ -394,11 +394,12 @@
 							"variable": [
 								{ "key": "userId", "value": "1" }
 							]
-						}
+						},
+						"description": "Lấy hoặc tạo cart đang active cho user"
 					}
 				},
 				{
-					"name": "2. ADD To Cart",
+					"name": "2. ADD To Cart (Minimal - productId only)",
 					"request": {
 						"method": "POST",
 						"header": [
@@ -406,7 +407,7 @@
 						],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n  \"productId\": \"PROD001\",\n  \"quantity\": 2,\n  \"unitPrice\": 2500000\n}"
+							"raw": "{\n  \"productId\": \"PROD001\"\n}"
 						},
 						"url": {
 							"raw": "{{base_url}}/api/carts/user/:userId/items",
@@ -415,7 +416,30 @@
 							"variable": [
 								{ "key": "userId", "value": "1" }
 							]
-						}
+						},
+						"description": "Thêm sản phẩm vào cart với quantity mặc định = 1. Giá sẽ tự động lấy từ product (ưu tiên sale, không thì price)"
+					}
+				},
+				{
+					"name": "2b. ADD To Cart (With quantity)",
+					"request": {
+						"method": "POST",
+						"header": [
+							{ "key": "Content-Type", "value": "application/json" }
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"productId\": \"PROD001\",\n  \"quantity\": 2\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/api/carts/user/:userId/items",
+							"host": ["{{base_url}}"],
+							"path": ["api", "carts", "user", ":userId", "items"],
+							"variable": [
+								{ "key": "userId", "value": "1" }
+							]
+						},
+						"description": "Thêm sản phẩm vào cart với quantity cụ thể. Nếu sản phẩm đã có trong cart, sẽ cộng thêm quantity. Giá tự động lấy từ product"
 					}
 				},
 				{
@@ -430,11 +454,28 @@
 							"variable": [
 								{ "key": "cartId", "value": "1" }
 							]
-						}
+						},
+						"description": "Lấy danh sách items trong cart kèm thông tin sản phẩm"
 					}
 				},
 				{
-					"name": "4. UPDATE Cart Item Quantity",
+					"name": "4. UPDATE Cart Item Quantity (Default +1)",
+					"request": {
+						"method": "PATCH",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/api/carts/items/:itemId",
+							"host": ["{{base_url}}"],
+							"path": ["api", "carts", "items", ":itemId"],
+							"variable": [
+								{ "key": "itemId", "value": "1" }
+							]
+						},
+						"description": "Cập nhật số lượng cart item - mặc định tăng lên 1 (không cần quantity parameter)"
+					}
+				},
+				{
+					"name": "5. UPDATE Cart Item Quantity (Set Specific)",
 					"request": {
 						"method": "PATCH",
 						"header": [],
@@ -448,11 +489,12 @@
 							"variable": [
 								{ "key": "itemId", "value": "1" }
 							]
-						}
+						},
+						"description": "Cập nhật số lượng cart item với giá trị cụ thể"
 					}
 				},
 				{
-					"name": "5. REMOVE From Cart",
+					"name": "6. REMOVE From Cart",
 					"request": {
 						"method": "DELETE",
 						"header": [],
@@ -463,11 +505,12 @@
 							"variable": [
 								{ "key": "itemId", "value": "1" }
 							]
-						}
+						},
+						"description": "Xóa một item khỏi cart"
 					}
 				},
 				{
-					"name": "6. CLEAR Cart",
+					"name": "7. CLEAR Cart",
 					"request": {
 						"method": "DELETE",
 						"header": [],
@@ -478,11 +521,12 @@
 							"variable": [
 								{ "key": "cartId", "value": "1" }
 							]
-						}
+						},
+						"description": "Xóa tất cả items trong cart"
 					}
 				},
 				{
-					"name": "7. CHECKOUT Cart",
+					"name": "8. CHECKOUT Cart",
 					"request": {
 						"method": "POST",
 						"header": [],
@@ -493,7 +537,8 @@
 							"variable": [
 								{ "key": "cartId", "value": "1" }
 							]
-						}
+						},
+						"description": "Checkout cart - chuyển trạng thái cart sang CHECKED_OUT"
 					}
 				}
 			]

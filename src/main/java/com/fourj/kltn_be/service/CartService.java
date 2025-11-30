@@ -60,18 +60,29 @@ public class CartService {
         Product product = productRepository.findById(request.getProductId())
                 .orElseThrow(() -> new RuntimeException("Product not found"));
         
+        // Lấy giá từ product: ưu tiên sale, không thì price
+        BigDecimal unitPrice = request.getUnitPrice();
+        if (unitPrice == null) {
+            unitPrice = (product.getSale() != null && product.getSale().compareTo(BigDecimal.ZERO) > 0) 
+                    ? product.getSale() 
+                    : product.getPrice();
+        }
+        
+        // Mặc định quantity = 1 nếu không có
+        Integer quantity = request.getQuantity() != null ? request.getQuantity() : 1;
+        
         Optional<CartItem> existingItem = cartItemRepository.findByCartIdAndProductId(cart.getId(), request.getProductId());
         
         CartItem cartItem;
         if (existingItem.isPresent()) {
             cartItem = existingItem.get();
-            cartItem.setQuantity(cartItem.getQuantity() + request.getQuantity());
+            cartItem.setQuantity(cartItem.getQuantity() + quantity);
         } else {
             cartItem = new CartItem();
             cartItem.setCart(cart);
             cartItem.setProduct(product);
-            cartItem.setQuantity(request.getQuantity());
-            cartItem.setUnitPrice(request.getUnitPrice());
+            cartItem.setQuantity(quantity);
+            cartItem.setUnitPrice(unitPrice);
         }
         
         CartItem saved = cartItemRepository.save(cartItem);
@@ -95,7 +106,12 @@ public class CartService {
     public CartItemDTO updateCartItemQuantity(Long itemId, Integer quantity) {
         CartItem item = cartItemRepository.findById(itemId)
                 .orElseThrow(() -> new RuntimeException("Cart item not found"));
-        item.setQuantity(quantity);
+        // Nếu không có quantity parameter, mặc định tăng lên 1
+        if (quantity == null) {
+            item.setQuantity(item.getQuantity() + 1);
+        } else {
+            item.setQuantity(quantity);
+        }
         CartItem saved = cartItemRepository.save(item);
         return convertItemToDTO(saved);
     }
