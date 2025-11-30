@@ -547,7 +547,7 @@
 			"name": "Order APIs",
 			"item": [
 				{
-					"name": "1. CREATE Order",
+					"name": "1. CREATE Order (COD)",
 					"request": {
 						"method": "POST",
 						"header": [
@@ -564,7 +564,30 @@
 							"variable": [
 								{ "key": "userId", "value": "1" }
 							]
-						}
+						},
+						"description": "Tạo order với phương thức thanh toán COD (Cash on Delivery)"
+					}
+				},
+				{
+					"name": "1b. CREATE Order (PAYOS)",
+					"request": {
+						"method": "POST",
+						"header": [
+							{ "key": "Content-Type", "value": "application/json" }
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"shippingAddress\": \"123 Đường ABC, Quận 1, TP.HCM\",\n  \"paymentMethod\": \"PAYOS\",\n  \"items\": [\n    { \"productId\": \"PROD001\", \"quantity\": 2, \"unitPrice\": 2500000 },\n    { \"productId\": \"PROD002\", \"quantity\": 1, \"unitPrice\": 3000000 }\n  ]\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/api/orders/user/:userId",
+							"host": ["{{base_url}}"],
+							"path": ["api", "orders", "user", ":userId"],
+							"variable": [
+								{ "key": "userId", "value": "1" }
+							]
+						},
+						"description": "Tạo order với phương thức thanh toán PayOS. Sau khi tạo order, sử dụng orderId để tạo payment link"
 					}
 				},
 				{
@@ -619,6 +642,81 @@
 								{ "key": "orderId", "value": "1" }
 							]
 						}
+					}
+				}
+			]
+		},
+		{
+			"name": "Payment APIs",
+			"item": [
+				{
+					"name": "1. CREATE Payment Link",
+					"request": {
+						"method": "POST",
+						"header": [
+							{ "key": "Content-Type", "value": "application/json" }
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"orderId\": 1,\n  \"returnUrl\": \"http://localhost:3000/payment/success\",\n  \"cancelUrl\": \"http://localhost:3000/payment/cancel\"\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/api/payments/create-link",
+							"host": ["{{base_url}}"],
+							"path": ["api", "payments", "create-link"]
+						},
+						"description": "Tạo payment link cho order đã có paymentMethod = PAYOS. Response sẽ trả về checkoutUrl để redirect user đến trang thanh toán PayOS"
+					}
+				},
+				{
+					"name": "2. GET Payment Status by Order Code",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/api/payments/status/:orderCode",
+							"host": ["{{base_url}}"],
+							"path": ["api", "payments", "status", ":orderCode"],
+							"variable": [
+								{ "key": "orderCode", "value": "123456" }
+							]
+						},
+						"description": "Lấy trạng thái thanh toán từ PayOS theo orderCode (số từ PayOS, không phải orderId của hệ thống)"
+					}
+				},
+				{
+					"name": "3. GET Payment Status by Order ID",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/api/payments/order/:orderId/status",
+							"host": ["{{base_url}}"],
+							"path": ["api", "payments", "order", ":orderId", "status"],
+							"variable": [
+								{ "key": "orderId", "value": "1" }
+							]
+						},
+						"description": "Lấy trạng thái thanh toán theo orderId của hệ thống. Trả về status: NOT_INITIATED, PENDING, hoặc PAID"
+					}
+				},
+				{
+					"name": "4. Webhook Handler (PayOS → Backend)",
+					"request": {
+						"method": "POST",
+						"header": [
+							{ "key": "Content-Type", "value": "application/json" }
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"code\": \"00\",\n  \"desc\": \"Thành công\",\n  \"data\": {\n    \"orderCode\": \"123456\",\n    \"amount\": 8000000,\n    \"description\": \"Thanh toán đơn hàng #1\",\n    \"accountNumber\": \"970415\",\n    \"reference\": \"REF123456\",\n    \"transactionDateTime\": \"2024-01-15T10:30:00Z\",\n    \"currency\": \"VND\",\n    \"paymentLinkId\": \"abc123xyz\",\n    \"code\": \"00\",\n    \"desc\": \"Thành công\"\n  },\n  \"signature\": \"abc123xyz...\"\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/api/payments/webhook",
+							"host": ["{{base_url}}"],
+							"path": ["api", "payments", "webhook"]
+						},
+						"description": "Webhook endpoint để PayOS gọi khi có thanh toán. Signature sẽ được verify tự động. Chỉ dùng để test, trong production PayOS sẽ tự động gọi endpoint này"
 					}
 				}
 			]

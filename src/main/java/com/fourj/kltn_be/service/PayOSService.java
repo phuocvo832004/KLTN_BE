@@ -20,6 +20,7 @@ import java.security.NoSuchAlgorithmException;
 import java.util.Base64;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.TreeMap;
 
 @Slf4j
 @Service
@@ -137,7 +138,14 @@ public class PayOSService {
 
     private String generateSignature(Map<String, Object> data) {
         try {
-            String jsonString = objectMapper.writeValueAsString(data);
+            // Sắp xếp keys theo thứ tự alphabet để đảm bảo signature nhất quán
+            Map<String, Object> sortedData = new TreeMap<>(data);
+            
+            String jsonString = objectMapper.writeValueAsString(sortedData);
+            
+            // Log để debug (có thể xóa sau)
+            log.debug("JSON string for signature: {}", jsonString);
+            
             Mac hmac = Mac.getInstance("HmacSHA256");
             SecretKeySpec secretKey = new SecretKeySpec(
                     payOSConfig.getChecksumKey().getBytes(StandardCharsets.UTF_8),
