@@ -18,6 +18,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.math.BigDecimal;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -60,7 +61,6 @@ public class CartService {
         Product product = productRepository.findById(request.getProductId())
                 .orElseThrow(() -> new RuntimeException("Product not found"));
         
-        // Lấy giá từ product: ưu tiên sale, không thì price
         BigDecimal unitPrice = request.getUnitPrice();
         if (unitPrice == null) {
             unitPrice = (product.getSale() != null && product.getSale().compareTo(BigDecimal.ZERO) > 0) 
@@ -68,7 +68,6 @@ public class CartService {
                     : product.getPrice();
         }
         
-        // Mặc định quantity = 1 nếu không có
         Integer quantity = request.getQuantity() != null ? request.getQuantity() : 1;
         
         Optional<CartItem> existingItem = cartItemRepository.findByCartIdAndProductId(cart.getId(), request.getProductId());
