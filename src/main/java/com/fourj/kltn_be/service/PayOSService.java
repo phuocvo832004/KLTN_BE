@@ -1,6 +1,5 @@
 package com.fourj.kltn_be.service;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fourj.kltn_be.config.PayOSConfig;
 import com.fourj.kltn_be.dto.PaymentLinkRequest;
 import com.fourj.kltn_be.dto.PaymentLinkResponse;
@@ -27,11 +26,9 @@ import java.util.TreeMap;
 public class PayOSService {
     private final WebClient webClient;
     private final String checksumKey;
-    private final ObjectMapper objectMapper;
 
     public PayOSService(PayOSConfig payOSConfig) {
         this.checksumKey = payOSConfig.getChecksumKey();
-        this.objectMapper = new ObjectMapper();
         this.webClient = WebClient.builder()
                 .baseUrl(payOSConfig.getBaseUrl())
                 .defaultHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON_VALUE)
@@ -46,6 +43,8 @@ public class PayOSService {
             payload.put("orderCode", request.getOrderId().intValue());
             payload.put("amount", request.getAmount().intValue());
             payload.put("description", request.getDescription());
+            payload.put("returnUrl", request.getReturnUrl());
+            payload.put("cancelUrl", request.getCancelUrl());
             
             if (request.getItems() != null && !request.getItems().isEmpty()) {
                 List<Map<String, Object>> items = new ArrayList<>();
@@ -58,11 +57,15 @@ public class PayOSService {
                 }
                 payload.put("items", items);
             }
-            
-            payload.put("returnUrl", request.getReturnUrl());
-            payload.put("cancelUrl", request.getCancelUrl());
 
-            String signature = generateSignature(payload);
+            Map<String, Object> signatureData = new TreeMap<>();
+            signatureData.put("amount", request.getAmount().intValue());
+            signatureData.put("cancelUrl", request.getCancelUrl());
+            signatureData.put("description", request.getDescription());
+            signatureData.put("orderCode", request.getOrderId().intValue());
+            signatureData.put("returnUrl", request.getReturnUrl());
+
+            String signature = generateSignature(signatureData);
             payload.put("signature", signature);
 
             PaymentLinkResponse response = webClient.post()
@@ -148,14 +151,21 @@ public class PayOSService {
 
     private String generateSignature(Map<String, Object> data) {
         try {
-            String jsonString = objectMapper.writeValueAsString(data);
+            StringBuilder rawData = new StringBuilder();
+            for (Map.Entry<String, Object> entry : data.entrySet()) {
+                if (rawData.length() > 0) {
+                    rawData.append("&");
+                }
+                rawData.append(entry.getKey()).append("=").append(entry.getValue());
+            }
+
             Mac hmac = Mac.getInstance("HmacSHA256");
             SecretKeySpec secretKey = new SecretKeySpec(
                     checksumKey.getBytes(StandardCharsets.UTF_8),
                     "HmacSHA256"
             );
             hmac.init(secretKey);
-            byte[] hash = hmac.doFinal(jsonString.getBytes(StandardCharsets.UTF_8));
+            byte[] hash = hmac.doFinal(rawData.toString().getBytes(StandardCharsets.UTF_8));
             return Base64.getEncoder().encodeToString(hash);
         } catch (Exception e) {
             log.error("Error generating signature", e);
