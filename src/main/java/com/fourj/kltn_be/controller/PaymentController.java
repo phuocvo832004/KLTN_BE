@@ -26,9 +26,20 @@ public class PaymentController {
             OrderDTO order = orderService.getOrderById(request.getOrderId())
                     .orElseThrow(() -> new RuntimeException("Order not found"));
 
-            if (!"PAYOS".equalsIgnoreCase(order.getPaymentMethod())) {
-                return ResponseEntity.badRequest()
-                        .body(Map.of("error", "Payment method is not PayOS"));
+            String paymentMethod = order.getPaymentMethod();
+            if (paymentMethod == null || paymentMethod.trim().isEmpty()) {
+                Map<String, Object> errorResponse = new HashMap<>();
+                errorResponse.put("error", "Payment method is not set for this order");
+                errorResponse.put("orderId", order.getId());
+                return ResponseEntity.badRequest().body(errorResponse);
+            }
+
+            if (!"PAYOS".equalsIgnoreCase(paymentMethod.trim())) {
+                Map<String, Object> errorResponse = new HashMap<>();
+                errorResponse.put("error", "Payment method is not PayOS");
+                errorResponse.put("currentPaymentMethod", paymentMethod);
+                errorResponse.put("orderId", order.getId());
+                return ResponseEntity.badRequest().body(errorResponse);
             }
 
             PaymentLinkRequest payOSRequest = new PaymentLinkRequest(
