@@ -6,10 +6,12 @@ import com.fourj.kltn_be.dto.PaymentLinkResponse;
 import com.fourj.kltn_be.dto.PaymentStatusResponse;
 import com.fourj.kltn_be.dto.PaymentWebhookPayload;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Service;
 import org.springframework.web.reactive.function.client.WebClient;
+import com.fasterxml.jackson.databind.ObjectMapper;
 
 import javax.crypto.Mac;
 import javax.crypto.spec.SecretKeySpec;
@@ -26,8 +28,10 @@ import java.util.TreeMap;
 public class PayOSService {
     private final WebClient webClient;
     private final String checksumKey;
+    private final ObjectMapper objectMapper;
 
-    public PayOSService(PayOSConfig payOSConfig) {
+    @Autowired
+    public PayOSService(PayOSConfig payOSConfig, ObjectMapper objectMapper) {
         this.checksumKey = payOSConfig.getChecksumKey();
         this.webClient = WebClient.builder()
                 .baseUrl(payOSConfig.getBaseUrl())
@@ -35,6 +39,7 @@ public class PayOSService {
                 .defaultHeader("x-client-id", payOSConfig.getClientId())
                 .defaultHeader("x-api-key", payOSConfig.getApiKey())
                 .build();
+        this.objectMapper = objectMapper;
     }
 
     public PaymentLinkResponse createPaymentLink(PaymentLinkRequest request) {
@@ -45,11 +50,12 @@ public class PayOSService {
             payload.put("description", request.getDescription());
             payload.put("returnUrl", request.getReturnUrl());
             payload.put("cancelUrl", request.getCancelUrl());
-            
+
+            List<Map<String, Object>> items = null;
             if (request.getItems() != null && !request.getItems().isEmpty()) {
-                List<Map<String, Object>> items = new ArrayList<>();
+                items = new ArrayList<>();
                 for (PaymentLinkRequest.PaymentItem item : request.getItems()) {
-                    Map<String, Object> itemMap = new HashMap<>();
+                    Map<String, Object> itemMap = new TreeMap<>();  // Use TreeMap for sorted keys in each item
                     itemMap.put("name", item.getName());
                     itemMap.put("quantity", item.getQuantity());
                     itemMap.put("price", item.getPrice().intValue());
@@ -64,6 +70,12 @@ public class PayOSService {
             signatureData.put("description", request.getDescription());
             signatureData.put("orderCode", request.getOrderId().intValue());
             signatureData.put("returnUrl", request.getReturnUrl());
+
+            if (items != null) {
+                // Serialize items to JSON string (Jackson will handle sorting within objects since we used TreeMap)
+                String itemsJson = objectMapper.writeValueAsString(items);
+                signatureData.put("items", itemsJson);
+            }
 
             String signature = generateSignature(signatureData);
             payload.put("signature", signature);
