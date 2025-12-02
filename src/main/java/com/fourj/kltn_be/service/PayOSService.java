@@ -56,7 +56,7 @@ public class PayOSService {
             if (request.getItems() != null && !request.getItems().isEmpty()) {
                 items = new ArrayList<>();
                 for (PaymentLinkRequest.PaymentItem item : request.getItems()) {
-                    Map<String, Object> itemMap = new TreeMap<>();  // Use TreeMap for sorted keys in each item
+                    Map<String, Object> itemMap = new TreeMap<>();
                     itemMap.put("name", item.getName());
                     itemMap.put("quantity", item.getQuantity());
                     itemMap.put("price", item.getPrice().intValue());
@@ -72,8 +72,7 @@ public class PayOSService {
             signatureData.put("orderCode", request.getOrderId().intValue());
             signatureData.put("returnUrl", request.getReturnUrl());
 
-            if (items != null) {
-                // Serialize items to JSON string (Jackson will handle sorting within objects since we used TreeMap)
+            if (items != null && !items.isEmpty()) {
                 String itemsJson = objectMapper.writeValueAsString(items);
                 signatureData.put("items", itemsJson);
             }
@@ -83,6 +82,10 @@ public class PayOSService {
 
             log.debug("Payment link request - orderCode: {}, amount: {}, signature: {}", 
                     request.getOrderId(), request.getAmount(), signature);
+            log.debug("Signature data map: {}", signatureData);
+            if (items != null && !items.isEmpty()) {
+                log.debug("Items JSON for signature: {}", objectMapper.writeValueAsString(items));
+            }
 
             PaymentLinkResponse response = webClient.post()
                     .uri("/v2/payment-requests")
@@ -172,9 +175,21 @@ public class PayOSService {
                 if (rawData.length() > 0) {
                     rawData.append("&");
                 }
-                String value = entry.getValue() != null ? entry.getValue().toString() : "";
-                // URL encode the value according to PayOS documentation
-                rawData.append(entry.getKey()).append("=").append(URLEncoder.encode(value, StandardCharsets.UTF_8));
+                String value;
+                if (entry.getValue() == null) {
+                    value = "";
+                } else {
+                    value = entry.getValue().toString();
+                }
+                String encodedValue = URLEncoder.encode(value, StandardCharsets.UTF_8);
+                rawData.append(entry.getKey()).append("=").append(encodedValue);
+            }
+
+            String rawDataString = rawData.toString();
+            log.debug("Raw data for signature: {}", rawDataString);
+
+            if (checksumKey == null || checksumKey.trim().isEmpty()) {
+                throw new RuntimeException("Checksum key is not configured");
             }
 
             Mac hmac = Mac.getInstance("HmacSHA256");
@@ -183,8 +198,11 @@ public class PayOSService {
                     "HmacSHA256"
             );
             hmac.init(secretKey);
-            byte[] hash = hmac.doFinal(rawData.toString().getBytes(StandardCharsets.UTF_8));
-            return Base64.getEncoder().encodeToString(hash);
+            byte[] hash = hmac.doFinal(rawDataString.getBytes(StandardCharsets.UTF_8));
+            String signature = Base64.getEncoder().encodeToString(hash);
+            
+            log.debug("Generated signature: {}", signature);
+            return signature;
         } catch (Exception e) {
             log.error("Error generating signature", e);
             throw new RuntimeException("Failed to generate signature", e);
