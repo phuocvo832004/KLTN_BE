@@ -81,6 +81,7 @@ public class CartService {
             cartItem.setProduct(product);
             cartItem.setQuantity(quantity);
             cartItem.setUnitPrice(unitPrice);
+            cart.getCartItems().add(cartItem);
         }
         
         CartItem saved = cartItemRepository.save(cartItem);
@@ -92,17 +93,34 @@ public class CartService {
         CartItem cartItem = cartItemRepository.findById(itemId)
                 .orElseThrow(() -> new RuntimeException("Cart item not found"));
         Long actualCartId = cartItem.getCart().getId();
-        cartItemRepository.deleteById(itemId);
+        
+        if (cartId != null && !cartId.equals(actualCartId)) {
+            throw new RuntimeException("Cart item does not belong to the specified cart");
+        }
         
         Cart cart = cartRepository.findByIdWithItems(actualCartId)
                 .orElseThrow(() -> new RuntimeException("Cart not found"));
-        return convertToDTO(cart);
+        
+        if (cart.getCartItems() != null) {
+            cart.getCartItems().remove(cartItem);
+        }
+        cartItemRepository.deleteById(itemId);
+        
+        Cart updatedCart = cartRepository.findByIdWithItems(actualCartId)
+                .orElseThrow(() -> new RuntimeException("Cart not found"));
+        return convertToDTO(updatedCart);
     }
 
     @Transactional
-    public CartItemDTO updateCartItemQuantity(Long itemId, Integer quantity) {
+    public CartItemDTO updateCartItemQuantity(Long cartId, Long itemId, Integer quantity) {
         CartItem item = cartItemRepository.findById(itemId)
                 .orElseThrow(() -> new RuntimeException("Cart item not found"));
+        
+        Long actualCartId = item.getCart().getId();
+        if (cartId != null && !cartId.equals(actualCartId)) {
+            throw new RuntimeException("Cart item does not belong to the specified cart");
+        }
+        
         if (quantity == null) {
             item.setQuantity(item.getQuantity() + 1);
         } else {
@@ -114,10 +132,17 @@ public class CartService {
 
     @Transactional
     public CartDTO clearCart(Long cartId) {
-        cartItemRepository.deleteByCartId(cartId);
         Cart cart = cartRepository.findByIdWithItems(cartId)
                 .orElseThrow(() -> new RuntimeException("Cart not found"));
-        return convertToDTO(cart);
+        
+        if (cart.getCartItems() != null) {
+            cart.getCartItems().clear();
+        }
+        cartItemRepository.deleteByCartId(cartId);
+        
+        Cart clearedCart = cartRepository.findByIdWithItems(cartId)
+                .orElseThrow(() -> new RuntimeException("Cart not found"));
+        return convertToDTO(clearedCart);
     }
 
     @Transactional
@@ -181,4 +206,5 @@ public class CartService {
         return dto;
     }
 }
+
 

@@ -40,20 +40,20 @@ public class CartController {
         return ResponseEntity.ok(cartService.getCartItemsWithProducts(cartId));
     }
 
-    @PatchMapping("/items/{itemId}")
-    public ResponseEntity<CartItemDTO> updateCartItemQuantity(@PathVariable Long itemId, @RequestParam(required = false) Integer quantity) {
+    @PatchMapping("/{cartId}/items/{itemId}")
+    public ResponseEntity<CartItemDTO> updateCartItemQuantity(@PathVariable Long cartId, @PathVariable Long itemId, @RequestParam(required = false) Integer quantity) {
         try {
-            CartItemDTO updatedItem = cartService.updateCartItemQuantity(itemId, quantity);
+            CartItemDTO updatedItem = cartService.updateCartItemQuantity(cartId, itemId, quantity);
             return ResponseEntity.ok(updatedItem);
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
         }
     }
 
-    @DeleteMapping("/items/{itemId}")
-    public ResponseEntity<CartDTO> removeFromCart(@PathVariable Long itemId) {
+    @DeleteMapping("/{cartId}/items/{itemId}")
+    public ResponseEntity<CartDTO> removeFromCart(@PathVariable Long cartId, @PathVariable Long itemId) {
         try {
-            CartDTO updatedCart = cartService.removeFromCart(null, itemId);
+            CartDTO updatedCart = cartService.removeFromCart(cartId, itemId);
             return ResponseEntity.ok(updatedCart);
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
