@@ -168,16 +168,18 @@
 						"method": "GET",
 						"header": [],
 						"url": {
-							"raw": "{{base_url}}/api/products/popular?page=0&size=24&sortBy=averageRating&sortDir=desc",
+							"raw": "{{base_url}}/api/products/popular?minRating=4.0&page=0&size=24&sortBy=averageRating&sortDir=desc",
 							"host": ["{{base_url}}"],
 							"path": ["api", "products", "popular"],
 							"query": [
+								{ "key": "minRating", "value": "4.0", "description": "Minimum rating filter (optional)" },
 								{ "key": "page", "value": "0" },
 								{ "key": "size", "value": "24" },
 								{ "key": "sortBy", "value": "averageRating" },
 								{ "key": "sortDir", "value": "desc" }
 							]
-						}
+						},
+						"description": "Lấy danh sách sản phẩm phổ biến với rating cao. Có thể filter theo minRating (tùy chọn)"
 					}
 				},
 				{
@@ -779,73 +781,12 @@
 					}
 				}
 			]
-		},
-		{
-			"name": "Chatbot APIs",
-			"item": [
-				{
-					"name": "1. POST Chat with Bot (Python API)",
-					"request": {
-						"method": "POST",
-						"header": [
-							{ "key": "Content-Type", "value": "application/json" }
-						],
-						"body": {
-							"mode": "raw",
-							"raw": "{\n  \"user_id\": \"1\",\n  \"message\": \"Tôi muốn tìm giày Nike giá khoảng 2 triệu\",\n  \"k\": 20\n}"
-						},
-						"url": {
-							"raw": "{{chatbot_base_url}}/chat",
-							"host": ["{{chatbot_base_url}}"],
-							"path": ["chat"]
-						}
-					}
-				},
-				{
-					"name": "2. GET User Chat Messages",
-					"request": {
-						"method": "GET",
-						"header": [],
-						"url": {
-							"raw": "{{base_url}}/api/chat-messages/user/:userId",
-							"host": ["{{base_url}}"],
-							"path": ["api", "chat-messages", "user", ":userId"],
-							"variable": [
-								{ "key": "userId", "value": "1" }
-							]
-						}
-					}
-				},
-				{
-					"name": "3. CREATE Chat Message",
-					"request": {
-						"method": "POST",
-						"header": [
-							{ "key": "Content-Type", "value": "application/json" }
-						],
-						"body": {
-							"mode": "raw",
-							"raw": "{\n  \"userId\": 1,\n  \"message\": \"Tôi muốn tìm giày Nike\",\n  \"response\": \"Tôi tìm thấy các sản phẩm Nike cho bạn\",\n  \"productIds\": \"[\\\"PROD001\\\", \\\"PROD002\\\"]\",\n  \"intent\": \"search_product\",\n  \"context\": \"{\\\"category\\\": \\\"sneakers\\\"}\"\n}"
-						},
-						"url": {
-							"raw": "{{base_url}}/api/chat-messages",
-							"host": ["{{base_url}}"],
-							"path": ["api", "chat-messages"]
-						}
-					}
-				}
-			]
 		}
 	],
 	"variable": [
 		{
 			"key": "base_url",
 			"value": "http://localhost:8080",
-			"type": "string"
-		},
-		{
-			"key": "chatbot_base_url",
-			"value": "http://localhost:8000",
 			"type": "string"
 		}
 	]

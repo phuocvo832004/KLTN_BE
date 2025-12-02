@@ -15,6 +15,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 
 import javax.crypto.Mac;
 import javax.crypto.spec.SecretKeySpec;
+import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.Base64;
@@ -79,6 +80,9 @@ public class PayOSService {
 
             String signature = generateSignature(signatureData);
             payload.put("signature", signature);
+
+            log.debug("Payment link request - orderCode: {}, amount: {}, signature: {}", 
+                    request.getOrderId(), request.getAmount(), signature);
 
             PaymentLinkResponse response = webClient.post()
                     .uri("/v2/payment-requests")
@@ -168,7 +172,9 @@ public class PayOSService {
                 if (rawData.length() > 0) {
                     rawData.append("&");
                 }
-                rawData.append(entry.getKey()).append("=").append(entry.getValue());
+                String value = entry.getValue() != null ? entry.getValue().toString() : "";
+                // URL encode the value according to PayOS documentation
+                rawData.append(entry.getKey()).append("=").append(URLEncoder.encode(value, StandardCharsets.UTF_8));
             }
 
             Mac hmac = Mac.getInstance("HmacSHA256");
