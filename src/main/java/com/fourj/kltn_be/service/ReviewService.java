@@ -64,6 +64,14 @@ public class ReviewService {
         return convertToDTO(saved);
     }
 
+    public void validateReviewOwnership(Integer reviewId, String userId) {
+        Review review = reviewRepository.findById(reviewId)
+                .orElseThrow(() -> new RuntimeException("Review not found"));
+        if (!review.getUserId().equals(userId)) {
+            throw new RuntimeException("Review does not belong to user");
+        }
+    }
+
     @Transactional
     public void deleteReview(Integer reviewId) {
         Review review = reviewRepository.findById(reviewId)

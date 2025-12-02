@@ -41,7 +41,7 @@ public class CartService {
             return convertToDTO(cart);
         }
         
-        User user = userRepository.findById(userId)
+        User user = userRepository.findByUserId(userId)
                 .orElseThrow(() -> new RuntimeException("User not found"));
         
         Cart cart = new Cart();
@@ -166,6 +166,14 @@ public class CartService {
                 .map(this::convertToCartProductDTO)
                 .collect(Collectors.toList());
         return CartItemsResponseDTO.of(products);
+    }
+
+    public void validateCartOwnership(Long cartId, Long userId) {
+        Cart cart = cartRepository.findById(cartId)
+                .orElseThrow(() -> new RuntimeException("Cart not found"));
+        if (!cart.getUser().getUserId().equals(userId)) {
+            throw new RuntimeException("Cart does not belong to user");
+        }
     }
 
     private CartProductDTO convertToCartProductDTO(CartItem item) {

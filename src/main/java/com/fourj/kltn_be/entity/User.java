@@ -37,6 +37,10 @@ public class User {
 
     @Column(name = "email", length = 255)
     private String email;
+
+    @Column(name = "password", length = 255)
+    private String password;
+
     @Column(name = "id", insertable = false, updatable = false)
     private Long id;
 

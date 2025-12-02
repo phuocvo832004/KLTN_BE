@@ -5,6 +5,7 @@ import com.fourj.kltn_be.dto.CartDTO;
 import com.fourj.kltn_be.dto.CartItemDTO;
 import com.fourj.kltn_be.dto.CartItemsResponseDTO;
 import com.fourj.kltn_be.service.CartService;
+import com.fourj.kltn_be.util.SecurityUtil;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -17,18 +18,20 @@ import org.springframework.web.bind.annotation.*;
 public class CartController {
     private final CartService cartService;
 
-    @GetMapping("/user/{userId}")
-    public ResponseEntity<CartDTO> getActiveCart(@PathVariable Long userId) {
+    @GetMapping
+    public ResponseEntity<CartDTO> getActiveCart() {
         try {
+            Long userId = SecurityUtil.getCurrentUserId();
             return ResponseEntity.ok(cartService.getOrCreateActiveCart(userId));
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
         }
     }
 
-    @PostMapping("/user/{userId}/items")
-    public ResponseEntity<CartItemDTO> addToCart(@PathVariable Long userId, @RequestBody AddToCartRequest request) {
+    @PostMapping("/items")
+    public ResponseEntity<CartItemDTO> addToCart(@RequestBody AddToCartRequest request) {
         try {
+            Long userId = SecurityUtil.getCurrentUserId();
             return ResponseEntity.ok(cartService.addToCart(userId, request));
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
@@ -37,12 +40,20 @@ public class CartController {
 
     @GetMapping("/{cartId}/items")
     public ResponseEntity<CartItemsResponseDTO> getCartItems(@PathVariable Long cartId) {
-        return ResponseEntity.ok(cartService.getCartItemsWithProducts(cartId));
+        try {
+            Long userId = SecurityUtil.getCurrentUserId();
+            cartService.validateCartOwnership(cartId, userId);
+            return ResponseEntity.ok(cartService.getCartItemsWithProducts(cartId));
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
+        }
     }
 
     @PatchMapping("/{cartId}/items/{itemId}")
     public ResponseEntity<CartItemDTO> updateCartItemQuantity(@PathVariable Long cartId, @PathVariable Long itemId, @RequestParam(required = false) Integer quantity) {
         try {
+            Long userId = SecurityUtil.getCurrentUserId();
+            cartService.validateCartOwnership(cartId, userId);
             CartItemDTO updatedItem = cartService.updateCartItemQuantity(cartId, itemId, quantity);
             return ResponseEntity.ok(updatedItem);
         } catch (Exception e) {
@@ -53,6 +64,8 @@ public class CartController {
     @DeleteMapping("/{cartId}/items/{itemId}")
     public ResponseEntity<CartDTO> removeFromCart(@PathVariable Long cartId, @PathVariable Long itemId) {
         try {
+            Long userId = SecurityUtil.getCurrentUserId();
+            cartService.validateCartOwnership(cartId, userId);
             CartDTO updatedCart = cartService.removeFromCart(cartId, itemId);
             return ResponseEntity.ok(updatedCart);
         } catch (Exception e) {
@@ -63,6 +76,8 @@ public class CartController {
     @DeleteMapping("/{cartId}/items")
     public ResponseEntity<CartDTO> clearCart(@PathVariable Long cartId) {
         try {
+            Long userId = SecurityUtil.getCurrentUserId();
+            cartService.validateCartOwnership(cartId, userId);
             CartDTO clearedCart = cartService.clearCart(cartId);
             return ResponseEntity.ok(clearedCart);
         } catch (Exception e) {
@@ -73,6 +88,8 @@ public class CartController {
     @PostMapping("/{cartId}/checkout")
     public ResponseEntity<CartDTO> checkoutCart(@PathVariable Long cartId) {
         try {
+            Long userId = SecurityUtil.getCurrentUserId();
+            cartService.validateCartOwnership(cartId, userId);
             CartDTO checkedOutCart = cartService.checkoutCart(cartId);
             return ResponseEntity.ok(checkedOutCart);
         } catch (Exception e) {

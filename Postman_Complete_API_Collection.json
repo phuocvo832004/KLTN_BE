@@ -6,6 +6,47 @@
 	},
 	"item": [
 		{
+			"name": "Auth APIs",
+			"item": [
+				{
+					"name": "1. Register",
+					"request": {
+						"method": "POST",
+						"header": [
+							{ "key": "Content-Type", "value": "application/json" }
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"username\": \"testuser\",\n  \"email\": \"testuser@example.com\",\n  \"password\": \"password123\",\n  \"preferences\": \"{\\\"theme\\\": \\\"dark\\\"}\"\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/api/auth/register",
+							"host": ["{{base_url}}"],
+							"path": ["api", "auth", "register"]
+						}
+					}
+				},
+				{
+					"name": "2. Login",
+					"request": {
+						"method": "POST",
+						"header": [
+							{ "key": "Content-Type", "value": "application/json" }
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"username\": \"testuser\",\n  \"password\": \"password123\"\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/api/auth/login",
+							"host": ["{{base_url}}"],
+							"path": ["api", "auth", "login"]
+						}
+					}
+				}
+			]
+		},
+		{
 			"name": "Product APIs",
 			"item": [
 				{
@@ -142,28 +183,7 @@
 					}
 				},
 				{
-					"name": "8. GET Products By Season Type",
-					"request": {
-						"method": "GET",
-						"header": [],
-						"url": {
-							"raw": "{{base_url}}/api/products/season/:type?page=0&size=24&sortBy=id&sortDir=asc",
-							"host": ["{{base_url}}"],
-							"path": ["api", "products", "season", ":type"],
-							"query": [
-								{ "key": "page", "value": "0" },
-								{ "key": "size", "value": "24" },
-								{ "key": "sortBy", "value": "id" },
-								{ "key": "sortDir", "value": "asc" }
-							],
-							"variable": [
-								{ "key": "type", "value": "0" }
-							]
-						}
-					}
-				},
-				{
-					"name": "9. GET Popular Products",
+					"name": "8. GET Popular Products",
 					"request": {
 						"method": "GET",
 						"header": [],
@@ -172,18 +192,17 @@
 							"host": ["{{base_url}}"],
 							"path": ["api", "products", "popular"],
 							"query": [
-								{ "key": "minRating", "value": "4.0", "description": "Minimum rating filter (optional)" },
+								{ "key": "minRating", "value": "4.0" },
 								{ "key": "page", "value": "0" },
 								{ "key": "size", "value": "24" },
 								{ "key": "sortBy", "value": "averageRating" },
 								{ "key": "sortDir", "value": "desc" }
 							]
-						},
-						"description": "Lấy danh sách sản phẩm phổ biến với rating cao. Có thể filter theo minRating (tùy chọn)"
+						}
 					}
 				},
 				{
-					"name": "10. GET Limited Deals",
+					"name": "9. GET Limited Deals",
 					"request": {
 						"method": "GET",
 						"header": [],
@@ -199,78 +218,6 @@
 							]
 						}
 					}
-				},
-				{
-					"name": "11. GET Products With Deals",
-					"request": {
-						"method": "GET",
-						"header": [],
-						"url": {
-							"raw": "{{base_url}}/api/products/products-with-deals?page=0&size=24&sortBy=id&sortDir=asc",
-							"host": ["{{base_url}}"],
-							"path": ["api", "products", "products-with-deals"],
-							"query": [
-								{ "key": "page", "value": "0" },
-								{ "key": "size", "value": "24" },
-								{ "key": "sortBy", "value": "id" },
-								{ "key": "sortDir", "value": "asc" }
-							]
-						}
-					}
-				},
-				{
-					"name": "12. CREATE Product",
-					"request": {
-						"method": "POST",
-						"header": [
-							{ "key": "Content-Type", "value": "application/json" }
-						],
-						"body": {
-							"mode": "raw",
-							"raw": "{\n  \"id\": \"PROD_NEW_001\",\n  \"title\": \"Nike Air Max 90\",\n  \"description\": \"Classic sneaker với thiết kế retro\",\n  \"price\": 2500000,\n  \"sale\": 2000000,\n  \"imurl\": \"https://example.com/nike-air-max-90.jpg\",\n  \"imgUrl\": \"https://example.com/nike-air-max-90.jpg\",\n  \"categories\": [\"sneakers\", \"nike\"],\n  \"specs\": \"{\\\"size\\\": \\\"42\\\", \\\"color\\\": \\\"black\\\"}\",\n  \"categoryList\": [\"sneakers\", \"nike\"],\n  \"specList\": [\n    { \"specKey\": \"Size\", \"specValue\": \"42\" },\n    { \"specKey\": \"Color\", \"specValue\": \"Black\" }\n  ]\n}"
-						},
-						"url": {
-							"raw": "{{base_url}}/api/products",
-							"host": ["{{base_url}}"],
-							"path": ["api", "products"]
-						}
-					}
-				},
-				{
-					"name": "13. UPDATE Product",
-					"request": {
-						"method": "PUT",
-						"header": [
-							{ "key": "Content-Type", "value": "application/json" }
-						],
-						"body": {
-							"mode": "raw",
-							"raw": "{\n  \"title\": \"Nike Air Max 90 Updated\",\n  \"description\": \"Classic sneaker với thiết kế retro - Updated\",\n  \"price\": 2600000,\n  \"sale\": 2080000,\n  \"imurl\": \"https://example.com/nike-air-max-90-updated.jpg\",\n  \"imgUrl\": \"https://example.com/nike-air-max-90-updated.jpg\",\n  \"categories\": [\"sneakers\", \"nike\"],\n  \"specs\": \"{\\\"size\\\": \\\"42\\\", \\\"color\\\": \\\"black\\\"}\",\n  \"categoryList\": [\"sneakers\", \"nike\"],\n  \"specList\": [\n    { \"specKey\": \"Size\", \"specValue\": \"42\" },\n    { \"specKey\": \"Color\", \"specValue\": \"Black\" }\n  ]\n}"
-						},
-						"url": {
-							"raw": "{{base_url}}/api/products/:id",
-							"host": ["{{base_url}}"],
-							"path": ["api", "products", ":id"],
-							"variable": [
-								{ "key": "id", "value": "PROD_NEW_001" }
-							]
-						}
-					}
-				},
-				{
-					"name": "14. DELETE Product",
-					"request": {
-						"method": "DELETE",
-						"header": [],
-						"url": {
-							"raw": "{{base_url}}/api/products/:id",
-							"host": ["{{base_url}}"],
-							"path": ["api", "products", ":id"],
-							"variable": [
-								{ "key": "id", "value": "PROD_NEW_001" }
-							]
-						}
-					}
 				}
 			]
 		},
@@ -278,104 +225,35 @@
 			"name": "User APIs",
 			"item": [
 				{
-					"name": "1. GET All Users",
+					"name": "1. GET Current User",
 					"request": {
 						"method": "GET",
-						"header": [],
-						"url": {
-							"raw": "{{base_url}}/api/users?page=0&size=24&sortBy=userId&sortDir=asc",
-							"host": ["{{base_url}}"],
-							"path": ["api", "users"],
-							"query": [
-								{ "key": "page", "value": "0" },
-								{ "key": "size", "value": "24" },
-								{ "key": "sortBy", "value": "userId" },
-								{ "key": "sortDir", "value": "asc" }
-							]
-						}
-					}
-				},
-				{
-					"name": "2. GET User By ID",
-					"request": {
-						"method": "GET",
-						"header": [],
-						"url": {
-							"raw": "{{base_url}}/api/users/:userId",
-							"host": ["{{base_url}}"],
-							"path": ["api", "users", ":userId"],
-							"variable": [
-								{ "key": "userId", "value": "1" }
-							]
-						}
-					}
-				},
-				{
-					"name": "3. GET User By Username",
-					"request": {
-						"method": "GET",
-						"header": [],
-						"url": {
-							"raw": "{{base_url}}/api/users/username/:username",
-							"host": ["{{base_url}}"],
-							"path": ["api", "users", "username", ":username"],
-							"variable": [
-								{ "key": "username", "value": "testuser" }
-							]
-						}
-					}
-				},
-				{
-					"name": "4. CREATE User",
-					"request": {
-						"method": "POST",
 						"header": [
-							{ "key": "Content-Type", "value": "application/json" }
+							{ "key": "Authorization", "value": "Bearer {{access_token}}" }
 						],
-						"body": {
-							"mode": "raw",
-							"raw": "{\n  \"username\": \"newuser\",\n  \"email\": \"newuser@example.com\",\n  \"preferences\": \"{\\\"theme\\\": \\\"dark\\\"}\"\n}"
-						},
 						"url": {
-							"raw": "{{base_url}}/api/users",
+							"raw": "{{base_url}}/api/users/me",
 							"host": ["{{base_url}}"],
-							"path": ["api", "users"]
+							"path": ["api", "users", "me"]
 						}
 					}
 				},
 				{
-					"name": "5. UPDATE User",
+					"name": "2. UPDATE Current User",
 					"request": {
 						"method": "PUT",
 						"header": [
+							{ "key": "Authorization", "value": "Bearer {{access_token}}" },
 							{ "key": "Content-Type", "value": "application/json" }
 						],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n  \"username\": \"updateduser\",\n  \"email\": \"updateduser@example.com\",\n  \"preferences\": \"{\\\"theme\\\": \\\"light\\\"}\"\n}"
+							"raw": "{\n  \"email\": \"updateduser@example.com\",\n  \"preferences\": \"{\\\"theme\\\": \\\"light\\\"}\"\n}"
 						},
 						"url": {
-							"raw": "{{base_url}}/api/users/:userId",
+							"raw": "{{base_url}}/api/users/me",
 							"host": ["{{base_url}}"],
-							"path": ["api", "users", ":userId"],
-							"variable": [
-								{ "key": "userId", "value": "1" }
-							]
-						}
-					}
-				},
-				{
-					"name": "6. DELETE User",
-					"request": {
-						"method": "DELETE",
-						"header": [],
-						"url": {
-							"raw": "{{base_url}}/api/users/:userId",
-							"host": ["{{base_url}}"],
-							"path": ["api", "users", ":userId"],
-							"variable": [
-								{ "key": "userId", "value": "1" }
-							]
+							"path": ["api", "users", "me"]
 						}
 					}
 				}
@@ -388,45 +266,22 @@
 					"name": "1. GET Active Cart",
 					"request": {
 						"method": "GET",
-						"header": [],
-						"url": {
-							"raw": "{{base_url}}/api/carts/user/:userId",
-							"host": ["{{base_url}}"],
-							"path": ["api", "carts", "user", ":userId"],
-							"variable": [
-								{ "key": "userId", "value": "1" }
-							]
-						},
-						"description": "Lấy hoặc tạo cart đang active cho user"
-					}
-				},
-				{
-					"name": "2. ADD To Cart (Minimal - productId only)",
-					"request": {
-						"method": "POST",
 						"header": [
-							{ "key": "Content-Type", "value": "application/json" }
+							{ "key": "Authorization", "value": "Bearer {{access_token}}" }
 						],
-						"body": {
-							"mode": "raw",
-							"raw": "{\n  \"productId\": \"PROD001\"\n}"
-						},
 						"url": {
-							"raw": "{{base_url}}/api/carts/user/:userId/items",
+							"raw": "{{base_url}}/api/carts",
 							"host": ["{{base_url}}"],
-							"path": ["api", "carts", "user", ":userId", "items"],
-							"variable": [
-								{ "key": "userId", "value": "1" }
-							]
-						},
-						"description": "Thêm sản phẩm vào cart với quantity mặc định = 1. Giá sẽ tự động lấy từ product (ưu tiên sale, không thì price)"
+							"path": ["api", "carts"]
+						}
 					}
 				},
 				{
-					"name": "3. ADD To Cart (With quantity)",
+					"name": "2. ADD To Cart",
 					"request": {
 						"method": "POST",
 						"header": [
+							{ "key": "Authorization", "value": "Bearer {{access_token}}" },
 							{ "key": "Content-Type", "value": "application/json" }
 						],
 						"body": {
@@ -434,21 +289,19 @@
 							"raw": "{\n  \"productId\": \"PROD001\",\n  \"quantity\": 2\n}"
 						},
 						"url": {
-							"raw": "{{base_url}}/api/carts/user/:userId/items",
+							"raw": "{{base_url}}/api/carts/items",
 							"host": ["{{base_url}}"],
-							"path": ["api", "carts", "user", ":userId", "items"],
-							"variable": [
-								{ "key": "userId", "value": "1" }
-							]
-						},
-						"description": "Thêm sản phẩm vào cart với quantity cụ thể. Nếu sản phẩm đã có trong cart, sẽ cộng thêm quantity. Giá tự động lấy từ product"
+							"path": ["api", "carts", "items"]
+						}
 					}
 				},
 				{
-					"name": "4. GET Cart Items",
+					"name": "3. GET Cart Items",
 					"request": {
 						"method": "GET",
-						"header": [],
+						"header": [
+							{ "key": "Authorization", "value": "Bearer {{access_token}}" }
+						],
 						"url": {
 							"raw": "{{base_url}}/api/carts/:cartId/items",
 							"host": ["{{base_url}}"],
@@ -456,66 +309,55 @@
 							"variable": [
 								{ "key": "cartId", "value": "1" }
 							]
-						},
-						"description": "Lấy danh sách items trong cart kèm thông tin sản phẩm"
+						}
 					}
 				},
 				{
-					"name": "5. UPDATE Cart Item Quantity (Default +1)",
+					"name": "4. UPDATE Cart Item Quantity",
 					"request": {
 						"method": "PATCH",
-						"header": [],
+						"header": [
+							{ "key": "Authorization", "value": "Bearer {{access_token}}" }
+						],
 						"url": {
-							"raw": "{{base_url}}/api/carts/items/:itemId",
+							"raw": "{{base_url}}/api/carts/:cartId/items/:itemId?quantity=3",
 							"host": ["{{base_url}}"],
-							"path": ["api", "carts", "items", ":itemId"],
-							"variable": [
-								{ "key": "itemId", "value": "1" }
-							]
-						},
-						"description": "Cập nhật số lượng cart item - mặc định tăng lên 1 (không cần quantity parameter)"
-					}
-				},
-				{
-					"name": "6. UPDATE Cart Item Quantity (Set Specific)",
-					"request": {
-						"method": "PATCH",
-						"header": [],
-						"url": {
-							"raw": "{{base_url}}/api/carts/items/:itemId?quantity=3",
-							"host": ["{{base_url}}"],
-							"path": ["api", "carts", "items", ":itemId"],
+							"path": ["api", "carts", ":cartId", "items", ":itemId"],
 							"query": [
 								{ "key": "quantity", "value": "3" }
 							],
 							"variable": [
+								{ "key": "cartId", "value": "1" },
 								{ "key": "itemId", "value": "1" }
 							]
-						},
-						"description": "Cập nhật số lượng cart item với giá trị cụ thể"
+						}
 					}
 				},
 				{
-					"name": "7. REMOVE From Cart",
+					"name": "5. REMOVE From Cart",
 					"request": {
 						"method": "DELETE",
-						"header": [],
+						"header": [
+							{ "key": "Authorization", "value": "Bearer {{access_token}}" }
+						],
 						"url": {
-							"raw": "{{base_url}}/api/carts/items/:itemId",
+							"raw": "{{base_url}}/api/carts/:cartId/items/:itemId",
 							"host": ["{{base_url}}"],
-							"path": ["api", "carts", "items", ":itemId"],
+							"path": ["api", "carts", ":cartId", "items", ":itemId"],
 							"variable": [
+								{ "key": "cartId", "value": "1" },
 								{ "key": "itemId", "value": "1" }
 							]
-						},
-						"description": "Xóa một item khỏi cart"
+						}
 					}
 				},
 				{
-					"name": "8. CLEAR Cart",
+					"name": "6. CLEAR Cart",
 					"request": {
 						"method": "DELETE",
-						"header": [],
+						"header": [
+							{ "key": "Authorization", "value": "Bearer {{access_token}}" }
+						],
 						"url": {
 							"raw": "{{base_url}}/api/carts/:cartId/items",
 							"host": ["{{base_url}}"],
@@ -523,15 +365,16 @@
 							"variable": [
 								{ "key": "cartId", "value": "1" }
 							]
-						},
-						"description": "Xóa tất cả items trong cart"
+						}
 					}
 				},
 				{
-					"name": "9. CHECKOUT Cart",
+					"name": "7. CHECKOUT Cart",
 					"request": {
 						"method": "POST",
-						"header": [],
+						"header": [
+							{ "key": "Authorization", "value": "Bearer {{access_token}}" }
+						],
 						"url": {
 							"raw": "{{base_url}}/api/carts/:cartId/checkout",
 							"host": ["{{base_url}}"],
@@ -539,8 +382,7 @@
 							"variable": [
 								{ "key": "cartId", "value": "1" }
 							]
-						},
-						"description": "Checkout cart - chuyển trạng thái cart sang CHECKED_OUT"
+						}
 					}
 				}
 			]
@@ -553,6 +395,7 @@
 					"request": {
 						"method": "POST",
 						"header": [
+							{ "key": "Authorization", "value": "Bearer {{access_token}}" },
 							{ "key": "Content-Type", "value": "application/json" }
 						],
 						"body": {
@@ -560,21 +403,18 @@
 							"raw": "{\n  \"shippingAddress\": \"123 Đường ABC, Quận 1, TP.HCM\",\n  \"paymentMethod\": \"COD\",\n  \"items\": [\n    { \"productId\": \"PROD001\", \"quantity\": 2, \"unitPrice\": 2500000 },\n    { \"productId\": \"PROD002\", \"quantity\": 1, \"unitPrice\": 3000000 }\n  ]\n}"
 						},
 						"url": {
-							"raw": "{{base_url}}/api/orders/user/:userId",
+							"raw": "{{base_url}}/api/orders",
 							"host": ["{{base_url}}"],
-							"path": ["api", "orders", "user", ":userId"],
-							"variable": [
-								{ "key": "userId", "value": "1" }
-							]
-						},
-						"description": "Tạo order với phương thức thanh toán COD (Cash on Delivery)"
+							"path": ["api", "orders"]
+						}
 					}
 				},
 				{
-					"name": "1b. CREATE Order (PAYOS)",
+					"name": "2. CREATE Order (PAYOS)",
 					"request": {
 						"method": "POST",
 						"header": [
+							{ "key": "Authorization", "value": "Bearer {{access_token}}" },
 							{ "key": "Content-Type", "value": "application/json" }
 						],
 						"body": {
@@ -582,64 +422,43 @@
 							"raw": "{\n  \"shippingAddress\": \"123 Đường ABC, Quận 1, TP.HCM\",\n  \"paymentMethod\": \"PAYOS\",\n  \"items\": [\n    { \"productId\": \"PROD001\", \"quantity\": 2, \"unitPrice\": 2500000 },\n    { \"productId\": \"PROD002\", \"quantity\": 1, \"unitPrice\": 3000000 }\n  ]\n}"
 						},
 						"url": {
-							"raw": "{{base_url}}/api/orders/user/:userId",
+							"raw": "{{base_url}}/api/orders",
 							"host": ["{{base_url}}"],
-							"path": ["api", "orders", "user", ":userId"],
-							"variable": [
-								{ "key": "userId", "value": "1" }
-							]
-						},
-						"description": "Tạo order với phương thức thanh toán PayOS. Sau khi tạo order, sử dụng orderId để tạo payment link"
+							"path": ["api", "orders"]
+						}
 					}
 				},
 				{
-					"name": "2. GET User Orders",
+					"name": "3. GET User Orders",
 					"request": {
 						"method": "GET",
-						"header": [],
+						"header": [
+							{ "key": "Authorization", "value": "Bearer {{access_token}}" }
+						],
 						"url": {
-							"raw": "{{base_url}}/api/orders/user/:userId?page=0&size=24&sortBy=createdAt&sortDir=desc",
+							"raw": "{{base_url}}/api/orders?page=0&size=24&sortBy=createdAt&sortDir=desc",
 							"host": ["{{base_url}}"],
-							"path": ["api", "orders", "user", ":userId"],
+							"path": ["api", "orders"],
 							"query": [
 								{ "key": "page", "value": "0" },
 								{ "key": "size", "value": "24" },
 								{ "key": "sortBy", "value": "createdAt" },
 								{ "key": "sortDir", "value": "desc" }
-							],
-							"variable": [
-								{ "key": "userId", "value": "1" }
 							]
 						}
 					}
 				},
 				{
-					"name": "3. GET Order By ID",
+					"name": "4. GET Order By ID",
 					"request": {
 						"method": "GET",
-						"header": [],
+						"header": [
+							{ "key": "Authorization", "value": "Bearer {{access_token}}" }
+						],
 						"url": {
 							"raw": "{{base_url}}/api/orders/:orderId",
 							"host": ["{{base_url}}"],
 							"path": ["api", "orders", ":orderId"],
-							"variable": [
-								{ "key": "orderId", "value": "1" }
-							]
-						}
-					}
-				},
-				{
-					"name": "4. UPDATE Order Status",
-					"request": {
-						"method": "PUT",
-						"header": [],
-						"url": {
-							"raw": "{{base_url}}/api/orders/:orderId/status?status=SHIPPED",
-							"host": ["{{base_url}}"],
-							"path": ["api", "orders", ":orderId", "status"],
-							"query": [
-								{ "key": "status", "value": "SHIPPED" }
-							],
 							"variable": [
 								{ "key": "orderId", "value": "1" }
 							]
@@ -656,6 +475,7 @@
 					"request": {
 						"method": "POST",
 						"header": [
+							{ "key": "Authorization", "value": "Bearer {{access_token}}" },
 							{ "key": "Content-Type", "value": "application/json" }
 						],
 						"body": {
@@ -666,15 +486,16 @@
 							"raw": "{{base_url}}/api/payments/create-link",
 							"host": ["{{base_url}}"],
 							"path": ["api", "payments", "create-link"]
-						},
-						"description": "Tạo payment link cho order đã có paymentMethod = PAYOS. Response sẽ trả về checkoutUrl để redirect user đến trang thanh toán PayOS"
+						}
 					}
 				},
 				{
 					"name": "2. GET Payment Status by Order Code",
 					"request": {
 						"method": "GET",
-						"header": [],
+						"header": [
+							{ "key": "Authorization", "value": "Bearer {{access_token}}" }
+						],
 						"url": {
 							"raw": "{{base_url}}/api/payments/status/:orderCode",
 							"host": ["{{base_url}}"],
@@ -682,15 +503,16 @@
 							"variable": [
 								{ "key": "orderCode", "value": "123456" }
 							]
-						},
-						"description": "Lấy trạng thái thanh toán từ PayOS theo orderCode (số từ PayOS, không phải orderId của hệ thống)"
+						}
 					}
 				},
 				{
 					"name": "3. GET Payment Status by Order ID",
 					"request": {
 						"method": "GET",
-						"header": [],
+						"header": [
+							{ "key": "Authorization", "value": "Bearer {{access_token}}" }
+						],
 						"url": {
 							"raw": "{{base_url}}/api/payments/order/:orderId/status",
 							"host": ["{{base_url}}"],
@@ -698,8 +520,7 @@
 							"variable": [
 								{ "key": "orderId", "value": "1" }
 							]
-						},
-						"description": "Lấy trạng thái thanh toán theo orderId của hệ thống. Trả về status: NOT_INITIATED, PENDING, hoặc PAID"
+						}
 					}
 				},
 				{
@@ -717,8 +538,7 @@
 							"raw": "{{base_url}}/api/payments/webhook",
 							"host": ["{{base_url}}"],
 							"path": ["api", "payments", "webhook"]
-						},
-						"description": "Webhook endpoint để PayOS gọi khi có thanh toán. Signature sẽ được verify tự động. Chỉ dùng để test, trong production PayOS sẽ tự động gọi endpoint này"
+						}
 					}
 				}
 			]
@@ -752,11 +572,12 @@
 					"request": {
 						"method": "POST",
 						"header": [
+							{ "key": "Authorization", "value": "Bearer {{access_token}}" },
 							{ "key": "Content-Type", "value": "application/json" }
 						],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n  \"productId\": \"PROD001\",\n  \"rating\": 5,\n  \"comment\": \"Sản phẩm rất tốt, chất lượng cao!\",\n  \"userId\": \"1\"\n}"
+							"raw": "{\n  \"productId\": \"PROD001\",\n  \"rating\": 5,\n  \"comment\": \"Sản phẩm rất tốt, chất lượng cao!\"\n}"
 						},
 						"url": {
 							"raw": "{{base_url}}/api/reviews",
@@ -769,7 +590,9 @@
 					"name": "3. DELETE Review",
 					"request": {
 						"method": "DELETE",
-						"header": [],
+						"header": [
+							{ "key": "Authorization", "value": "Bearer {{access_token}}" }
+						],
 						"url": {
 							"raw": "{{base_url}}/api/reviews/:reviewId",
 							"host": ["{{base_url}}"],
@@ -788,6 +611,12 @@
 			"key": "base_url",
 			"value": "http://localhost:8080",
 			"type": "string"
+		},
+		{
+			"key": "access_token",
+			"value": "",
+			"type": "string"
 		}
 	]
 }
+

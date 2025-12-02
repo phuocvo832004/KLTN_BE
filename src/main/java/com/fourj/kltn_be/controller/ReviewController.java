@@ -3,6 +3,7 @@ package com.fourj.kltn_be.controller;
 import com.fourj.kltn_be.dto.PageResponse;
 import com.fourj.kltn_be.dto.ReviewDTO;
 import com.fourj.kltn_be.service.ReviewService;
+import com.fourj.kltn_be.util.SecurityUtil;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -42,6 +43,8 @@ public class ReviewController {
     @PostMapping
     public ResponseEntity<ReviewDTO> createReview(@RequestBody ReviewDTO reviewDTO) {
         try {
+            Long userId = SecurityUtil.getCurrentUserId();
+            reviewDTO.setUserId(userId.toString());
             return ResponseEntity.status(HttpStatus.CREATED).body(reviewService.createReview(reviewDTO));
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
@@ -51,6 +54,9 @@ public class ReviewController {
     @DeleteMapping("/{reviewId}")
     public ResponseEntity<Void> deleteReview(@PathVariable Integer reviewId) {
         try {
+            Long userId = SecurityUtil.getCurrentUserId();
+            // Validate review ownership before deleting
+            reviewService.validateReviewOwnership(reviewId, userId.toString());
             reviewService.deleteReview(reviewId);
             return ResponseEntity.noContent().build();
         } catch (Exception e) {
