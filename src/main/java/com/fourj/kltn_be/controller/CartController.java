@@ -84,17 +84,5 @@ public class CartController {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
         }
     }
-
-    @PostMapping("/{cartId}/checkout")
-    public ResponseEntity<CartDTO> checkoutCart(@PathVariable Long cartId) {
-        try {
-            Long userId = SecurityUtil.getCurrentUserId();
-            cartService.validateCartOwnership(cartId, userId);
-            CartDTO checkedOutCart = cartService.checkoutCart(cartId);
-            return ResponseEntity.ok(checkedOutCart);
-        } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
-        }
-    }
 }
 

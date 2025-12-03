@@ -124,53 +124,5 @@ public class PaymentController {
                     .body(Map.of("error", e.getMessage()));
         }
     }
-
-    @GetMapping("/order/{orderId}/status")
-    public ResponseEntity<?> getOrderPaymentStatus(@PathVariable Long orderId) {
-        try {
-            OrderDTO order = orderService.getOrderById(orderId)
-                    .orElseThrow(() -> new RuntimeException("Order not found"));
-
-            if (order.getPaymentLinkId() == null) {
-                return ResponseEntity.ok(Map.of(
-                        "status", "NOT_INITIATED",
-                        "message", "Payment link not created"
-                ));
-            }
-
-            if ("PAID".equals(order.getPaymentStatus()) || "COMPLETED".equals(order.getStatus())) {
-                return ResponseEntity.ok(Map.of(
-                        "status", "PAID",
-                        "orderStatus", order.getStatus(),
-                        "message", "Payment completed"
-                ));
-            }
-
-            if (order.getPaymentCode() != null) {
-                try {
-                    Long orderCode = Long.parseLong(order.getPaymentCode());
-                    PaymentStatusResponse response = payOSService.getPaymentStatus(orderCode);
-                    if (response.getCode() == 0 && response.getData() != null) {
-                        String paymentStatus = "00".equals(response.getData().getCode()) ? "PAID" : "PENDING";
-                        orderService.updatePaymentStatus(orderId, paymentStatus);
-                        return ResponseEntity.ok(Map.of(
-                                "status", paymentStatus,
-                                "orderStatus", order.getStatus(),
-                                "amount", response.getData().getAmount()
-                        ));
-                    }
-                } catch (NumberFormatException e) {
-                }
-            }
-
-            return ResponseEntity.ok(Map.of(
-                    "status", order.getPaymentStatus() != null ? order.getPaymentStatus() : "PENDING",
-                    "orderStatus", order.getStatus()
-            ));
-        } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-                    .body(Map.of("error", e.getMessage()));
-        }
-    }
 }
 

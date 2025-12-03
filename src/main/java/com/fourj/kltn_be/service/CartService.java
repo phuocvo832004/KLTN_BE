@@ -145,15 +145,6 @@ public class CartService {
         return convertToDTO(clearedCart);
     }
 
-    @Transactional
-    public CartDTO checkoutCart(Long cartId) {
-        Cart cart = cartRepository.findByIdWithItems(cartId)
-                .orElseThrow(() -> new RuntimeException("Cart not found"));
-        cart.setStatus("CHECKED_OUT");
-        Cart saved = cartRepository.save(cart);
-        return convertToDTO(saved);
-    }
-
     public List<CartItemDTO> getCartItems(Long cartId) {
         return cartItemRepository.findByCartId(cartId).stream()
                 .map(this::convertItemToDTO)
