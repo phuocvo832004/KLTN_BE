@@ -62,6 +62,7 @@ public class UserService {
         }
         
         User user = new User();
+        user.setUserId(null);
         user.setUsername(userDTO.getUsername());
         user.setEmail(userDTO.getEmail());
         user.setPreferences(userDTO.getPreferences());
