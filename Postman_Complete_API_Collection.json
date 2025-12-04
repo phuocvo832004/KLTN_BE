@@ -89,7 +89,24 @@
 					}
 				},
 				{
-					"name": "3. Search Products",
+					"name": "3. GET Products By IDs",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/api/products/by-ids?ids=PROD001&ids=PROD002&ids=PROD003",
+							"host": ["{{base_url}}"],
+							"path": ["api", "products", "by-ids"],
+							"query": [
+								{ "key": "ids", "value": "PROD001" },
+								{ "key": "ids", "value": "PROD002" },
+								{ "key": "ids", "value": "PROD003" }
+							]
+						}
+					}
+				},
+				{
+					"name": "4. Search Products",
 					"request": {
 						"method": "GET",
 						"header": [],
@@ -108,7 +125,7 @@
 					}
 				},
 				{
-					"name": "4. GET Products By Category",
+					"name": "5. GET Products By Category",
 					"request": {
 						"method": "GET",
 						"header": [],
@@ -129,7 +146,7 @@
 					}
 				},
 				{
-					"name": "5. GET Homepage Data",
+					"name": "6. GET Homepage Data",
 					"request": {
 						"method": "GET",
 						"header": [],
@@ -147,7 +164,7 @@
 					}
 				},
 				{
-					"name": "6. GET Special Offers",
+					"name": "7. GET Special Offers",
 					"request": {
 						"method": "GET",
 						"header": [],
@@ -165,7 +182,7 @@
 					}
 				},
 				{
-					"name": "7. GET New Arrivals",
+					"name": "8. GET New Arrivals",
 					"request": {
 						"method": "GET",
 						"header": [],
@@ -183,7 +200,7 @@
 					}
 				},
 				{
-					"name": "8. GET Popular Products",
+					"name": "9. GET Popular Products",
 					"request": {
 						"method": "GET",
 						"header": [],
@@ -202,7 +219,7 @@
 					}
 				},
 				{
-					"name": "9. GET Limited Deals",
+					"name": "10. GET Limited Deals",
 					"request": {
 						"method": "GET",
 						"header": [],

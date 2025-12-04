@@ -169,6 +169,15 @@ public class ProductService {
                 .collect(Collectors.toList());
     }
 
+    public List<ProductDTO> getProductsByIds(List<String> ids) {
+        if (ids == null || ids.isEmpty()) {
+            return List.of();
+        }
+        return productRepository.findByIdIn(ids).stream()
+                .map(this::convertToDTO)
+                .collect(Collectors.toList());
+    }
+
     public PageResponse<ProductDTO> getProductsWithDeals(Pageable pageable) {
         LocalDateTime now = LocalDateTime.now();
         Page<Product> page = saleRepository.findProductsWithActiveSales(now, pageable);

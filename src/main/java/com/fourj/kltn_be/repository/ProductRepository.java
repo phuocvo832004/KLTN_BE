@@ -50,5 +50,7 @@ public interface ProductRepository extends JpaRepository<Product, String> {
     
     @Query("SELECT p FROM Product p WHERE p.averageRating >= :minRating ORDER BY p.averageRating DESC")
     Page<Product> findPopularProductsWithMinRating(@Param("minRating") Double minRating, Pageable pageable);
+    
+    List<Product> findByIdIn(List<String> ids);
 }
 

@@ -247,5 +247,11 @@ public class ProductController {
         PageResponse<ProductDTO> response = productService.getProductsWithDeals(pageable);
         return ResponseEntity.ok(response);
     }
+
+    @GetMapping("/by-ids")
+    public ResponseEntity<List<ProductDTO>> getProductsByIds(@RequestParam List<String> ids) {
+        List<ProductDTO> products = productService.getProductsByIds(ids);
+        return ResponseEntity.ok(products);
+    }
 }
 
