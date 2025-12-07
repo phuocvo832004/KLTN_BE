@@ -6,14 +6,18 @@ import com.fourj.kltn_be.dto.PageResponse;
 import com.fourj.kltn_be.dto.ProductDTO;
 import com.fourj.kltn_be.dto.ProductSpecDTO;
 import com.fourj.kltn_be.dto.ReviewDTO;
+import com.fourj.kltn_be.dto.WishlistDTO;
+import com.fourj.kltn_be.dto.WishlistRequest;
 import com.fourj.kltn_be.entity.Product;
 import com.fourj.kltn_be.entity.ProductCategory;
 import com.fourj.kltn_be.entity.ProductSpec;
 import com.fourj.kltn_be.entity.Review;
 import com.fourj.kltn_be.entity.Sale;
+import com.fourj.kltn_be.entity.Wishlist;
 import com.fourj.kltn_be.repository.ProductRepository;
 import com.fourj.kltn_be.repository.ReviewRepository;
 import com.fourj.kltn_be.repository.SaleRepository;
+import com.fourj.kltn_be.repository.WishlistRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
@@ -36,6 +40,7 @@ public class ProductService {
     private final ProductRepository productRepository;
     private final ReviewRepository reviewRepository;
     private final SaleRepository saleRepository;
+    private final WishlistRepository wishlistRepository;
 
     public List<ProductDTO> getAllProducts() {
         return productRepository.findAll().stream()
@@ -369,6 +374,60 @@ public class ProductService {
         dto.setUserId(review.getUserId());
         dto.setCreatedAt(review.getCreatedAt());
         dto.setReviewDate(review.getReviewDate());
+        return dto;
+    }
+
+    // Wishlist methods
+    @Transactional
+    public WishlistDTO addToWishlist(WishlistRequest request) {
+        if (wishlistRepository.existsByUserIdAndProductId(request.getUserId(), request.getProductId())) {
+            throw new IllegalArgumentException("Product already in wishlist");
+        }
+        
+        Wishlist wishlist = new Wishlist();
+        wishlist.setUserId(request.getUserId());
+        wishlist.setProductId(request.getProductId());
+        
+        Wishlist saved = wishlistRepository.save(wishlist);
+        return convertWishlistToDTO(saved);
+    }
+
+    @Transactional
+    public void removeFromWishlist(Long userId, String productId) {
+        wishlistRepository.deleteByUserIdAndProductId(userId, productId);
+    }
+
+    public List<WishlistDTO> getUserWishlist(Long userId) {
+        List<Wishlist> wishlists = wishlistRepository.findByUserId(userId);
+        return wishlists.stream()
+                .map(this::convertWishlistToDTO)
+                .collect(Collectors.toList());
+    }
+
+    public List<ProductDTO> getUserWishlistProducts(Long userId) {
+        List<String> productIds = wishlistRepository.findProductIdsByUserId(userId);
+        return getProductsByIds(productIds);
+    }
+
+    public boolean isInWishlist(Long userId, String productId) {
+        return wishlistRepository.existsByUserIdAndProductId(userId, productId);
+    }
+
+    public long getWishlistCount(Long userId) {
+        return wishlistRepository.countByUserId(userId);
+    }
+
+    private WishlistDTO convertWishlistToDTO(Wishlist wishlist) {
+        WishlistDTO dto = new WishlistDTO();
+        dto.setUserId(wishlist.getUserId());
+        dto.setProductId(wishlist.getProductId());
+        dto.setCreatedAt(wishlist.getCreatedAt());
+        
+        // Optionally include product details
+        if (wishlist.getProduct() != null) {
+            dto.setProduct(convertToDTO(wishlist.getProduct()));
+        }
+        
         return dto;
     }
 }

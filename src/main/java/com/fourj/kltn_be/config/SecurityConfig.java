@@ -47,7 +47,7 @@ public class SecurityConfig {
         CorsConfiguration configuration = new CorsConfiguration();
         configuration.setAllowedOrigins(List.of(
         "http://localhost:3000",
-        "https://kltn-fe-nx3d.onrender.com"
+        "https://kltn-fe-nine.vercel.app"
     ));
         configuration.setAllowedMethods(Arrays.asList("GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"));
         configuration.setAllowedHeaders(List.of("*"));
