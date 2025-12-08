@@ -89,16 +89,20 @@ public class CartService {
     }
 
     @Transactional
-    public CartDTO removeFromCart(Long cartId, Long itemId) {
+    public CartDTO removeFromCart(Long userId, Long itemId) {
         CartItem cartItem = cartItemRepository.findById(itemId)
                 .orElseThrow(() -> new RuntimeException("Cart item not found"));
-        Long actualCartId = cartItem.getCart().getId();
         
-        if (cartId != null && !cartId.equals(actualCartId)) {
-            throw new RuntimeException("Cart item does not belong to the specified cart");
+        Long cartId = cartItem.getCart().getId();
+        
+        // Validate ownership
+        Cart cart = cartRepository.findById(cartId)
+                .orElseThrow(() -> new RuntimeException("Cart not found"));
+        if (!cart.getUser().getUserId().equals(userId)) {
+            throw new RuntimeException("Cart does not belong to user");
         }
         
-        Cart cart = cartRepository.findByIdWithItems(actualCartId)
+        cart = cartRepository.findByIdWithItems(cartId)
                 .orElseThrow(() -> new RuntimeException("Cart not found"));
         
         if (cart.getCartItems() != null) {
@@ -106,19 +110,20 @@ public class CartService {
         }
         cartItemRepository.deleteById(itemId);
         
-        Cart updatedCart = cartRepository.findByIdWithItems(actualCartId)
+        Cart updatedCart = cartRepository.findByIdWithItems(cartId)
                 .orElseThrow(() -> new RuntimeException("Cart not found"));
         return convertToDTO(updatedCart);
     }
 
     @Transactional
-    public CartItemDTO updateCartItemQuantity(Long cartId, Long itemId, Integer quantity) {
+    public CartItemDTO updateCartItemQuantity(Long userId, Long itemId, Integer quantity) {
         CartItem item = cartItemRepository.findById(itemId)
                 .orElseThrow(() -> new RuntimeException("Cart item not found"));
         
-        Long actualCartId = item.getCart().getId();
-        if (cartId != null && !cartId.equals(actualCartId)) {
-            throw new RuntimeException("Cart item does not belong to the specified cart");
+        // Validate ownership
+        Cart cart = item.getCart();
+        if (!cart.getUser().getUserId().equals(userId)) {
+            throw new RuntimeException("Cart does not belong to user");
         }
         
         if (quantity == null) {
@@ -131,9 +136,12 @@ public class CartService {
     }
 
     @Transactional
-    public CartDTO clearCart(Long cartId) {
-        Cart cart = cartRepository.findByIdWithItems(cartId)
-                .orElseThrow(() -> new RuntimeException("Cart not found"));
+    public CartDTO clearCart(Long userId) {
+        // Get active cart for the user
+        Cart cart = cartRepository.findByUserIdAndStatusWithItems(userId, "ACTIVE")
+                .orElseThrow(() -> new RuntimeException("Active cart not found"));
+        
+        Long cartId = cart.getId();
         
         if (cart.getCartItems() != null) {
             cart.getCartItems().clear();

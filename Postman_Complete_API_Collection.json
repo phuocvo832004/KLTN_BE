@@ -578,7 +578,7 @@
 			"name": "Cart APIs",
 			"item": [
 				{
-					"name": "1. GET Active Cart",
+					"name": "1. GET Cart (with items)",
 					"request": {
 						"method": "GET",
 						"header": [
@@ -588,7 +588,8 @@
 							"raw": "{{base_url}}/api/carts",
 							"host": ["{{base_url}}"],
 							"path": ["api", "carts"]
-						}
+						},
+						"description": "Get active cart with all items and product details"
 					}
 				},
 				{
@@ -611,75 +612,53 @@
 					}
 				},
 				{
-					"name": "3. GET Cart Items",
-					"request": {
-						"method": "GET",
-						"header": [
-							{ "key": "Authorization", "value": "Bearer {{access_token}}" }
-						],
-						"url": {
-							"raw": "{{base_url}}/api/carts/:cartId/items",
-							"host": ["{{base_url}}"],
-							"path": ["api", "carts", ":cartId", "items"],
-							"variable": [
-								{ "key": "cartId", "value": "1" }
-							]
-						}
-					}
-				},
-				{
-					"name": "4. UPDATE Cart Item Quantity",
+					"name": "3. UPDATE Cart Item Quantity",
 					"request": {
 						"method": "PATCH",
 						"header": [
 							{ "key": "Authorization", "value": "Bearer {{access_token}}" }
 						],
 						"url": {
-							"raw": "{{base_url}}/api/carts/:cartId/items/:itemId?quantity=3",
+							"raw": "{{base_url}}/api/carts/items/:itemId?quantity=3",
 							"host": ["{{base_url}}"],
-							"path": ["api", "carts", ":cartId", "items", ":itemId"],
+							"path": ["api", "carts", "items", ":itemId"],
 							"query": [
 								{ "key": "quantity", "value": "3" }
 							],
 							"variable": [
-								{ "key": "cartId", "value": "1" },
 								{ "key": "itemId", "value": "1" }
 							]
 						}
 					}
 				},
 				{
-					"name": "5. REMOVE From Cart",
+					"name": "4. REMOVE From Cart",
 					"request": {
 						"method": "DELETE",
 						"header": [
 							{ "key": "Authorization", "value": "Bearer {{access_token}}" }
 						],
 						"url": {
-							"raw": "{{base_url}}/api/carts/:cartId/items/:itemId",
+							"raw": "{{base_url}}/api/carts/items/:itemId",
 							"host": ["{{base_url}}"],
-							"path": ["api", "carts", ":cartId", "items", ":itemId"],
+							"path": ["api", "carts", "items", ":itemId"],
 							"variable": [
-								{ "key": "cartId", "value": "1" },
 								{ "key": "itemId", "value": "1" }
 							]
 						}
 					}
 				},
 				{
-					"name": "6. CLEAR Cart",
+					"name": "5. CLEAR Cart",
 					"request": {
 						"method": "DELETE",
 						"header": [
 							{ "key": "Authorization", "value": "Bearer {{access_token}}" }
 						],
 						"url": {
-							"raw": "{{base_url}}/api/carts/:cartId/items",
+							"raw": "{{base_url}}/api/carts/items",
 							"host": ["{{base_url}}"],
-							"path": ["api", "carts", ":cartId", "items"],
-							"variable": [
-								{ "key": "cartId", "value": "1" }
-							]
+							"path": ["api", "carts", "items"]
 						}
 					}
 				}

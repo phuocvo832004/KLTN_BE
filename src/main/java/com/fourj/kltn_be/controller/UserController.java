@@ -27,7 +27,7 @@ public class UserController {
         }
     }
 
-    @PutMapping("/me")
+    @PatchMapping("/me")
     public ResponseEntity<UserDTO> updateCurrentUser(@RequestBody UserDTO userDTO) {
         try {
             Long userId = SecurityUtil.getCurrentUserId();
