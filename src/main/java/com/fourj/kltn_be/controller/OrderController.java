@@ -24,8 +24,12 @@ public class OrderController {
     @PostMapping
     public ResponseEntity<OrderDTO> createOrder(@RequestBody CreateOrderRequest request) {
         Long userId = SecurityUtil.getCurrentUserId();
-        return ResponseEntity.status(HttpStatus.CREATED)
-                .body(orderService.createOrder(userId, request));
+        if (userId == null) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
+        }
+
+        OrderDTO order = orderService.createOrder(userId, request);
+        return ResponseEntity.status(HttpStatus.CREATED).body(order);
     }
 
     @GetMapping
