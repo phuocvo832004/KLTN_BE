@@ -903,47 +903,6 @@
 					}
 				}
 			]
-		},
-		{
-			"name": "ChatMessage APIs",
-			"item": [
-				{
-					"name": "1. GET User Chat Messages",
-					"request": {
-						"method": "GET",
-						"header": [
-							{ "key": "Authorization", "value": "Bearer {{access_token}}" }
-						],
-						"url": {
-							"raw": "{{base_url}}/api/chat-messages/user/:userId",
-							"host": ["{{base_url}}"],
-							"path": ["api", "chat-messages", "user", ":userId"],
-							"variable": [
-								{ "key": "userId", "value": "1" }
-							]
-						}
-					}
-				},
-				{
-					"name": "2. CREATE Chat Message",
-					"request": {
-						"method": "POST",
-						"header": [
-							{ "key": "Authorization", "value": "Bearer {{access_token}}" },
-							{ "key": "Content-Type", "value": "application/json" }
-						],
-						"body": {
-							"mode": "raw",
-							"raw": "{\n  \"userId\": 1,\n  \"message\": \"Tôi muốn tìm giày thể thao Nike\",\n  \"response\": \"Đây là một số sản phẩm giày Nike phù hợp với bạn...\",\n  \"productIds\": \"PROD001,PROD002\",\n  \"intent\": \"product_search\",\n  \"context\": \"{\\\"category\\\": \\\"sneakers\\\", \\\"brand\\\": \\\"Nike\\\"}\"\n}"
-						},
-						"url": {
-							"raw": "{{base_url}}/api/chat-messages",
-							"host": ["{{base_url}}"],
-							"path": ["api", "chat-messages"]
-						}
-					}
-				}
-			]
 		}
 	],
 	"variable": [
