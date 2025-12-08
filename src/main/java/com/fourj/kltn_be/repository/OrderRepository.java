@@ -12,9 +12,9 @@ import java.util.Optional;
 @Repository
 public interface OrderRepository extends JpaRepository<Order, Long> {
     Optional<Order> findById(Long id);
-    List<Order> findByUserId(Long userId);
-    Page<Order> findByUserId(Long userId, Pageable pageable);
-    List<Order> findByUserIdAndStatus(Long userId, String status);
+    List<Order> findByUser_UserId(Long userId);
+    Page<Order> findByUser_UserId(Long userId, Pageable pageable);
+    List<Order> findByUser_UserIdAndStatus(Long userId, String status);
     Optional<Order> findByPaymentCode(String paymentCode);
 }
 
