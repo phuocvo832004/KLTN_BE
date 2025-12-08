@@ -1,7 +1,6 @@
 package com.fourj.kltn_be.controller;
 
 import com.fourj.kltn_be.dto.AddToCartRequest;
-import com.fourj.kltn_be.dto.UpdateQuantityRequest;
 import com.fourj.kltn_be.dto.CartDTO;
 import com.fourj.kltn_be.dto.CartItemDTO;
 import com.fourj.kltn_be.service.CartService;
@@ -35,10 +34,10 @@ public class CartController {
     @PatchMapping("/items/{itemId}")
     public CartItemDTO updateCartItemQuantity(
             @PathVariable Long itemId,
-            @RequestBody UpdateQuantityRequest request
+            @RequestParam int quantity
     ) {
         Long userId = SecurityUtil.getCurrentUserId();
-        return cartService.updateCartItemQuantity(userId, itemId, request.getQuantity());
+        return cartService.updateCartItemQuantity(userId, itemId, quantity);
     }
 
     @DeleteMapping("/items/{itemId}")

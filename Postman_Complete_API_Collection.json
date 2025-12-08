@@ -602,7 +602,7 @@
 						],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n  \"productId\": \"PROD001\",\n  \"quantity\": 2\n}"
+							"raw": "{\n  \"productId\": \"PROD001\",\n  \"quantity\": 2,\n  \"unitPrice\": 2500000\n}"
 						},
 						"url": {
 							"raw": "{{base_url}}/api/carts/items",
@@ -616,15 +616,17 @@
 					"request": {
 						"method": "PATCH",
 						"header": [
-							{ "key": "Authorization", "value": "Bearer {{access_token}}" }
+							{ "key": "Authorization", "value": "Bearer {{access_token}}" },
+							{ "key": "Content-Type", "value": "application/json" }
 						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"quantity\": 3\n}"
+						},
 						"url": {
-							"raw": "{{base_url}}/api/carts/items/:itemId?quantity=3",
+							"raw": "{{base_url}}/api/carts/items/:itemId",
 							"host": ["{{base_url}}"],
 							"path": ["api", "carts", "items", ":itemId"],
-							"query": [
-								{ "key": "quantity", "value": "3" }
-							],
 							"variable": [
 								{ "key": "itemId", "value": "1" }
 							]
