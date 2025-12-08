@@ -64,13 +64,13 @@ public class OrderService {
     }
 
     public List<OrderDTO> getUserOrders(Long userId) {
-        return orderRepository.findByUserId(userId).stream()
+        return orderRepository.findByUser_UserId(userId).stream()
                 .map(this::convertToDTO)
                 .collect(Collectors.toList());
     }
 
     public PageResponse<OrderDTO> getUserOrders(Long userId, Pageable pageable) {
-        Page<Order> page = orderRepository.findByUserId(userId, pageable);
+        Page<Order> page = orderRepository.findByUser_UserId(userId, pageable);
         List<OrderDTO> content = page.getContent().stream()
                 .map(this::convertToDTO)
                 .collect(Collectors.toList());
