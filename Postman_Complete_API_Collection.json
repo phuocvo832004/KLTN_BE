@@ -779,7 +779,7 @@
 						],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n  \"orderId\": 1,\n  \"returnUrl\": \"http://localhost:3000/payment/success\",\n  \"cancelUrl\": \"http://localhost:3000/payment/cancel\"\n}"
+							"raw": "{\n  \"orderId\": 1,\n  \"amount\": 8000000,\n  \"description\": \"Thanh toan don hang #1\",\n  \"returnUrl\": \"http://localhost:3000/payment/success\",\n  \"cancelUrl\": \"http://localhost:3000/payment/cancel\"\n}"
 						},
 						"url": {
 							"raw": "{{base_url}}/api/payments/create-link",

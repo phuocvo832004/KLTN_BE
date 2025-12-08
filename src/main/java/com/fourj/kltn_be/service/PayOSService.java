@@ -72,20 +72,12 @@ public class PayOSService {
             signatureData.put("orderCode", request.getOrderId().intValue());
             signatureData.put("returnUrl", request.getReturnUrl());
 
-            if (items != null && !items.isEmpty()) {
-                String itemsJson = objectMapper.writeValueAsString(items);
-                signatureData.put("items", itemsJson);
-            }
-
             String signature = generateSignature(signatureData);
             payload.put("signature", signature);
 
             log.debug("Payment link request - orderCode: {}, amount: {}, signature: {}", 
                     request.getOrderId(), request.getAmount(), signature);
             log.debug("Signature data map: {}", signatureData);
-            if (items != null && !items.isEmpty()) {
-                log.debug("Items JSON for signature: {}", objectMapper.writeValueAsString(items));
-            }
 
             PaymentLinkResponse response = webClient.post()
                     .uri("/v2/payment-requests")
