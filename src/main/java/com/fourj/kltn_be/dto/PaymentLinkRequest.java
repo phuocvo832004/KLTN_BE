@@ -11,20 +11,10 @@ import java.util.List;
 @NoArgsConstructor
 @AllArgsConstructor
 public class PaymentLinkRequest {
-    private Long orderId;
+    private long orderCode;
+    private Long amount;
     private String description;
-    private BigDecimal amount;
-    private List<PaymentItem> items;
     private String returnUrl;
     private String cancelUrl;
-
-    @Data
-    @NoArgsConstructor
-    @AllArgsConstructor
-    public static class PaymentItem {
-        private String name;
-        private Integer quantity;
-        private BigDecimal price;
-    }
 }
 

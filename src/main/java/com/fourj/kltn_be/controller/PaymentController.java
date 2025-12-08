@@ -1,5 +1,7 @@
 package com.fourj.kltn_be.controller;
 
+import com.fasterxml.jackson.annotation.JsonInclude;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fourj.kltn_be.dto.*;
 import com.fourj.kltn_be.service.OrderService;
 import com.fourj.kltn_be.service.PayOSService;
@@ -23,41 +25,41 @@ public class PaymentController {
     @PostMapping("/create-link")
     public ResponseEntity<?> createPaymentLink(@RequestBody PaymentLinkRequest request) {
         try {
-            OrderDTO order = orderService.getOrderById(request.getOrderId())
+            // Log request của client
+            System.out.println("👉 Incoming createPaymentLink request: " + request);
+
+            // Lấy order
+            OrderDTO order = orderService.getOrderById(Long.valueOf(request.getOrderCode()))
                     .orElseThrow(() -> new RuntimeException("Order not found"));
 
-            String paymentMethod = order.getPaymentMethod();
-            if (paymentMethod == null || paymentMethod.trim().isEmpty()) {
-                Map<String, Object> errorResponse = new HashMap<>();
-                errorResponse.put("error", "Payment method is not set for this order");
-                errorResponse.put("orderId", order.getId());
-                return ResponseEntity.badRequest().body(errorResponse);
+            // Check phương thức thanh toán
+            if (!"PAYOS".equalsIgnoreCase(order.getPaymentMethod())) {
+                return ResponseEntity.badRequest().body(Map.of(
+                        "error", "Payment method is not PayOS",
+                        "orderCode", order.getId()
+                ));
             }
 
-            if (!"PAYOS".equalsIgnoreCase(paymentMethod.trim())) {
-                Map<String, Object> errorResponse = new HashMap<>();
-                errorResponse.put("error", "Payment method is not PayOS");
-                errorResponse.put("currentPaymentMethod", paymentMethod);
-                errorResponse.put("orderId", order.getId());
-                return ResponseEntity.badRequest().body(errorResponse);
-            }
-
+            // Build payload tối thiểu gửi sang PayOS
             PaymentLinkRequest payOSRequest = new PaymentLinkRequest(
                     order.getId(),
+                    order.getTotalAmount().longValue(),
                     "Thanh toán đơn hàng #" + order.getId(),
-                    order.getTotalAmount(),
-                    order.getItems().stream()
-                            .map(orderItem -> new PaymentLinkRequest.PaymentItem(
-                                    orderItem.getProduct() != null ? orderItem.getProduct().getTitle() : "Product",
-                                    orderItem.getQuantity(),
-                                    orderItem.getUnitPrice()
-                            ))
-                            .collect(Collectors.toList()),
                     request.getReturnUrl(),
                     request.getCancelUrl()
             );
 
+            // Log JSON payload thật sự dùng để ký
+            ObjectMapper mapper = new ObjectMapper();
+            mapper.setSerializationInclusion(JsonInclude.Include.NON_NULL);
+            String json = mapper.writeValueAsString(payOSRequest);
+            System.out.println("📦 PayOS JSON payload (before signature): " + json);
+
+            // Gửi sang PayOS
             PaymentLinkResponse response = payOSService.createPaymentLink(payOSRequest);
+
+            // Log response
+            System.out.println("📥 PayOS response: " + response);
 
             if (response.getCode() == 0 && response.getData() != null) {
                 orderService.updatePaymentInfo(
@@ -73,15 +75,21 @@ public class PaymentController {
                         "orderCode", response.getData().getOrderCode(),
                         "qrCode", response.getData().getQrCode()
                 ));
-            } else {
-                return ResponseEntity.status(HttpStatus.BAD_REQUEST)
-                        .body(Map.of("error", response.getDesc() != null ? response.getDesc() : "Failed to create payment link"));
             }
+
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+                    .body(Map.of("error",
+                            response.getDesc() != null ? response.getDesc() :
+                                    "Failed to create payment link"));
+
         } catch (Exception e) {
+            System.out.println("🔥 Error creating payment link: " + e.getMessage());
+            e.printStackTrace();
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
                     .body(Map.of("error", e.getMessage()));
         }
     }
+
 
     @PostMapping("/webhook")
     public ResponseEntity<?> handleWebhook(@RequestBody PaymentWebhookPayload payload) {

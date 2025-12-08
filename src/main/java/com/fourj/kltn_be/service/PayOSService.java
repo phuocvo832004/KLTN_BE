@@ -46,37 +46,27 @@ public class PayOSService {
     public PaymentLinkResponse createPaymentLink(PaymentLinkRequest request) {
         try {
             Map<String, Object> payload = new TreeMap<>();
-            payload.put("orderCode", request.getOrderId().intValue());
+            payload.put("orderCode", request.getOrderCode());
             payload.put("amount", request.getAmount().intValue());
             payload.put("description", request.getDescription());
             payload.put("returnUrl", request.getReturnUrl());
             payload.put("cancelUrl", request.getCancelUrl());
 
             List<Map<String, Object>> items = null;
-            if (request.getItems() != null && !request.getItems().isEmpty()) {
-                items = new ArrayList<>();
-                for (PaymentLinkRequest.PaymentItem item : request.getItems()) {
-                    Map<String, Object> itemMap = new TreeMap<>();
-                    itemMap.put("name", item.getName());
-                    itemMap.put("quantity", item.getQuantity());
-                    itemMap.put("price", item.getPrice().intValue());
-                    items.add(itemMap);
-                }
-                payload.put("items", items);
-            }
+
 
             Map<String, Object> signatureData = new TreeMap<>();
             signatureData.put("amount", request.getAmount().intValue());
             signatureData.put("cancelUrl", request.getCancelUrl());
             signatureData.put("description", request.getDescription());
-            signatureData.put("orderCode", request.getOrderId().intValue());
+            signatureData.put("orderCode", request.getOrderCode());
             signatureData.put("returnUrl", request.getReturnUrl());
 
             String signature = generateSignature(signatureData);
             payload.put("signature", signature);
 
             log.debug("Payment link request - orderCode: {}, amount: {}, signature: {}", 
-                    request.getOrderId(), request.getAmount(), signature);
+                    request.getOrderCode(), request.getAmount(), signature);
             log.debug("Signature data map: {}", signatureData);
 
             PaymentLinkResponse response = webClient.post()
@@ -162,42 +152,40 @@ public class PayOSService {
 
     private String generateSignature(Map<String, Object> data) {
         try {
-            StringBuilder rawData = new StringBuilder();
+            // Map đã được TreeMap sort sẵn theo key
+            StringBuilder payloadBuilder = new StringBuilder();
+
             for (Map.Entry<String, Object> entry : data.entrySet()) {
-                if (rawData.length() > 0) {
-                    rawData.append("&");
+                if (payloadBuilder.length() > 0) {
+                    payloadBuilder.append("&");
                 }
-                String value;
-                if (entry.getValue() == null) {
-                    value = "";
-                } else {
-                    value = entry.getValue().toString();
-                }
-                String encodedValue = URLEncoder.encode(value, StandardCharsets.UTF_8);
-                rawData.append(entry.getKey()).append("=").append(encodedValue);
+                payloadBuilder
+                        .append(entry.getKey())
+                        .append("=")
+                        .append(entry.getValue());
             }
 
-            String rawDataString = rawData.toString();
-            log.debug("Raw data for signature: {}", rawDataString);
+            String payloadString = payloadBuilder.toString();
 
-            if (checksumKey == null || checksumKey.trim().isEmpty()) {
-                throw new RuntimeException("Checksum key is not configured");
-            }
-
-            Mac hmac = Mac.getInstance("HmacSHA256");
+            Mac sha256_HMAC = Mac.getInstance("HmacSHA256");
             SecretKeySpec secretKey = new SecretKeySpec(
                     checksumKey.getBytes(StandardCharsets.UTF_8),
                     "HmacSHA256"
             );
-            hmac.init(secretKey);
-            byte[] hash = hmac.doFinal(rawDataString.getBytes(StandardCharsets.UTF_8));
-            String signature = Base64.getEncoder().encodeToString(hash);
-            
-            log.debug("Generated signature: {}", signature);
-            return signature;
+            sha256_HMAC.init(secretKey);
+
+            byte[] hash = sha256_HMAC.doFinal(payloadString.getBytes(StandardCharsets.UTF_8));
+
+            StringBuilder sb = new StringBuilder();
+            for (byte b : hash) {
+                sb.append(String.format("%02x", b));
+            }
+
+            return sb.toString();
+
         } catch (Exception e) {
-            log.error("Error generating signature", e);
-            throw new RuntimeException("Failed to generate signature", e);
+            throw new RuntimeException("Error generating signature: " + e.getMessage(), e);
         }
     }
+
 }
