@@ -41,9 +41,6 @@ public class User {
     @Column(name = "password", length = 255)
     private String password;
 
-    @Column(name = "id", insertable = false, updatable = false)
-    private Long id;
-
     @Column(name = "updated_at")
     private OffsetDateTime updatedAt;
 
