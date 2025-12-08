@@ -235,6 +235,193 @@
 							]
 						}
 					}
+				},
+				{
+					"name": "11. GET Products By Season Type",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/api/products/season/:type?page=0&size=24&sortBy=id&sortDir=asc",
+							"host": ["{{base_url}}"],
+							"path": ["api", "products", "season", ":type"],
+							"query": [
+								{ "key": "page", "value": "0" },
+								{ "key": "size", "value": "24" },
+								{ "key": "sortBy", "value": "id" },
+								{ "key": "sortDir", "value": "asc" }
+							],
+							"variable": [
+								{ "key": "type", "value": "1" }
+							]
+						}
+					}
+				},
+				{
+					"name": "12. GET Products With Deals",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/api/products/products-with-deals?page=0&size=24&sortBy=id&sortDir=asc",
+							"host": ["{{base_url}}"],
+							"path": ["api", "products", "products-with-deals"],
+							"query": [
+								{ "key": "page", "value": "0" },
+								{ "key": "size", "value": "24" },
+								{ "key": "sortBy", "value": "id" },
+								{ "key": "sortDir", "value": "asc" }
+							]
+						}
+					}
+				},
+				{
+					"name": "13. CREATE Product",
+					"request": {
+						"method": "POST",
+						"header": [
+							{ "key": "Authorization", "value": "Bearer {{access_token}}" },
+							{ "key": "Content-Type", "value": "application/json" }
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"id\": \"PROD999\",\n  \"title\": \"New Product\",\n  \"description\": \"Product description\",\n  \"category\": \"sneakers\",\n  \"price\": 2500000,\n  \"sale\": 10,\n  \"stock\": 100,\n  \"images\": [\"image1.jpg\", \"image2.jpg\"],\n  \"colors\": [\"Black\", \"White\"],\n  \"sizes\": [\"40\", \"41\", \"42\"]\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/api/products",
+							"host": ["{{base_url}}"],
+							"path": ["api", "products"]
+						}
+					}
+				},
+				{
+					"name": "14. UPDATE Product",
+					"request": {
+						"method": "PUT",
+						"header": [
+							{ "key": "Authorization", "value": "Bearer {{access_token}}" },
+							{ "key": "Content-Type", "value": "application/json" }
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"title\": \"Updated Product Name\",\n  \"price\": 2800000,\n  \"sale\": 15,\n  \"stock\": 80\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/api/products/:id",
+							"host": ["{{base_url}}"],
+							"path": ["api", "products", ":id"],
+							"variable": [
+								{ "key": "id", "value": "PROD999" }
+							]
+						}
+					}
+				},
+				{
+					"name": "15. DELETE Product",
+					"request": {
+						"method": "DELETE",
+						"header": [
+							{ "key": "Authorization", "value": "Bearer {{access_token}}" }
+						],
+						"url": {
+							"raw": "{{base_url}}/api/products/:id",
+							"host": ["{{base_url}}"],
+							"path": ["api", "products", ":id"],
+							"variable": [
+								{ "key": "id", "value": "PROD999" }
+							]
+						}
+					}
+				}
+			]
+		},
+		{
+			"name": "Brand APIs",
+			"item": [
+				{
+					"name": "1. GET All Brands",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/api/brands",
+							"host": ["{{base_url}}"],
+							"path": ["api", "brands"]
+						}
+					}
+				},
+				{
+					"name": "2. GET Brand By ID",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/api/brands/:id",
+							"host": ["{{base_url}}"],
+							"path": ["api", "brands", ":id"],
+							"variable": [
+								{ "key": "id", "value": "1" }
+							]
+						}
+					}
+				},
+				{
+					"name": "3. CREATE Brand",
+					"request": {
+						"method": "POST",
+						"header": [
+							{ "key": "Authorization", "value": "Bearer {{access_token}}" },
+							{ "key": "Content-Type", "value": "application/json" }
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"name\": \"Samsung\",\n  \"logo\": \"https://example.com/logo/samsung.png\"\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/api/brands",
+							"host": ["{{base_url}}"],
+							"path": ["api", "brands"]
+						}
+					}
+				},
+				{
+					"name": "4. UPDATE Brand",
+					"request": {
+						"method": "PUT",
+						"header": [
+							{ "key": "Authorization", "value": "Bearer {{access_token}}" },
+							{ "key": "Content-Type", "value": "application/json" }
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"name\": \"Samsung Electronics\",\n  \"logo\": \"https://example.com/logo/samsung-updated.png\"\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/api/brands/:id",
+							"host": ["{{base_url}}"],
+							"path": ["api", "brands", ":id"],
+							"variable": [
+								{ "key": "id", "value": "1" }
+							]
+						}
+					}
+				},
+				{
+					"name": "5. DELETE Brand",
+					"request": {
+						"method": "DELETE",
+						"header": [
+							{ "key": "Authorization", "value": "Bearer {{access_token}}" }
+						],
+						"url": {
+							"raw": "{{base_url}}/api/brands/:id",
+							"host": ["{{base_url}}"],
+							"path": ["api", "brands", ":id"],
+							"variable": [
+								{ "key": "id", "value": "1" }
+							]
+						}
+					}
 				}
 			]
 		},
@@ -271,6 +458,117 @@
 							"raw": "{{base_url}}/api/users/me",
 							"host": ["{{base_url}}"],
 							"path": ["api", "users", "me"]
+						}
+					}
+				}
+			]
+		},
+		{
+			"name": "Wishlist APIs",
+			"item": [
+				{
+					"name": "1. ADD To Wishlist",
+					"request": {
+						"method": "POST",
+						"header": [
+							{ "key": "Authorization", "value": "Bearer {{access_token}}" },
+							{ "key": "Content-Type", "value": "application/json" }
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"userId\": 1,\n  \"productId\": \"PROD001\"\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/api/products/wishlist",
+							"host": ["{{base_url}}"],
+							"path": ["api", "products", "wishlist"]
+						}
+					}
+				},
+				{
+					"name": "2. REMOVE From Wishlist",
+					"request": {
+						"method": "DELETE",
+						"header": [
+							{ "key": "Authorization", "value": "Bearer {{access_token}}" }
+						],
+						"url": {
+							"raw": "{{base_url}}/api/products/wishlist?userId=1&productId=PROD001",
+							"host": ["{{base_url}}"],
+							"path": ["api", "products", "wishlist"],
+							"query": [
+								{ "key": "userId", "value": "1" },
+								{ "key": "productId", "value": "PROD001" }
+							]
+						}
+					}
+				},
+				{
+					"name": "3. GET User Wishlist",
+					"request": {
+						"method": "GET",
+						"header": [
+							{ "key": "Authorization", "value": "Bearer {{access_token}}" }
+						],
+						"url": {
+							"raw": "{{base_url}}/api/products/wishlist/:userId",
+							"host": ["{{base_url}}"],
+							"path": ["api", "products", "wishlist", ":userId"],
+							"variable": [
+								{ "key": "userId", "value": "1" }
+							]
+						}
+					}
+				},
+				{
+					"name": "4. GET User Wishlist Products",
+					"request": {
+						"method": "GET",
+						"header": [
+							{ "key": "Authorization", "value": "Bearer {{access_token}}" }
+						],
+						"url": {
+							"raw": "{{base_url}}/api/products/wishlist/:userId/products",
+							"host": ["{{base_url}}"],
+							"path": ["api", "products", "wishlist", ":userId", "products"],
+							"variable": [
+								{ "key": "userId", "value": "1" }
+							]
+						}
+					}
+				},
+				{
+					"name": "5. CHECK If In Wishlist",
+					"request": {
+						"method": "GET",
+						"header": [
+							{ "key": "Authorization", "value": "Bearer {{access_token}}" }
+						],
+						"url": {
+							"raw": "{{base_url}}/api/products/wishlist/check?userId=1&productId=PROD001",
+							"host": ["{{base_url}}"],
+							"path": ["api", "products", "wishlist", "check"],
+							"query": [
+								{ "key": "userId", "value": "1" },
+								{ "key": "productId", "value": "PROD001" }
+							]
+						}
+					}
+				},
+				{
+					"name": "6. GET Wishlist Count",
+					"request": {
+						"method": "GET",
+						"header": [
+							{ "key": "Authorization", "value": "Bearer {{access_token}}" }
+						],
+						"url": {
+							"raw": "{{base_url}}/api/products/wishlist/:userId/count",
+							"host": ["{{base_url}}"],
+							"path": ["api", "products", "wishlist", ":userId", "count"],
+							"variable": [
+								{ "key": "userId", "value": "1" }
+							]
 						}
 					}
 				}
@@ -384,23 +682,6 @@
 							]
 						}
 					}
-				},
-				{
-					"name": "7. CHECKOUT Cart",
-					"request": {
-						"method": "POST",
-						"header": [
-							{ "key": "Authorization", "value": "Bearer {{access_token}}" }
-						],
-						"url": {
-							"raw": "{{base_url}}/api/carts/:cartId/checkout",
-							"host": ["{{base_url}}"],
-							"path": ["api", "carts", ":cartId", "checkout"],
-							"variable": [
-								{ "key": "cartId", "value": "1" }
-							]
-						}
-					}
 				}
 			]
 		},
@@ -476,6 +757,26 @@
 							"raw": "{{base_url}}/api/orders/:orderId",
 							"host": ["{{base_url}}"],
 							"path": ["api", "orders", ":orderId"],
+							"variable": [
+								{ "key": "orderId", "value": "1" }
+							]
+						}
+					}
+				},
+				{
+					"name": "5. UPDATE Order Status (Admin)",
+					"request": {
+						"method": "PUT",
+						"header": [
+							{ "key": "Authorization", "value": "Bearer {{access_token}}" }
+						],
+						"url": {
+							"raw": "{{base_url}}/api/orders/:orderId/status?status=SHIPPED",
+							"host": ["{{base_url}}"],
+							"path": ["api", "orders", ":orderId", "status"],
+							"query": [
+								{ "key": "status", "value": "SHIPPED" }
+							],
 							"variable": [
 								{ "key": "orderId", "value": "1" }
 							]
@@ -617,6 +918,47 @@
 							"variable": [
 								{ "key": "reviewId", "value": "1" }
 							]
+						}
+					}
+				}
+			]
+		},
+		{
+			"name": "ChatMessage APIs",
+			"item": [
+				{
+					"name": "1. GET User Chat Messages",
+					"request": {
+						"method": "GET",
+						"header": [
+							{ "key": "Authorization", "value": "Bearer {{access_token}}" }
+						],
+						"url": {
+							"raw": "{{base_url}}/api/chat-messages/user/:userId",
+							"host": ["{{base_url}}"],
+							"path": ["api", "chat-messages", "user", ":userId"],
+							"variable": [
+								{ "key": "userId", "value": "1" }
+							]
+						}
+					}
+				},
+				{
+					"name": "2. CREATE Chat Message",
+					"request": {
+						"method": "POST",
+						"header": [
+							{ "key": "Authorization", "value": "Bearer {{access_token}}" },
+							{ "key": "Content-Type", "value": "application/json" }
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"userId\": 1,\n  \"message\": \"Tôi muốn tìm giày thể thao Nike\",\n  \"response\": \"Đây là một số sản phẩm giày Nike phù hợp với bạn...\",\n  \"productIds\": \"PROD001,PROD002\",\n  \"intent\": \"product_search\",\n  \"context\": \"{\\\"category\\\": \\\"sneakers\\\", \\\"brand\\\": \\\"Nike\\\"}\"\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/api/chat-messages",
+							"host": ["{{base_url}}"],
+							"path": ["api", "chat-messages"]
 						}
 					}
 				}
