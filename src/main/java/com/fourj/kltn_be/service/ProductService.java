@@ -379,13 +379,13 @@ public class ProductService {
 
     // Wishlist methods
     @Transactional
-    public WishlistDTO addToWishlist(WishlistRequest request) {
-        if (wishlistRepository.existsByUserIdAndProductId(request.getUserId(), request.getProductId())) {
+    public WishlistDTO addToWishlist(Long userId, WishlistRequest request) {
+        if (wishlistRepository.existsByUserIdAndProductId(userId, request.getProductId())) {
             throw new IllegalArgumentException("Product already in wishlist");
         }
         
         Wishlist wishlist = new Wishlist();
-        wishlist.setUserId(request.getUserId());
+        wishlist.setUserId(userId);
         wishlist.setProductId(request.getProductId());
         
         Wishlist saved = wishlistRepository.save(wishlist);

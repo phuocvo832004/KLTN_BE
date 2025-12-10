@@ -7,6 +7,7 @@ import com.fourj.kltn_be.dto.ProductDTO;
 import com.fourj.kltn_be.dto.WishlistDTO;
 import com.fourj.kltn_be.dto.WishlistRequest;
 import com.fourj.kltn_be.service.ProductService;
+import com.fourj.kltn_be.util.SecurityUtil;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -259,7 +260,8 @@ public class ProductController {
     @PostMapping("/wishlist")
     public ResponseEntity<?> addToWishlist(@RequestBody WishlistRequest request) {
         try {
-            WishlistDTO wishlist = productService.addToWishlist(request);
+            Long userId = SecurityUtil.getCurrentUserId();
+            WishlistDTO wishlist = productService.addToWishlist(userId, request);
             return ResponseEntity.status(HttpStatus.CREATED).body(wishlist);
         } catch (IllegalArgumentException e) {
             return ResponseEntity.status(HttpStatus.CONFLICT).body(e.getMessage());
@@ -269,37 +271,58 @@ public class ProductController {
     }
 
     @DeleteMapping("/wishlist")
-    public ResponseEntity<Void> removeFromWishlist(
-            @RequestParam Long userId,
-            @RequestParam String productId) {
-        productService.removeFromWishlist(userId, productId);
-        return ResponseEntity.noContent().build();
+    public ResponseEntity<Void> removeFromWishlist(@RequestParam String productId) {
+        try {
+            Long userId = SecurityUtil.getCurrentUserId();
+            productService.removeFromWishlist(userId, productId);
+            return ResponseEntity.noContent().build();
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
+        }
     }
 
-    @GetMapping("/wishlist/{userId}")
-    public ResponseEntity<List<WishlistDTO>> getUserWishlist(@PathVariable Long userId) {
-        List<WishlistDTO> wishlist = productService.getUserWishlist(userId);
-        return ResponseEntity.ok(wishlist);
+    @GetMapping("/wishlist")
+    public ResponseEntity<List<WishlistDTO>> getUserWishlist() {
+        try {
+            Long userId = SecurityUtil.getCurrentUserId();
+            List<WishlistDTO> wishlist = productService.getUserWishlist(userId);
+            return ResponseEntity.ok(wishlist);
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
+        }
     }
 
-    @GetMapping("/wishlist/{userId}/products")
-    public ResponseEntity<List<ProductDTO>> getUserWishlistProducts(@PathVariable Long userId) {
-        List<ProductDTO> products = productService.getUserWishlistProducts(userId);
-        return ResponseEntity.ok(products);
+    @GetMapping("/wishlist/products")
+    public ResponseEntity<List<ProductDTO>> getUserWishlistProducts() {
+        try {
+            Long userId = SecurityUtil.getCurrentUserId();
+            List<ProductDTO> products = productService.getUserWishlistProducts(userId);
+            return ResponseEntity.ok(products);
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
+        }
     }
 
     @GetMapping("/wishlist/check")
-    public ResponseEntity<Boolean> isInWishlist(
-            @RequestParam Long userId,
-            @RequestParam String productId) {
-        boolean isInWishlist = productService.isInWishlist(userId, productId);
-        return ResponseEntity.ok(isInWishlist);
+    public ResponseEntity<Boolean> isInWishlist(@RequestParam String productId) {
+        try {
+            Long userId = SecurityUtil.getCurrentUserId();
+            boolean isInWishlist = productService.isInWishlist(userId, productId);
+            return ResponseEntity.ok(isInWishlist);
+        } catch (Exception e) {
+            return ResponseEntity.ok(false);
+        }
     }
 
-    @GetMapping("/wishlist/{userId}/count")
-    public ResponseEntity<Long> getWishlistCount(@PathVariable Long userId) {
-        long count = productService.getWishlistCount(userId);
-        return ResponseEntity.ok(count);
+    @GetMapping("/wishlist/count")
+    public ResponseEntity<Long> getWishlistCount() {
+        try {
+            Long userId = SecurityUtil.getCurrentUserId();
+            long count = productService.getWishlistCount(userId);
+            return ResponseEntity.ok(count);
+        } catch (Exception e) {
+            return ResponseEntity.ok(0L);
+        }
     }
 }
 

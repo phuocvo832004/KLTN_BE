@@ -4,8 +4,10 @@ import com.fourj.kltn_be.dto.PageResponse;
 import com.fourj.kltn_be.dto.ReviewDTO;
 import com.fourj.kltn_be.entity.Product;
 import com.fourj.kltn_be.entity.Review;
+import com.fourj.kltn_be.entity.User;
 import com.fourj.kltn_be.repository.ProductRepository;
 import com.fourj.kltn_be.repository.ReviewRepository;
+import com.fourj.kltn_be.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -21,6 +23,7 @@ public class ReviewService {
     private final ReviewRepository reviewRepository;
     private final ProductRepository productRepository;
     private final ProductService productService;
+    private final UserRepository userRepository;
 
     public List<ReviewDTO> getProductReviews(String productId) {
         return reviewRepository.findByProductId(productId).stream()
@@ -90,6 +93,19 @@ public class ReviewService {
         dto.setUserId(review.getUserId());
         dto.setCreatedAt(review.getCreatedAt());
         dto.setReviewDate(review.getReviewDate());
+        
+        // Fetch and set user name
+        if (review.getUserId() != null) {
+            try {
+                Long userId = Long.parseLong(review.getUserId());
+                userRepository.findByUserId(userId).ifPresent(user -> {
+                    dto.setUserName(user.getUsername());
+                });
+            } catch (NumberFormatException e) {
+                // If userId is not a valid number, leave userName as null
+            }
+        }
+        
         return dto;
     }
 }
