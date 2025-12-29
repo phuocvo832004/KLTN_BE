@@ -36,6 +36,8 @@ public class SecurityConfig {
                 .requestMatchers("/api/products/**").permitAll()
                 .requestMatchers("/api/reviews/product/**").permitAll()
                 .requestMatchers("/api/payments/webhook").permitAll()
+                // Cho phép xem trạng thái thanh toán công khai (PayOS callback/polling)
+                .requestMatchers("/api/payments/status/**").permitAll()
                 .anyRequest().authenticated()
             )
             .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class);
