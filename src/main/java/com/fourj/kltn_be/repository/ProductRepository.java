@@ -20,6 +20,17 @@ public interface ProductRepository extends JpaRepository<Product, String>, JpaSp
     
     Page<Product> findByTitleContainingIgnoreCase(String title, Pageable pageable);
     
+    // Enhanced search with multiple strategies
+    @Query("SELECT DISTINCT p FROM Product p WHERE " +
+           "LOWER(p.title) LIKE LOWER(CONCAT('%', :keyword, '%')) OR " +
+           "LOWER(p.description) LIKE LOWER(CONCAT('%', :keyword, '%'))")
+    List<Product> searchByKeyword(@Param("keyword") String keyword);
+    
+    @Query("SELECT DISTINCT p FROM Product p WHERE " +
+           "LOWER(p.title) LIKE LOWER(CONCAT('%', :keyword, '%')) OR " +
+           "LOWER(p.description) LIKE LOWER(CONCAT('%', :keyword, '%'))")
+    Page<Product> searchByKeyword(@Param("keyword") String keyword, Pageable pageable);
+    
     @Query("SELECT DISTINCT p FROM Product p JOIN p.productCategories pc WHERE pc.category = :category")
     List<Product> findByCategory(@Param("category") String category);
     

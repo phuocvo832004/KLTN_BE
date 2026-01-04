@@ -84,13 +84,19 @@ public class ProductService {
     }
 
     public List<ProductDTO> searchProducts(String title) {
-        return productRepository.findByTitleContainingIgnoreCase(title).stream()
+        // Use enhanced search with ProductSpecification
+        ProductFilterRequest filterRequest = new ProductFilterRequest();
+        filterRequest.setKeyword(title);
+        return productRepository.findAll(ProductSpecification.filterProducts(filterRequest)).stream()
                 .map(this::convertToDTO)
                 .collect(Collectors.toList());
     }
 
     public PageResponse<ProductDTO> searchProducts(String title, Pageable pageable) {
-        Page<Product> page = productRepository.findByTitleContainingIgnoreCase(title, pageable);
+        // Use enhanced search with ProductSpecification
+        ProductFilterRequest filterRequest = new ProductFilterRequest();
+        filterRequest.setKeyword(title);
+        Page<Product> page = productRepository.findAll(ProductSpecification.filterProducts(filterRequest), pageable);
         return convertToPageResponse(page);
     }
 

@@ -17,16 +17,63 @@ public class ProductSpecification {
         return (root, query, criteriaBuilder) -> {
             List<Predicate> predicates = new ArrayList<>();
 
-            // Keyword search in title or description
+            // Enhanced keyword search with fuzzy matching
             if (filter.getKeyword() != null && !filter.getKeyword().isEmpty()) {
-                String keyword = "%" + filter.getKeyword().toLowerCase() + "%";
-                Predicate titlePredicate = criteriaBuilder.like(
-                    criteriaBuilder.lower(root.get("title")), keyword
+                String keyword = filter.getKeyword().trim();
+                List<Predicate> keywordPredicates = new ArrayList<>();
+                
+                // Strategy 1: Exact match (highest priority)
+                String exactKeyword = "%" + keyword.toLowerCase() + "%";
+                Predicate exactTitleMatch = criteriaBuilder.like(
+                    criteriaBuilder.lower(root.get("title")), exactKeyword
                 );
-                Predicate descriptionPredicate = criteriaBuilder.like(
-                    criteriaBuilder.lower(root.get("description")), keyword
+                Predicate exactDescMatch = criteriaBuilder.like(
+                    criteriaBuilder.lower(root.get("description")), exactKeyword
                 );
-                predicates.add(criteriaBuilder.or(titlePredicate, descriptionPredicate));
+                keywordPredicates.add(criteriaBuilder.or(exactTitleMatch, exactDescMatch));
+                
+                // Strategy 2: Split keywords and match each word
+                String[] keywords = keyword.toLowerCase().split("\\s+");
+                if (keywords.length > 1) {
+                    List<Predicate> wordPredicates = new ArrayList<>();
+                    for (String word : keywords) {
+                        if (word.length() > 2) { // Only search words with 3+ characters
+                            String wordPattern = "%" + word + "%";
+                            Predicate wordInTitle = criteriaBuilder.like(
+                                criteriaBuilder.lower(root.get("title")), wordPattern
+                            );
+                            Predicate wordInDesc = criteriaBuilder.like(
+                                criteriaBuilder.lower(root.get("description")), wordPattern
+                            );
+                            wordPredicates.add(criteriaBuilder.or(wordInTitle, wordInDesc));
+                        }
+                    }
+                    if (!wordPredicates.isEmpty()) {
+                        // Match if ANY word is found
+                        keywordPredicates.add(criteriaBuilder.or(wordPredicates.toArray(new Predicate[0])));
+                    }
+                }
+                
+                // Strategy 3: Fuzzy match with character variations
+                if (keyword.length() >= 4) {
+                    // Remove spaces for continuous matching
+                    String noSpaceKeyword = "%" + keyword.replaceAll("\\s+", "") + "%";
+                    Predicate noSpaceTitle = criteriaBuilder.like(
+                        criteriaBuilder.function("regexp_replace", String.class,
+                            criteriaBuilder.lower(root.get("title")),
+                            criteriaBuilder.literal("\\s+"),
+                            criteriaBuilder.literal(""),
+                            criteriaBuilder.literal("g")
+                        ),
+                        noSpaceKeyword
+                    );
+                    keywordPredicates.add(noSpaceTitle);
+                }
+                
+                // Combine all keyword strategies with OR
+                if (!keywordPredicates.isEmpty()) {
+                    predicates.add(criteriaBuilder.or(keywordPredicates.toArray(new Predicate[0])));
+                }
             }
 
             // Categories filter
