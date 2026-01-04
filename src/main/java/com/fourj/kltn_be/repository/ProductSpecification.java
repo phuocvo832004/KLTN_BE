@@ -70,6 +70,51 @@ public class ProductSpecification {
                     keywordPredicates.add(noSpaceTitle);
                 }
                 
+                // Strategy 4: Typo handling (PostgreSQL Trigram Similarity)
+                // This handles common typos like "iphonen" -> "iphone"
+                if (keyword.length() >= 3) {
+                    // Using PostgreSQL similarity() function with threshold 0.3
+                    // Lower threshold = more forgiving for typos
+                    Expression<Double> titleSimilarity = criteriaBuilder.function(
+                        "similarity",
+                        Double.class,
+                        criteriaBuilder.lower(root.get("title")),
+                        criteriaBuilder.literal(keyword.toLowerCase())
+                    );
+                    
+                    Expression<Double> descSimilarity = criteriaBuilder.function(
+                        "similarity",
+                        Double.class,
+                        criteriaBuilder.lower(root.get("description")),
+                        criteriaBuilder.literal(keyword.toLowerCase())
+                    );
+                    
+                    // Match if similarity >= 0.3 (30% similar)
+                    Predicate titleSimilarityMatch = criteriaBuilder.greaterThanOrEqualTo(
+                        titleSimilarity, 0.3
+                    );
+                    Predicate descSimilarityMatch = criteriaBuilder.greaterThanOrEqualTo(
+                        descSimilarity, 0.3
+                    );
+                    
+                    keywordPredicates.add(criteriaBuilder.or(titleSimilarityMatch, descSimilarityMatch));
+                }
+                
+                // Strategy 5: Handle common typo patterns
+                if (keyword.length() > 3) {
+                    List<String> typoVariations = generateTypoVariations(keyword);
+                    for (String variation : typoVariations) {
+                        String pattern = "%" + variation.toLowerCase() + "%";
+                        Predicate varTitleMatch = criteriaBuilder.like(
+                            criteriaBuilder.lower(root.get("title")), pattern
+                        );
+                        Predicate varDescMatch = criteriaBuilder.like(
+                            criteriaBuilder.lower(root.get("description")), pattern
+                        );
+                        keywordPredicates.add(criteriaBuilder.or(varTitleMatch, varDescMatch));
+                    }
+                }
+                
                 // Combine all keyword strategies with OR
                 if (!keywordPredicates.isEmpty()) {
                     predicates.add(criteriaBuilder.or(keywordPredicates.toArray(new Predicate[0])));
@@ -120,6 +165,64 @@ public class ProductSpecification {
 
             return criteriaBuilder.and(predicates.toArray(new Predicate[0]));
         };
+    }
+    
+    /**
+     * Generate common typo variations for a keyword
+     * Examples:
+     * - "iphonen" -> ["iphone"] (remove extra char at end)
+     * - "ipphone" -> ["iphone"] (remove duplicate char)
+     * - "ihpone" -> original keyword is kept in main search
+     */
+    private static List<String> generateTypoVariations(String keyword) {
+        List<String> variations = new ArrayList<>();
+        
+        if (keyword == null || keyword.length() < 4) {
+            return variations;
+        }
+        
+        String lowerKeyword = keyword.toLowerCase();
+        
+        // Variation 1: Remove last character (handles "iphonen" -> "iphone")
+        if (lowerKeyword.length() > 3) {
+            variations.add(lowerKeyword.substring(0, lowerKeyword.length() - 1));
+        }
+        
+        // Variation 2: Remove first character (handles "aiphone" -> "iphone")
+        if (lowerKeyword.length() > 3) {
+            variations.add(lowerKeyword.substring(1));
+        }
+        
+        // Variation 3: Remove duplicate consecutive characters
+        StringBuilder deduplicated = new StringBuilder();
+        char lastChar = '\0';
+        for (char c : lowerKeyword.toCharArray()) {
+            if (c != lastChar) {
+                deduplicated.append(c);
+                lastChar = c;
+            }
+        }
+        String deduplicatedStr = deduplicated.toString();
+        if (!deduplicatedStr.equals(lowerKeyword) && deduplicatedStr.length() >= 3) {
+            variations.add(deduplicatedStr);
+        }
+        
+        // Variation 4: Handle common character substitutions
+        // Vietnamese keyboard typos: o/ô, a/ă/â, e/ê, u/ư, etc.
+        String normalized = lowerKeyword
+            .replace("ô", "o")
+            .replace("ơ", "o")
+            .replace("ă", "a")
+            .replace("â", "a")
+            .replace("ê", "e")
+            .replace("ư", "u")
+            .replace("đ", "d");
+        
+        if (!normalized.equals(lowerKeyword)) {
+            variations.add(normalized);
+        }
+        
+        return variations;
     }
 }
 
