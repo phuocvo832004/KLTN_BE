@@ -4,6 +4,7 @@ import com.fourj.kltn_be.dto.HomepageDataDTO;
 import com.fourj.kltn_be.dto.LimitedDealDTO;
 import com.fourj.kltn_be.dto.PageResponse;
 import com.fourj.kltn_be.dto.ProductDTO;
+import com.fourj.kltn_be.dto.ProductFilterRequest;
 import com.fourj.kltn_be.dto.ProductSpecDTO;
 import com.fourj.kltn_be.dto.ReviewDTO;
 import com.fourj.kltn_be.dto.WishlistDTO;
@@ -15,6 +16,7 @@ import com.fourj.kltn_be.entity.Review;
 import com.fourj.kltn_be.entity.Sale;
 import com.fourj.kltn_be.entity.Wishlist;
 import com.fourj.kltn_be.repository.ProductRepository;
+import com.fourj.kltn_be.repository.ProductSpecification;
 import com.fourj.kltn_be.repository.ReviewRepository;
 import com.fourj.kltn_be.repository.SaleRepository;
 import com.fourj.kltn_be.repository.WishlistRepository;
@@ -181,6 +183,17 @@ public class ProductService {
         return productRepository.findByIdIn(ids).stream()
                 .map(this::convertToDTO)
                 .collect(Collectors.toList());
+    }
+
+    public List<ProductDTO> filterProducts(ProductFilterRequest filterRequest) {
+        return productRepository.findAll(ProductSpecification.filterProducts(filterRequest)).stream()
+                .map(this::convertToDTO)
+                .collect(Collectors.toList());
+    }
+
+    public PageResponse<ProductDTO> filterProducts(ProductFilterRequest filterRequest, Pageable pageable) {
+        Page<Product> page = productRepository.findAll(ProductSpecification.filterProducts(filterRequest), pageable);
+        return convertToPageResponse(page);
     }
 
     public PageResponse<ProductDTO> getProductsWithDeals(Pageable pageable) {

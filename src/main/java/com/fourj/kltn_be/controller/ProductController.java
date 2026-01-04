@@ -4,6 +4,7 @@ import com.fourj.kltn_be.dto.HomepageDataDTO;
 import com.fourj.kltn_be.dto.LimitedDealDTO;
 import com.fourj.kltn_be.dto.PageResponse;
 import com.fourj.kltn_be.dto.ProductDTO;
+import com.fourj.kltn_be.dto.ProductFilterRequest;
 import com.fourj.kltn_be.dto.WishlistDTO;
 import com.fourj.kltn_be.dto.WishlistRequest;
 import com.fourj.kltn_be.service.ProductService;
@@ -254,6 +255,25 @@ public class ProductController {
     public ResponseEntity<List<ProductDTO>> getProductsByIds(@RequestParam List<String> ids) {
         List<ProductDTO> products = productService.getProductsByIds(ids);
         return ResponseEntity.ok(products);
+    }
+
+    @PostMapping("/filter")
+    public ResponseEntity<?> filterProducts(
+            @RequestBody ProductFilterRequest filterRequest,
+            @RequestParam(required = false, defaultValue = "0") int page,
+            @RequestParam(required = false, defaultValue = "24") int size,
+            @RequestParam(required = false, defaultValue = "id") String sortBy,
+            @RequestParam(required = false, defaultValue = "asc") String sortDir) {
+        if (page < 0 || size <= 0) {
+            return ResponseEntity.ok(productService.filterProducts(filterRequest));
+        }
+        
+        Sort sort = sortDir.equalsIgnoreCase("desc") 
+                ? Sort.by(sortBy).descending() 
+                : Sort.by(sortBy).ascending();
+        Pageable pageable = PageRequest.of(page, size, sort);
+        PageResponse<ProductDTO> response = productService.filterProducts(filterRequest, pageable);
+        return ResponseEntity.ok(response);
     }
 
     // Wishlist endpoints

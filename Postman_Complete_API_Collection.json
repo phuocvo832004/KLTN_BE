@@ -237,7 +237,32 @@
 					}
 				},
 				{
-					"name": "11. GET Products By Season Type",
+					"name": "11. Filter Products (Advanced)",
+					"request": {
+						"method": "POST",
+						"header": [
+							{ "key": "Content-Type", "value": "application/json" }
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"keyword\": \"nike\",\n  \"categories\": [\"Sneakers\", \"Running Shoes\"],\n  \"minPrice\": 50,\n  \"maxPrice\": 200,\n  \"minRating\": 4.0,\n  \"seasonType\": 0,\n  \"hasDiscount\": true\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/api/products/filter?page=0&size=24&sortBy=price&sortDir=asc",
+							"host": ["{{base_url}}"],
+							"path": ["api", "products", "filter"],
+							"query": [
+								{ "key": "page", "value": "0" },
+								{ "key": "size", "value": "24" },
+								{ "key": "sortBy", "value": "price" },
+								{ "key": "sortDir", "value": "asc" }
+							]
+						},
+						"description": "Advanced filter with multiple criteria: keyword search, categories, price range, rating, season type, and discount status."
+					}
+				},
+				{
+					"name": "12. GET Products By Season Type",
 					"request": {
 						"method": "GET",
 						"header": [],
@@ -445,14 +470,14 @@
 				{
 					"name": "2. UPDATE Current User",
 					"request": {
-						"method": "PUT",
+						"method": "PATCH",
 						"header": [
 							{ "key": "Authorization", "value": "Bearer {{access_token}}" },
 							{ "key": "Content-Type", "value": "application/json" }
 						],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n  \"email\": \"updateduser@example.com\",\n  \"preferences\": \"{\\\"theme\\\": \\\"light\\\"}\"\n}"
+							"raw": "{\n  \"firstName\": \"John\",\n  \"lastName\": \"Doe\",\n  \"email\": \"updateduser@example.com\",\n  \"phone\": \"0901234567\",\n  \"address\": \"123 Updated Street\"\n}"
 						},
 						"url": {
 							"raw": "{{base_url}}/api/users/me",
@@ -476,13 +501,14 @@
 						],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n  \"userId\": 1,\n  \"productId\": \"PROD001\"\n}"
+							"raw": "{\n  \"productId\": \"PROD001\"\n}"
 						},
 						"url": {
 							"raw": "{{base_url}}/api/products/wishlist",
 							"host": ["{{base_url}}"],
 							"path": ["api", "products", "wishlist"]
-						}
+						},
+						"description": "Add product to wishlist. User ID is extracted from JWT token."
 					}
 				},
 				{
@@ -493,14 +519,14 @@
 							{ "key": "Authorization", "value": "Bearer {{access_token}}" }
 						],
 						"url": {
-							"raw": "{{base_url}}/api/products/wishlist?userId=1&productId=PROD001",
+							"raw": "{{base_url}}/api/products/wishlist?productId=PROD001",
 							"host": ["{{base_url}}"],
 							"path": ["api", "products", "wishlist"],
 							"query": [
-								{ "key": "userId", "value": "1" },
 								{ "key": "productId", "value": "PROD001" }
 							]
-						}
+						},
+						"description": "Remove product from wishlist. User ID is extracted from JWT token."
 					}
 				},
 				{
@@ -511,13 +537,11 @@
 							{ "key": "Authorization", "value": "Bearer {{access_token}}" }
 						],
 						"url": {
-							"raw": "{{base_url}}/api/products/wishlist/:userId",
+							"raw": "{{base_url}}/api/products/wishlist",
 							"host": ["{{base_url}}"],
-							"path": ["api", "products", "wishlist", ":userId"],
-							"variable": [
-								{ "key": "userId", "value": "1" }
-							]
-						}
+							"path": ["api", "products", "wishlist"]
+						},
+						"description": "Get current user's wishlist. User ID is extracted from JWT token."
 					}
 				},
 				{
@@ -528,13 +552,11 @@
 							{ "key": "Authorization", "value": "Bearer {{access_token}}" }
 						],
 						"url": {
-							"raw": "{{base_url}}/api/products/wishlist/:userId/products",
+							"raw": "{{base_url}}/api/products/wishlist/products",
 							"host": ["{{base_url}}"],
-							"path": ["api", "products", "wishlist", ":userId", "products"],
-							"variable": [
-								{ "key": "userId", "value": "1" }
-							]
-						}
+							"path": ["api", "products", "wishlist", "products"]
+						},
+						"description": "Get full product details for current user's wishlist. User ID is extracted from JWT token."
 					}
 				},
 				{
@@ -545,14 +567,14 @@
 							{ "key": "Authorization", "value": "Bearer {{access_token}}" }
 						],
 						"url": {
-							"raw": "{{base_url}}/api/products/wishlist/check?userId=1&productId=PROD001",
+							"raw": "{{base_url}}/api/products/wishlist/check?productId=PROD001",
 							"host": ["{{base_url}}"],
 							"path": ["api", "products", "wishlist", "check"],
 							"query": [
-								{ "key": "userId", "value": "1" },
 								{ "key": "productId", "value": "PROD001" }
 							]
-						}
+						},
+						"description": "Check if product is in current user's wishlist. User ID is extracted from JWT token."
 					}
 				},
 				{
@@ -563,13 +585,11 @@
 							{ "key": "Authorization", "value": "Bearer {{access_token}}" }
 						],
 						"url": {
-							"raw": "{{base_url}}/api/products/wishlist/:userId/count",
+							"raw": "{{base_url}}/api/products/wishlist/count",
 							"host": ["{{base_url}}"],
-							"path": ["api", "products", "wishlist", ":userId", "count"],
-							"variable": [
-								{ "key": "userId", "value": "1" }
-							]
-						}
+							"path": ["api", "products", "wishlist", "count"]
+						},
+						"description": "Get count of items in current user's wishlist. User ID is extracted from JWT token."
 					}
 				}
 			]
@@ -608,7 +628,8 @@
 							"raw": "{{base_url}}/api/carts/items",
 							"host": ["{{base_url}}"],
 							"path": ["api", "carts", "items"]
-						}
+						},
+						"description": "Add item to cart. User ID is extracted from JWT token."
 					}
 				},
 				{
@@ -616,21 +637,20 @@
 					"request": {
 						"method": "PATCH",
 						"header": [
-							{ "key": "Authorization", "value": "Bearer {{access_token}}" },
-							{ "key": "Content-Type", "value": "application/json" }
+							{ "key": "Authorization", "value": "Bearer {{access_token}}" }
 						],
-						"body": {
-							"mode": "raw",
-							"raw": "{\n  \"quantity\": 3\n}"
-						},
 						"url": {
-							"raw": "{{base_url}}/api/carts/items/:itemId",
+							"raw": "{{base_url}}/api/carts/items/:itemId?quantity=3",
 							"host": ["{{base_url}}"],
 							"path": ["api", "carts", "items", ":itemId"],
+							"query": [
+								{ "key": "quantity", "value": "3" }
+							],
 							"variable": [
 								{ "key": "itemId", "value": "1" }
 							]
-						}
+						},
+						"description": "Update cart item quantity using query parameter"
 					}
 				},
 				{
@@ -679,13 +699,14 @@
 						],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n  \"shippingAddress\": \"123 Đường ABC, Quận 1, TP.HCM\",\n  \"paymentMethod\": \"COD\",\n  \"items\": [\n    { \"productId\": \"PROD001\", \"quantity\": 2, \"unitPrice\": 2500000 },\n    { \"productId\": \"PROD002\", \"quantity\": 1, \"unitPrice\": 3000000 }\n  ]\n}"
+							"raw": "{\n  \"shippingAddress\": {\n    \"fullName\": \"Nguyễn Văn A\",\n    \"phone\": \"0901234567\",\n    \"addressLine\": \"123 Đường ABC\",\n    \"ward\": \"Phường Bến Nghé\",\n    \"district\": \"Quận 1\",\n    \"province\": \"TP.HCM\"\n  },\n  \"paymentMethod\": \"COD\",\n  \"note\": \"Giao hàng giờ hành chính\"\n}"
 						},
 						"url": {
 							"raw": "{{base_url}}/api/orders",
 							"host": ["{{base_url}}"],
 							"path": ["api", "orders"]
-						}
+						},
+						"description": "Create order with COD payment. Order items are taken from current cart."
 					}
 				},
 				{
@@ -698,13 +719,14 @@
 						],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n  \"shippingAddress\": \"123 Đường ABC, Quận 1, TP.HCM\",\n  \"paymentMethod\": \"PAYOS\",\n  \"items\": [\n    { \"productId\": \"PROD001\", \"quantity\": 2, \"unitPrice\": 2500000 },\n    { \"productId\": \"PROD002\", \"quantity\": 1, \"unitPrice\": 3000000 }\n  ]\n}"
+							"raw": "{\n  \"shippingAddress\": {\n    \"fullName\": \"Nguyễn Văn A\",\n    \"phone\": \"0901234567\",\n    \"addressLine\": \"123 Đường ABC\",\n    \"ward\": \"Phường Bến Nghé\",\n    \"district\": \"Quận 1\",\n    \"province\": \"TP.HCM\"\n  },\n  \"paymentMethod\": \"PAYOS\",\n  \"note\": \"Thanh toán online qua PayOS\"\n}"
 						},
 						"url": {
 							"raw": "{{base_url}}/api/orders",
 							"host": ["{{base_url}}"],
 							"path": ["api", "orders"]
-						}
+						},
+						"description": "Create order with PayOS payment. Order items are taken from current cart."
 					}
 				},
 				{
@@ -774,56 +796,38 @@
 					"request": {
 						"method": "POST",
 						"header": [
-							{ "key": "Authorization", "value": "Bearer {{access_token}}" },
 							{ "key": "Content-Type", "value": "application/json" }
 						],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n  \"orderId\": 1,\n  \"amount\": 8000000,\n  \"description\": \"Thanh toan don hang #1\",\n  \"returnUrl\": \"http://localhost:3000/payment/success\",\n  \"cancelUrl\": \"http://localhost:3000/payment/cancel\"\n}"
+							"raw": "{\n  \"orderCode\": 1,\n  \"returnUrl\": \"http://localhost:3000/payment/success\",\n  \"cancelUrl\": \"http://localhost:3000/payment/cancel\"\n}"
 						},
 						"url": {
 							"raw": "{{base_url}}/api/payments/create-link",
 							"host": ["{{base_url}}"],
 							"path": ["api", "payments", "create-link"]
-						}
+						},
+						"description": "Create PayOS payment link. Amount and description are extracted from order."
 					}
 				},
 				{
-					"name": "2. GET Payment Status by Order Code",
+					"name": "2. GET Payment Status",
 					"request": {
 						"method": "GET",
-						"header": [
-							{ "key": "Authorization", "value": "Bearer {{access_token}}" }
-						],
+						"header": [],
 						"url": {
 							"raw": "{{base_url}}/api/payments/status/:orderCode",
 							"host": ["{{base_url}}"],
 							"path": ["api", "payments", "status", ":orderCode"],
 							"variable": [
-								{ "key": "orderCode", "value": "123456" }
+								{ "key": "orderCode", "value": "1" }
 							]
-						}
+						},
+						"description": "Get payment status from PayOS by order code"
 					}
 				},
 				{
-					"name": "3. GET Payment Status by Order ID",
-					"request": {
-						"method": "GET",
-						"header": [
-							{ "key": "Authorization", "value": "Bearer {{access_token}}" }
-						],
-						"url": {
-							"raw": "{{base_url}}/api/payments/order/:orderId/status",
-							"host": ["{{base_url}}"],
-							"path": ["api", "payments", "order", ":orderId", "status"],
-							"variable": [
-								{ "key": "orderId", "value": "1" }
-							]
-						}
-					}
-				},
-				{
-					"name": "4. Webhook Handler (PayOS → Backend)",
+					"name": "3. Webhook Handler (PayOS → Backend)",
 					"request": {
 						"method": "POST",
 						"header": [
@@ -831,13 +835,14 @@
 						],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n  \"code\": \"00\",\n  \"desc\": \"Thành công\",\n  \"data\": {\n    \"orderCode\": \"123456\",\n    \"amount\": 8000000,\n    \"description\": \"Thanh toán đơn hàng #1\",\n    \"accountNumber\": \"970415\",\n    \"reference\": \"REF123456\",\n    \"transactionDateTime\": \"2024-01-15T10:30:00Z\",\n    \"currency\": \"VND\",\n    \"paymentLinkId\": \"abc123xyz\",\n    \"code\": \"00\",\n    \"desc\": \"Thành công\"\n  },\n  \"signature\": \"abc123xyz...\"\n}"
+							"raw": "{\n  \"code\": \"00\",\n  \"desc\": \"Thành công\",\n  \"data\": {\n    \"orderCode\": \"1\",\n    \"amount\": 8000000,\n    \"description\": \"Thanh toán đơn hàng #1\",\n    \"accountNumber\": \"970415\",\n    \"reference\": \"FT12345678\",\n    \"transactionDateTime\": \"2024-01-15T10:30:00Z\",\n    \"currency\": \"VND\",\n    \"paymentLinkId\": \"abc123xyz\",\n    \"code\": \"00\",\n    \"desc\": \"Thành công\"\n  },\n  \"signature\": \"generated_signature_by_payos\"\n}"
 						},
 						"url": {
 							"raw": "{{base_url}}/api/payments/webhook",
 							"host": ["{{base_url}}"],
 							"path": ["api", "payments", "webhook"]
-						}
+						},
+						"description": "PayOS webhook endpoint. This is called by PayOS server when payment status changes."
 					}
 				}
 			]
