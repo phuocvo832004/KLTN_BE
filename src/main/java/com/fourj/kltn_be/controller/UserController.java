@@ -1,5 +1,6 @@
 package com.fourj.kltn_be.controller;
 
+import com.fourj.kltn_be.dto.ChangePasswordRequest;
 import com.fourj.kltn_be.dto.UserDTO;
 import com.fourj.kltn_be.service.UserService;
 import com.fourj.kltn_be.util.SecurityUtil;
@@ -33,6 +34,17 @@ public class UserController {
             return userService.updateUser(userId, userDTO)
                     .map(ResponseEntity::ok)
                     .orElse(ResponseEntity.notFound().build());
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
+        }
+    }
+
+    @PatchMapping("/me/password")
+    public ResponseEntity<Void> changePassword(@RequestBody ChangePasswordRequest request) {
+        try {
+            Long userId = SecurityUtil.getCurrentUserId();
+            userService.changePassword(userId, request.getCurrentPassword(), request.getNewPassword());
+            return ResponseEntity.ok().build();
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
         }

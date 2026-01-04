@@ -7,6 +7,7 @@ import com.fourj.kltn_be.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -18,6 +19,7 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor
 public class UserService {
     private final UserRepository userRepository;
+    private final PasswordEncoder passwordEncoder;
 
     public List<UserDTO> getAllUsers() {
         return userRepository.findAll().stream()
@@ -75,6 +77,12 @@ public class UserService {
     public Optional<UserDTO> updateUser(Long userId, UserDTO userDTO) {
         return userRepository.findByUserId(userId)
                 .map(existing -> {
+                    if (userDTO.getUsername() != null && !userDTO.getUsername().equals(existing.getUsername())) {
+                        if (userRepository.existsByUsername(userDTO.getUsername())) {
+                            throw new RuntimeException("Username already exists");
+                        }
+                        existing.setUsername(userDTO.getUsername());
+                    }
                     if (userDTO.getEmail() != null && !userDTO.getEmail().equals(existing.getEmail())) {
                         if (userRepository.existsByEmail(userDTO.getEmail())) {
                             throw new RuntimeException("Email already exists");
@@ -92,6 +100,19 @@ public class UserService {
     @Transactional
     public void deleteUser(Long userId) {
         userRepository.deleteById(userId);
+    }
+
+    @Transactional
+    public void changePassword(Long userId, String currentPassword, String newPassword) {
+        User user = userRepository.findByUserId(userId)
+                .orElseThrow(() -> new RuntimeException("User not found"));
+        
+        if (!passwordEncoder.matches(currentPassword, user.getPassword())) {
+            throw new RuntimeException("Current password is incorrect");
+        }
+        
+        user.setPassword(passwordEncoder.encode(newPassword));
+        userRepository.save(user);
     }
 
     private UserDTO convertToDTO(User user) {
