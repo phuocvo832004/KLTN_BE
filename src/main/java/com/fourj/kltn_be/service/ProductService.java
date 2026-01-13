@@ -93,10 +93,20 @@ public class ProductService {
     }
 
     public PageResponse<ProductDTO> searchProducts(String title, Pageable pageable) {
-        // Use enhanced search with ProductSpecification
-        ProductFilterRequest filterRequest = new ProductFilterRequest();
-        filterRequest.setKeyword(title);
-        Page<Product> page = productRepository.findAll(ProductSpecification.filterProducts(filterRequest), pageable);
+        // Check if sorting by relevance (default sort by id means relevance sort)
+        boolean isSortingByRelevance = pageable.getSort().stream()
+                .anyMatch(order -> order.getProperty().equals("id") && order.getDirection() == Sort.Direction.ASC);
+        
+        Page<Product> page;
+        if (isSortingByRelevance && title != null && !title.trim().isEmpty()) {
+            // Use relevance-based search with similarity scoring
+            page = productRepository.searchByKeywordWithRelevance(title, pageable);
+        } else {
+            // Use enhanced search with ProductSpecification for other sorting
+            ProductFilterRequest filterRequest = new ProductFilterRequest();
+            filterRequest.setKeyword(title);
+            page = productRepository.findAll(ProductSpecification.filterProducts(filterRequest), pageable);
+        }
         return convertToPageResponse(page);
     }
 

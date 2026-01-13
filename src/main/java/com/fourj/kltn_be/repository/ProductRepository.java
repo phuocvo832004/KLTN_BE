@@ -64,5 +64,24 @@ public interface ProductRepository extends JpaRepository<Product, String>, JpaSp
     Page<Product> findPopularProductsWithMinRating(@Param("minRating") Double minRating, Pageable pageable);
     
     List<Product> findByIdIn(List<String> ids);
+    
+    // Search with relevance scoring using PostgreSQL similarity
+    @Query(value = "SELECT DISTINCT p.* FROM products p " +
+           "WHERE LOWER(p.title) LIKE LOWER(CONCAT('%', :keyword, '%')) " +
+           "OR LOWER(p.description) LIKE LOWER(CONCAT('%', :keyword, '%')) " +
+           "ORDER BY " +
+           "CASE " +
+           "  WHEN LOWER(p.title) = LOWER(:keyword) THEN 1 " +
+           "  WHEN LOWER(p.title) LIKE LOWER(CONCAT(:keyword, '%')) THEN 2 " +
+           "  WHEN LOWER(p.title) LIKE LOWER(CONCAT('%', :keyword, '%')) THEN 3 " +
+           "  ELSE 4 " +
+           "END, " +
+           "similarity(LOWER(p.title), LOWER(:keyword)) DESC, " +
+           "p.average_rating DESC NULLS LAST",
+           countQuery = "SELECT COUNT(DISTINCT p.id) FROM products p " +
+           "WHERE LOWER(p.title) LIKE LOWER(CONCAT('%', :keyword, '%')) " +
+           "OR LOWER(p.description) LIKE LOWER(CONCAT('%', :keyword, '%'))",
+           nativeQuery = true)
+    Page<Product> searchByKeywordWithRelevance(@Param("keyword") String keyword, Pageable pageable);
 }
 
